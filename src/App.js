@@ -5,9 +5,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 // Import components
 import IntroScreen from './components/Animation/IntroScreen';
+import LoadingScreen from './components/Animation/LoadingScreen';
 import BackgroundAnimation from './components/Animation/BackgroundAnimation';
 import MouseTrail from './components/Animation/MouseTrail';
-import NeonHalo from './components/Animation/NeonHalo';
+
 
 import AuthScreen from './components/Auth/AuthScreen';
 import AdminLogin from './components/Auth/AdminLogin';
@@ -64,27 +65,18 @@ function App() {
   // Show loading screen while initializing
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-bg-dark flex items-center justify-center relative overflow-hidden">
-        <BackgroundAnimation />
-        <MouseTrail />
-        <div className="text-center relative z-10">
-          <NeonHalo intensity={1.5}>
-            <div className="loading-spinner mx-auto mb-4"></div>
-          </NeonHalo>
-          <h2 className="text-xl font-bold text-neutral-light mb-2 gradient-text">
-            Loading YESSplora
-          </h2>
-          <p className="text-neutral-light text-opacity-80">Preparing your adventure...</p>
-        </div>
-      </div>
+      <LoadingScreen 
+        onComplete={() => setIsLoading(false)}
+        duration={2500}
+      />
     );
   }
 
   return (
     <Router>
-          <div className="App min-h-screen bg-gradient-bg-dark relative overflow-hidden">
-      <BackgroundAnimation />
-      <MouseTrail />
+      <div className="App min-h-screen bg-gradient-bg-dark relative overflow-hidden app-content">
+        <BackgroundAnimation />
+        <MouseTrail />
 
         <Toaster
           position="top-right"
