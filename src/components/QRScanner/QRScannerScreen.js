@@ -17,20 +17,17 @@ const QRScannerScreen = () => {
   const [scanResult, setScanResult] = useState(null);
   const [error, setError] = useState(null);
   const [isScanning, setIsScanning] = useState(false);
-  const [isInitialized, setIsInitialized] = useState(false);
   const scannerRef = useRef(null);
   const scannerInstanceRef = useRef(null);
 
   const processQRCode = (qrData) => {
     const qrId = qrData.id;
     
-    // Check if already scanned
     if (isQRScanned(qrId)) {
       setError('This QR code has already been scanned by your team!');
       return;
     }
 
-    // Validate and process QR code
     const success = scanQRCode(qrId);
     
     if (success) {
@@ -45,42 +42,40 @@ const QRScannerScreen = () => {
     }
   };
 
-  const onScanSuccess = (decodedText, decodedResult) => {
+  const onScanSuccess = (decodedText) => {
     console.log('QR Code scanned:', decodedText);
     
-    // Process the QR code
     try {
       const qrData = JSON.parse(decodedText);
       processQRCode(qrData);
     } catch (error) {
-      // If not JSON, treat as simple QR ID
       processQRCode({ id: decodedText });
     }
   };
 
   const onScanFailure = (error) => {
-    // Handle scan failure silently
     console.warn('QR scan failed:', error);
   };
 
-  // Initialize scanner
+  // Initialize scanner once on mount
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
+    // Only initialize if not already initialized
+    if (scannerInstanceRef.current) {
+      return;
+    }
+
     const initScanner = () => {
-      if (scannerInstanceRef.current || isInitialized) {
-        return;
-      }
-
-      console.log('Initializing QR scanner...');
-
       try {
-        // Clear the container
+        console.log('Creating QR scanner...');
+        
+        // Clear container
         if (scannerRef.current) {
           scannerRef.current.innerHTML = '';
         }
 
         // Create scanner
-        const html5QrcodeScanner = new Html5QrcodeScanner(
+        const scanner = new Html5QrcodeScanner(
           "qr-reader",
           { 
             fps: 10, 
@@ -91,28 +86,31 @@ const QRScannerScreen = () => {
         );
 
         // Render scanner
-        html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+        scanner.render(onScanSuccess, onScanFailure);
         
         // Store instance
-        scannerInstanceRef.current = html5QrcodeScanner;
+        scannerInstanceRef.current = scanner;
         setIsScanning(true);
-        setIsInitialized(true);
         setError(null);
         
-        console.log('QR scanner initialized successfully');
+        console.log('QR scanner created successfully');
       } catch (error) {
-        console.error('Failed to initialize QR scanner:', error);
+        console.error('Failed to create QR scanner:', error);
         setError('Failed to initialize camera. Please check permissions and try again.');
       }
     };
 
-    // Delay initialization
-    const timer = setTimeout(initScanner, 1000);
+    // Delay to ensure DOM is ready
+    const timer = setTimeout(initScanner, 1500);
 
     return () => {
       clearTimeout(timer);
-      
-      // Cleanup scanner
+    };
+  }, []); // Empty dependency array - only run once
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
       if (scannerInstanceRef.current) {
         try {
           scannerInstanceRef.current.clear();
@@ -121,10 +119,8 @@ const QRScannerScreen = () => {
         }
         scannerInstanceRef.current = null;
       }
-      setIsScanning(false);
-      setIsInitialized(false);
     };
-  }, [isInitialized]);
+  }, []);
 
   const handleRetry = () => {
     setScanResult(null);
@@ -141,29 +137,32 @@ const QRScannerScreen = () => {
     }
     
     setIsScanning(false);
-    setIsInitialized(false);
     
-    // Reinitialize
+    // Recreate scanner
     setTimeout(() => {
-      if (scannerRef.current) {
-        scannerRef.current.innerHTML = '';
-        
-        const html5QrcodeScanner = new Html5QrcodeScanner(
-          "qr-reader",
-          { 
-            fps: 10, 
-            qrbox: { width: 250, height: 250 },
-            aspectRatio: 1.0
-          },
-          false
-        );
+      try {
+        if (scannerRef.current) {
+          scannerRef.current.innerHTML = '';
+          
+          const scanner = new Html5QrcodeScanner(
+            "qr-reader",
+            { 
+              fps: 10, 
+              qrbox: { width: 250, height: 250 },
+              aspectRatio: 1.0
+            },
+            false
+          );
 
-        html5QrcodeScanner.render(onScanSuccess, onScanFailure);
-        scannerInstanceRef.current = html5QrcodeScanner;
-        setIsScanning(true);
-        setIsInitialized(true);
+          scanner.render(onScanSuccess, onScanFailure);
+          scannerInstanceRef.current = scanner;
+          setIsScanning(true);
+        }
+      } catch (error) {
+        console.error('Failed to recreate scanner:', error);
+        setError('Failed to restart camera. Please try again.');
       }
-    }, 500);
+    }, 1000);
   };
 
   const handleClose = () => {
@@ -228,7 +227,7 @@ const QRScannerScreen = () => {
           />
 
           {/* Loading State */}
-          {!isScanning && !isInitialized && (
+          {!isScanning && (
             <motion.div
               className="text-center mt-4 p-4 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-lg"
               initial={{ opacity: 0 }}
@@ -332,7 +331,6 @@ const QRScannerScreen = () => {
           >
             <h4 className="font-medium text-neutral-light mb-2">Debug Info:</h4>
             <div className="text-xs text-neutral-light text-opacity-80 space-y-1">
-              <div>Scanner Initialized: <span className="text-primary-accent">{isInitialized ? 'Yes' : 'No'}</span></div>
               <div>Is Scanning: <span className="text-primary-accent">{isScanning ? 'Yes' : 'No'}</span></div>
               <div>Scanner Instance: <span className="text-primary-accent">{scannerInstanceRef.current ? 'Active' : 'None'}</span></div>
               <div>Camera Supported: <span className="text-primary-accent">{navigator.mediaDevices ? 'Yes' : 'No'}</span></div>
