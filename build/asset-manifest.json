@@ -1,12 +1,12 @@
 {
   "files": {
-    "main.css": "/YESSplora-Frontend/static/css/main.52c904c6.css",
-    "main.js": "/YESSplora-Frontend/static/js/main.2afd242d.js",
+    "main.css": "/YESSplora-Frontend/static/css/main.d0292956.css",
+    "main.js": "/YESSplora-Frontend/static/js/main.20424968.js",
     "static/js/206.883e0a5b.chunk.js": "/YESSplora-Frontend/static/js/206.883e0a5b.chunk.js",
     "index.html": "/YESSplora-Frontend/index.html"
   },
   "entrypoints": [
-    "static/css/main.52c904c6.css",
-    "static/js/main.2afd242d.js"
+    "static/css/main.d0292956.css",
+    "static/js/main.20424968.js"
   ]
 }

@@ -2,7 +2,7 @@
   "name": "yessplora-frontend",
   "version": "1.0.0",
   "description": "YessPLORA - NIT Campus Treasure Hunt PWA",
-  "homepage": "https://binary-boys.github.io/YESSplora-Frontend",
+  "homepage": "https://yourusername.github.io/YESSplora-Frontend",
   "private": true,
   "dependencies": {
     "@react-three/drei": "^9.88.13",
