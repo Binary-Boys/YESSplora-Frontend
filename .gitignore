@@ -78,7 +78,6 @@ dist
 
 # React build output
 build/
-public
 
 # Storybook build outputs
 .out
