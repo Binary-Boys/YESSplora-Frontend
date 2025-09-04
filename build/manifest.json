@@ -1,0 +1,77 @@
+{
+  "short_name": "YessPLORA",
+  "name": "YessPLORA - NIT Campus Treasure Hunt",
+  "description": "Interactive treasure hunt game for NIT campus with 3D animations and map-based gameplay",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "logo192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "logo512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    },
+    {
+      "src": "maskable_icon.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "maskable"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#0ea5e9",
+  "background_color": "#ffffff",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en",
+  "categories": ["games", "education", "entertainment"],
+  "screenshots": [
+    {
+      "src": "screenshot1.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    },
+    {
+      "src": "screenshot2.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Start Game",
+      "short_name": "Play",
+      "description": "Start the treasure hunt game",
+      "url": "/game",
+      "icons": [
+        {
+          "src": "play-icon.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Leaderboard",
+      "short_name": "Scores",
+      "description": "View team rankings",
+      "url": "/leaderboard",
+      "icons": [
+        {
+          "src": "leaderboard-icon.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ]
+}
+
