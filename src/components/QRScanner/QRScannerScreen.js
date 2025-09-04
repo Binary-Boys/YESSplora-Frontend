@@ -19,6 +19,7 @@ const QRScannerScreen = () => {
   const [isScanning, setIsScanning] = useState(false);
   const [scanResult, setScanResult] = useState(null);
   const [error, setError] = useState(null);
+  const [isInitialized, setIsInitialized] = useState(false);
   const scannerRef = useRef(null);
   const scannerInstanceRef = useRef(null);
 
@@ -70,43 +71,73 @@ const QRScannerScreen = () => {
     console.warn('QR scan failed:', error);
   }, []);
 
-  // Initialize scanner only once
+  // Initialize scanner when component mounts
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
-    if (scannerRef.current && !scannerInstanceRef.current) {
-      const html5QrcodeScanner = new Html5QrcodeScanner(
-        "qr-reader",
-        { 
-          fps: 10, 
-          qrbox: { width: 250, height: 250 },
-          aspectRatio: 1.0,
-          supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA]
-        },
-        false
-      );
+    let mounted = true;
+    
+    const initializeScanner = () => {
+      if (!mounted || !scannerRef.current || scannerInstanceRef.current || isInitialized) {
+        return;
+      }
 
-      html5QrcodeScanner.render(onScanSuccess, onScanFailure);
-      scannerInstanceRef.current = html5QrcodeScanner;
-      setScanner(html5QrcodeScanner);
-      setIsScanning(true);
-    }
+      try {
+        console.log('Initializing QR scanner...');
+        
+        const html5QrcodeScanner = new Html5QrcodeScanner(
+          "qr-reader",
+          { 
+            fps: 10, 
+            qrbox: { width: 250, height: 250 },
+            aspectRatio: 1.0,
+            supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA]
+          },
+          false
+        );
 
-    // Cleanup on unmount
+        html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+        
+        if (mounted) {
+          scannerInstanceRef.current = html5QrcodeScanner;
+          setScanner(html5QrcodeScanner);
+          setIsScanning(true);
+          setIsInitialized(true);
+          console.log('QR scanner initialized successfully');
+        }
+      } catch (error) {
+        console.error('Failed to initialize QR scanner:', error);
+        if (mounted) {
+          setError('Failed to initialize camera. Please check permissions and try again.');
+        }
+      }
+    };
+
+    // Small delay to ensure DOM is ready
+    const timer = setTimeout(initializeScanner, 100);
+
     return () => {
+      mounted = false;
+      clearTimeout(timer);
+      
       if (scannerInstanceRef.current) {
+        console.log('Cleaning up QR scanner...');
         scannerInstanceRef.current.clear();
         scannerInstanceRef.current = null;
         setScanner(null);
         setIsScanning(false);
+        setIsInitialized(false);
       }
     };
-  }, [onScanSuccess, onScanFailure]);
+  }, []); // Empty dependency array - only run on mount/unmount
 
-  const handleRetry = () => {
+  const handleRetry = useCallback(() => {
     setScanResult(null);
     setError(null);
+    setIsInitialized(false);
     
     // Clear existing scanner
     if (scannerInstanceRef.current) {
+      console.log('Clearing existing scanner...');
       scannerInstanceRef.current.clear();
       scannerInstanceRef.current = null;
       setScanner(null);
@@ -116,6 +147,7 @@ const QRScannerScreen = () => {
     // Recreate scanner after cleanup
     setTimeout(() => {
       if (scannerRef.current && !scannerInstanceRef.current) {
+        console.log('Reinitializing scanner...');
         const html5QrcodeScanner = new Html5QrcodeScanner(
           "qr-reader",
           { 
@@ -131,15 +163,16 @@ const QRScannerScreen = () => {
         scannerInstanceRef.current = html5QrcodeScanner;
         setScanner(html5QrcodeScanner);
         setIsScanning(true);
+        setIsInitialized(true);
       }
-    }, 300);
-  };
+    }, 500);
+  }, [onScanSuccess, onScanFailure]);
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     setScanResult(null);
     setError(null);
     handleRetry();
-  };
+  }, [handleRetry]);
 
   return (
     <div className="min-h-screen bg-gradient-bg-dark flex items-center justify-center p-4 relative">
@@ -196,6 +229,23 @@ const QRScannerScreen = () => {
             className="w-full max-w-md mx-auto"
           />
 
+          {/* Loading State */}
+          {!isScanning && !isInitialized && (
+            <motion.div
+              className="text-center mt-4 p-4 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-lg"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+            >
+              <div className="flex items-center justify-center space-x-2 mb-2">
+                <div className="w-4 h-4 bg-primary-accent rounded-full animate-spin" />
+                <span className="text-sm text-neutral-light">Initializing camera...</span>
+              </div>
+              <p className="text-xs text-neutral-light text-opacity-60">
+                Please allow camera permissions when prompted
+              </p>
+            </motion.div>
+          )}
+
           {/* Scanner Status */}
           {isScanning && (
             <motion.div
@@ -209,23 +259,70 @@ const QRScannerScreen = () => {
               </div>
             </motion.div>
           )}
+
+          {/* Error State */}
+          {error && (
+            <motion.div
+              className="text-center mt-4 p-4 bg-red-500 bg-opacity-20 border border-red-500 border-opacity-30 rounded-lg"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+            >
+              <div className="flex items-center justify-center space-x-2 mb-2">
+                <AlertCircle className="w-4 h-4 text-red-400" />
+                <span className="text-sm text-red-400">Camera Error</span>
+              </div>
+              <p className="text-xs text-red-400 text-opacity-80 mb-3">
+                {error}
+              </p>
+              <NeonHalo intensity={1}>
+                <motion.button
+                  onClick={handleRetry}
+                  className="bg-gradient-bg-primary text-neutral-light px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gradient-bg-secondary transition-all duration-300"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  Retry Camera
+                </motion.button>
+              </NeonHalo>
+            </motion.div>
+          )}
         </motion.div>
 
-        {/* Instructions */}
-        <motion.div
-          className="glass-effect rounded-xl p-4 mb-6 max-w-3xl mx-auto"
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.4, delay: 0.2 }}
-        >
-          <h4 className="font-medium text-neutral-light mb-2">How to Scan:</h4>
-          <ul className="text-sm text-neutral-light text-opacity-80 space-y-1">
-            <li>• Point your camera at a QR code</li>
-            <li>• Keep the QR code within the frame</li>
-            <li>• Hold steady until scan completes</li>
-            <li>• Each QR code can only be scanned once per team</li>
-          </ul>
-        </motion.div>
+                  {/* Instructions */}
+          <motion.div
+            className="glass-effect rounded-xl p-4 mb-6 max-w-3xl mx-auto"
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.4, delay: 0.2 }}
+          >
+            <h4 className="font-medium text-neutral-light mb-2">How to Scan:</h4>
+            <ul className="text-sm text-neutral-light text-opacity-80 space-y-1">
+              <li>• Point your camera at a QR code</li>
+              <li>• Keep the QR code within the frame</li>
+              <li>• Hold steady until scan completes</li>
+              <li>• Each QR code can only be scanned once per team</li>
+            </ul>
+            
+            {/* Manual Retry Button */}
+            {!isScanning && !error && (
+              <div className="mt-4 pt-4 border-t border-white border-opacity-20">
+                <p className="text-xs text-neutral-light text-opacity-60 mb-3">
+                  Camera not working? Try refreshing the scanner:
+                </p>
+                <NeonHalo intensity={0.8}>
+                  <motion.button
+                    onClick={handleRetry}
+                    className="bg-gradient-bg-primary text-neutral-light px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gradient-bg-secondary transition-all duration-300"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <Camera className="w-4 h-4 mr-2 inline" />
+                    Refresh Scanner
+                  </motion.button>
+                </NeonHalo>
+              </div>
+            )}
+          </motion.div>
 
         {/* Team Stats */}
         {team && (
