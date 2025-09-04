@@ -181,7 +181,7 @@ const QRScannerScreen = () => {
         setIsInitializing(false);
       }
     }
-  }, [checkCameraPermission, cleanupScanner, team, updateTeamPoints, updateTeamScannedQRs]);
+  }, [checkCameraPermission, cleanupScanner, team, updateTeamPoints, updateTeamScannedQRs, isInitializing]);
 
   // Retry function
   const handleRetry = useCallback(() => {

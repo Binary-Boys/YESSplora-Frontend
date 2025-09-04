@@ -5,7 +5,7 @@ export const VALIDATION_RULES = {
   name: {
     minLength: 2,
     maxLength: 50,
-    pattern: /^[a-zA-Z\s\-'\.]+$/,
+    pattern: /^[a-zA-Z\s\-'.]+$/,
     required: true,
     messages: {
       required: 'Name is required',

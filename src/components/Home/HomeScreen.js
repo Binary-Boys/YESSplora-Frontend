@@ -13,10 +13,8 @@ import {
   Target,
   CheckCircle,
   Lock,
-  ArrowRight,
   Sparkles,
-  TrendingUp,
-  Award
+  TrendingUp
 } from 'lucide-react';
 
 const HomeScreen = () => {

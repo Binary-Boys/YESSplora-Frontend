@@ -12,8 +12,7 @@ import {
   Sparkles,
   Trophy,
   Target,
-  Linkedin,
-  ExternalLink
+  Linkedin
 } from 'lucide-react';
 
 const AboutScreen = () => {

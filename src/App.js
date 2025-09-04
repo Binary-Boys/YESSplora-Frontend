@@ -8,7 +8,7 @@ import IntroScreen from './components/Animation/IntroScreen';
 import BackgroundAnimation from './components/Animation/BackgroundAnimation';
 import MouseTrail from './components/Animation/MouseTrail';
 import NeonHalo from './components/Animation/NeonHalo';
-import AdminLoginIcon from './components/Auth/AdminLoginIcon';
+
 import AuthScreen from './components/Auth/AuthScreen';
 import AdminLogin from './components/Auth/AdminLogin';
 import TeamRegistration from './components/Auth/TeamRegistration';

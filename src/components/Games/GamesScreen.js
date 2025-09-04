@@ -5,20 +5,18 @@ import { useGameStore } from '../../hooks/useGameStore';
 import NeonHalo from '../Animation/NeonHalo';
 import { 
   Gamepad2, 
-  Trophy, 
   Lock, 
   CheckCircle, 
   Play,
   Target,
   QrCode,
   Code,
-  Star,
-  Sparkles
+  Star
 } from 'lucide-react';
 
 const GamesScreen = () => {
   const { team } = useAuthStore();
-  const { levels, completeLevel } = useGameStore();
+  const { levels } = useGameStore();
   const [selectedLevel, setSelectedLevel] = useState(null);
 
   const getLevelIcon = (type) => {
@@ -74,9 +72,7 @@ const GamesScreen = () => {
     }
   };
 
-  const handleCompleteLevel = (levelId) => {
-    completeLevel(levelId);
-  };
+
 
   return (
     <div className="min-h-screen bg-gradient-bg-dark flex items-center justify-center p-4 relative">
