@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useAuthStore } from '../../hooks/useAuthStore';
 import { useGameStore } from '../../hooks/useGameStore';
+import NeonHalo from '../Animation/NeonHalo';
 import { 
   Gamepad2, 
   Trophy, 
@@ -11,7 +12,8 @@ import {
   Target,
   QrCode,
   Code,
-  Star
+  Star,
+  Sparkles
 } from 'lucide-react';
 
 const GamesScreen = () => {
@@ -47,13 +49,13 @@ const GamesScreen = () => {
   const getStatusColor = (status) => {
     switch (status) {
       case 'completed':
-        return 'bg-success-100 border-success-200 text-success-700';
+        return 'bg-white bg-opacity-10 border border-white border-opacity-20 text-neutral-light';
       case 'available':
-        return 'bg-primary-100 border-primary-200 text-primary-700';
+        return 'bg-primary-accent border-primary-accent text-neutral-light';
       case 'locked':
-        return 'bg-gray-100 border-gray-200 text-gray-500';
+        return 'bg-white bg-opacity-5 border border-white border-opacity-10 text-neutral-light text-opacity-60';
       default:
-        return 'bg-gray-100 border-gray-200 text-gray-500';
+        return 'bg-white bg-opacity-5 border border-white border-opacity-10 text-neutral-light text-opacity-60';
     }
   };
 
@@ -77,215 +79,167 @@ const GamesScreen = () => {
   };
 
   return (
-    <div className="h-full overflow-y-auto p-4">
-      {/* Header */}
-      <motion.div
-        className="mb-6"
-        initial={{ y: -20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.5 }}
-      >
-        <div className="flex items-center justify-between mb-2">
-          <h1 className="text-2xl font-display font-bold text-gray-800">Game Levels</h1>
-          <div className="flex items-center space-x-2">
-            <Trophy className="w-5 h-5 text-accent-500" />
-            <span className="text-sm font-medium text-gray-600">
-              {team?.points || 0} pts
-            </span>
-          </div>
-        </div>
-        <p className="text-gray-600 text-sm">
-          Complete levels to unlock new challenges and earn points
-        </p>
-      </motion.div>
-
-      {/* Levels Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {levels.map((level, index) => {
-          const status = getLevelStatus(level);
-          
-          return (
-            <motion.div
-              key={level.id}
-              className="bg-white/70 backdrop-blur-sm rounded-xl p-4 border border-white/20 cursor-pointer transition-all duration-200 hover:shadow-lg"
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              onClick={() => handleLevelClick(level)}
-            >
-              <div className="flex items-start justify-between mb-3">
-                <div className="flex items-center space-x-3">
-                  <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${
-                    status === 'completed' ? 'bg-success-500' :
-                    status === 'available' ? 'bg-primary-500' : 'bg-gray-400'
-                  }`}>
-                    {getLevelIcon(level.type)}
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-gray-800">{level.name}</h3>
-                    <p className="text-xs text-gray-500">Level {level.id}</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-center space-x-1">
-                  {status === 'completed' && (
-                    <CheckCircle className="w-5 h-5 text-success-500" />
-                  )}
-                  {status === 'available' && (
-                    <Target className="w-5 h-5 text-primary-500" />
-                  )}
-                  {status === 'locked' && (
-                    <Lock className="w-5 h-5 text-gray-400" />
-                  )}
-                </div>
-              </div>
-
-              <p className="text-sm text-gray-600 mb-3 line-clamp-2">
-                {level.description}
-              </p>
-
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                    getStatusColor(status)
-                  }`}>
-                    {status}
-                  </span>
-                  <span className="text-xs text-gray-500">
-                    {level.points} pts
-                  </span>
-                </div>
-                
-                {status === 'available' && (
-                  <motion.button
-                    className="bg-gradient-to-r from-primary-500 to-secondary-500 text-white px-3 py-1 rounded-lg text-xs font-medium flex items-center"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleStartLevel();
-                    }}
-                  >
-                    <Play className="w-3 h-3 mr-1" />
-                    Start
-                  </motion.button>
-                )}
-                
-                {status === 'completed' && (
-                  <motion.button
-                    className="bg-success-500 text-white px-3 py-1 rounded-lg text-xs font-medium flex items-center"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleCompleteLevel(level.id);
-                    }}
-                  >
-                    <CheckCircle className="w-3 h-3 mr-1" />
-                    Completed
-                  </motion.button>
-                )}
-              </div>
-
-              {/* Progress Indicator */}
-              {status === 'available' && (
-                <motion.div
-                  className="w-full bg-gray-200 rounded-full h-1 mt-3"
-                  initial={{ width: 0 }}
-                  animate={{ width: '100%' }}
-                  transition={{ duration: 0.5, delay: 0.5 }}
-                >
-                  <div className="bg-gradient-to-r from-primary-500 to-secondary-500 h-1 rounded-full w-0 animate-pulse" />
-                </motion.div>
-              )}
-            </motion.div>
-          );
-        })}
-      </div>
-
-      {/* Level Details Modal */}
-      {selectedLevel && (
+    <div className="min-h-screen bg-gradient-bg-dark flex items-center justify-center p-4 relative">
+      <div className="w-full max-w-4xl relative z-10">
+        {/* Header */}
         <motion.div
-          className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          onClick={() => setSelectedLevel(null)}
+          className="text-center mb-8"
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.4 }}
         >
-          <motion.div
-            className="bg-white rounded-xl p-6 max-w-md w-full"
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.9, opacity: 0 }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="text-center mb-4">
-              <div className={`w-16 h-16 rounded-xl flex items-center justify-center mx-auto mb-3 ${
-                getLevelStatus(selectedLevel) === 'available' ? 'bg-primary-500' : 'bg-gray-400'
-              }`}>
-                {getLevelIcon(selectedLevel.type)}
+          <NeonHalo intensity={1.2}>
+            <div className="flex items-center justify-center mb-4">
+              <div className="w-16 h-16 bg-gradient-bg-primary rounded-2xl flex items-center justify-center mr-4">
+                <Gamepad2 className="w-8 h-8 text-neutral-light" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-800 mb-1">
-                {selectedLevel.name}
-              </h3>
-              <p className="text-sm text-gray-600">
-                Level {selectedLevel.id}
-              </p>
-            </div>
-
-            <div className="space-y-3 mb-6">
-              <p className="text-sm text-gray-700">
-                {selectedLevel.description}
-              </p>
-              
-              <div className="bg-gray-50 rounded-lg p-3">
-                <h4 className="text-sm font-medium text-gray-700 mb-2">Instructions:</h4>
-                <ul className="text-xs text-gray-600 space-y-1">
-                  {selectedLevel.instructions?.map((instruction, index) => (
-                    <li key={index} className="flex items-start">
-                      <span className="w-1.5 h-1.5 bg-primary-500 rounded-full mt-1.5 mr-2 flex-shrink-0" />
-                      {instruction}
-                    </li>
-                  ))}
-                </ul>
+              <div>
+                <h1 className="text-3xl font-bold gradient-text">
+                  Game Levels
+                </h1>
+                <p className="text-sm text-neutral-light text-opacity-80">Complete challenges</p>
               </div>
-
-              {selectedLevel.hints && (
-                <div className="bg-yellow-50 rounded-lg p-3">
-                  <h4 className="text-sm font-medium text-yellow-700 mb-2">Hints:</h4>
-                  <ul className="text-xs text-yellow-600 space-y-1">
-                    {selectedLevel.hints.map((hint, index) => (
-                      <li key={index} className="flex items-start">
-                        <span className="w-1.5 h-1.5 bg-yellow-500 rounded-full mt-1.5 mr-2 flex-shrink-0" />
-                        {hint}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
             </div>
-
-            <div className="flex space-x-3">
-              <motion.button
-                onClick={handleStartLevel}
-                className="flex-1 bg-gradient-to-r from-primary-500 to-secondary-500 text-white py-3 rounded-lg font-medium flex items-center justify-center"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <Play className="w-4 h-4 mr-2" />
-                Start Level
-              </motion.button>
-              
-              <button
-                onClick={() => setSelectedLevel(null)}
-                className="flex-1 bg-gray-100 text-gray-700 py-3 rounded-lg font-medium hover:bg-gray-200 transition-colors"
-              >
-                Cancel
-              </button>
-            </div>
-          </motion.div>
+          </NeonHalo>
+          
+          <p className="text-neutral-light text-opacity-80 text-sm">
+            Complete levels to unlock new challenges and earn points
+          </p>
         </motion.div>
-      )}
+
+        {/* Levels Grid */}
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8"
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.4, delay: 0.1 }}
+        >
+          {levels.map((level, index) => {
+            const status = getLevelStatus(level);
+            return (
+              <NeonHalo key={level.id} intensity={0.8}>
+                <motion.div
+                  className={`glass-effect rounded-xl p-6 cursor-pointer transition-all duration-300 ${
+                    status === 'available' ? 'hover:bg-white hover:bg-opacity-10' : ''
+                  }`}
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ duration: 0.4, delay: 0.2 + index * 0.1 }}
+                  onClick={() => handleLevelClick(level)}
+                  whileHover={status === 'available' ? { scale: 1.02 } : {}}
+                  whileTap={status === 'available' ? { scale: 0.98 } : {}}
+                >
+                  <div className="text-center">
+                    <div className="w-12 h-12 bg-gradient-bg-primary rounded-xl flex items-center justify-center mx-auto mb-3">
+                      {getLevelIcon(level.type)}
+                    </div>
+                    
+                    <h3 className="font-semibold text-neutral-light mb-2">
+                      Level {level.id}: {level.name}
+                    </h3>
+                    
+                    <p className="text-sm text-neutral-light text-opacity-80 mb-3">
+                      {level.description}
+                    </p>
+                    
+                    <div className="flex items-center justify-between text-xs mb-3">
+                      <span className="text-neutral-light text-opacity-60">Type:</span>
+                      <span className="text-neutral-light capitalize">{level.type}</span>
+                    </div>
+                    
+                    <div className="flex items-center justify-between text-xs mb-4">
+                      <span className="text-neutral-light text-opacity-60">Points:</span>
+                      <span className="text-primary-accent font-medium">{level.points} pts</span>
+                    </div>
+                    
+                    <div className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(status)}`}>
+                      {status === 'completed' && <CheckCircle className="w-3 h-3 mr-1" />}
+                      {status === 'available' && <Target className="w-3 h-3 mr-1" />}
+                      {status === 'locked' && <Lock className="w-3 h-3 mr-1" />}
+                      {status.charAt(0).toUpperCase() + status.slice(1)}
+                    </div>
+                  </div>
+                </motion.div>
+              </NeonHalo>
+            );
+          })}
+        </motion.div>
+
+        {/* Level Details Modal */}
+        {selectedLevel && (
+          <motion.div
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className="glass-effect rounded-xl p-6 max-w-md w-full"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+            >
+              <div className="text-center mb-4">
+                <NeonHalo intensity={0.8}>
+                  <div className="w-16 h-16 bg-gradient-bg-primary rounded-2xl flex items-center justify-center mx-auto mb-3">
+                    {getLevelIcon(selectedLevel.type)}
+                  </div>
+                </NeonHalo>
+                <h3 className="text-xl font-semibold text-neutral-light mb-1">
+                  Level {selectedLevel.id}: {selectedLevel.name}
+                </h3>
+                <p className="text-sm text-neutral-light text-opacity-80">
+                  {selectedLevel.description}
+                </p>
+              </div>
+
+              <div className="space-y-3 mb-6">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-neutral-light text-opacity-80">Type:</span>
+                  <span className="font-medium text-neutral-light capitalize">
+                    {selectedLevel.type}
+                  </span>
+                </div>
+                
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-neutral-light text-opacity-80">Points:</span>
+                  <span className="font-medium text-primary-accent">
+                    {selectedLevel.points} pts
+                  </span>
+                </div>
+                
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-neutral-light text-opacity-80">Required:</span>
+                  <span className="font-medium text-neutral-light">
+                    {selectedLevel.required}
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex space-x-3">
+                <NeonHalo intensity={1}>
+                  <motion.button
+                    onClick={handleStartLevel}
+                    className="flex-1 bg-gradient-bg-primary text-neutral-light py-3 rounded-lg font-semibold hover:bg-gradient-bg-secondary transition-all duration-300 transform hover:scale-105 flex items-center justify-center"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <Play className="w-4 h-4 mr-2" />
+                    Start Level
+                  </motion.button>
+                </NeonHalo>
+                
+                <button
+                  onClick={() => setSelectedLevel(null)}
+                  className="flex-1 bg-white bg-opacity-20 text-neutral-light py-3 rounded-lg font-semibold hover:bg-opacity-30 transition-all duration-300"
+                >
+                  Close
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </div>
     </div>
   );
 };

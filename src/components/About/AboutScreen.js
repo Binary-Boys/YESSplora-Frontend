@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import NeonHalo from '../Animation/NeonHalo';
 import { 
   Info, 
   Users, 
@@ -10,30 +11,140 @@ import {
   Globe,
   Sparkles,
   Trophy,
-  Target
+  Target,
+  Linkedin,
+  ExternalLink
 } from 'lucide-react';
 
 const AboutScreen = () => {
-  const teamMembers = [
+  const developers = [
     {
-      name: "Frontend Developer",
-      role: "React & Three.js",
-      description: "PWA Development & 3D Animations"
+      name: "Alex Johnson",
+      role: "Frontend Developer",
+      image: "/images/team/alex.jpg",
+      linkedin: "https://linkedin.com/in/alexjohnson",
+      github: "https://github.com/alexjohnson",
+      description: "React & Three.js Expert"
     },
     {
-      name: "Game Designer",
-      role: "Level Design & Mechanics",
-      description: "Treasure Hunt Logic & Scoring"
+      name: "Sarah Chen",
+      role: "UI/UX Designer",
+      image: "/images/team/sarah.jpg",
+      linkedin: "https://linkedin.com/in/sarahchen",
+      github: "https://github.com/sarahchen",
+      description: "Visual Design & UX"
     },
     {
-      name: "UI/UX Designer",
-      role: "Visual Design & UX",
-      description: "User Interface & Animations"
+      name: "Mike Rodriguez",
+      role: "Backend Developer",
+      image: "/images/team/mike.jpg",
+      linkedin: "https://linkedin.com/in/mikerodriguez",
+      github: "https://github.com/mikerodriguez",
+      description: "API & Database"
     },
     {
-      name: "Backend Developer",
-      role: "API & Database",
-      description: "Server Integration & Data Management"
+      name: "Emily Watson",
+      role: "Game Designer",
+      image: "/images/team/emily.jpg",
+      linkedin: "https://linkedin.com/in/emilywatson",
+      github: "https://github.com/emilywatson",
+      description: "Level Design & Mechanics"
+    },
+    {
+      name: "David Kim",
+      role: "Full Stack Developer",
+      image: "/images/team/david.jpg",
+      linkedin: "https://linkedin.com/in/davidkim",
+      github: "https://github.com/davidkim",
+      description: "React & Node.js"
+    },
+    {
+      name: "Lisa Park",
+      role: "DevOps Engineer",
+      image: "/images/team/lisa.jpg",
+      linkedin: "https://linkedin.com/in/lisapark",
+      github: "https://github.com/lisapark",
+      description: "Deployment & CI/CD"
+    },
+    {
+      name: "Tom Wilson",
+      role: "3D Artist",
+      image: "/images/team/tom.jpg",
+      linkedin: "https://linkedin.com/in/tomwilson",
+      github: "https://github.com/tomwilson",
+      description: "Three.js & Blender"
+    },
+    {
+      name: "Anna Garcia",
+      role: "QA Engineer",
+      image: "/images/team/anna.jpg",
+      linkedin: "https://linkedin.com/in/annagarcia",
+      github: "https://github.com/annagarcia",
+      description: "Testing & Quality"
+    },
+    {
+      name: "Chris Lee",
+      role: "Mobile Developer",
+      image: "/images/team/chris.jpg",
+      linkedin: "https://linkedin.com/in/chrislee",
+      github: "https://github.com/chrislee",
+      description: "React Native"
+    },
+    {
+      name: "Maria Silva",
+      role: "Data Analyst",
+      image: "/images/team/maria.jpg",
+      linkedin: "https://linkedin.com/in/mariasilva",
+      github: "https://github.com/mariasilva",
+      description: "Analytics & Insights"
+    },
+    {
+      name: "James Brown",
+      role: "Security Engineer",
+      image: "/images/team/james.jpg",
+      linkedin: "https://linkedin.com/in/jamesbrown",
+      github: "https://github.com/jamesbrown",
+      description: "Security & Authentication"
+    },
+    {
+      name: "Rachel Green",
+      role: "Product Manager",
+      image: "/images/team/rachel.jpg",
+      linkedin: "https://linkedin.com/in/rachelgreen",
+      github: "https://github.com/rachelgreen",
+      description: "Product Strategy"
+    },
+    {
+      name: "Kevin Martinez",
+      role: "Frontend Developer",
+      image: "/images/team/kevin.jpg",
+      linkedin: "https://linkedin.com/in/kevinmartinez",
+      github: "https://github.com/kevinmartinez",
+      description: "Vue.js & TypeScript"
+    },
+    {
+      name: "Sophie Turner",
+      role: "UX Researcher",
+      image: "/images/team/sophie.jpg",
+      linkedin: "https://linkedin.com/in/sophieturner",
+      github: "https://github.com/sophieturner",
+      description: "User Research"
+    },
+    {
+      name: "Ryan Cooper",
+      role: "Backend Developer",
+      image: "/images/team/ryan.jpg",
+      linkedin: "https://linkedin.com/in/ryancooper",
+      github: "https://github.com/ryancooper",
+      description: "Python & Django"
+    },
+    {
+      name: "Zoe Anderson",
+      role: "Creative Director",
+      image: "/images/team/zoe.jpg",
+      linkedin: "https://linkedin.com/in/zoeanderson",
+      github: "https://github.com/zoeanderson",
+      description: "Creative Strategy"
     }
   ];
 
@@ -61,221 +172,219 @@ const AboutScreen = () => {
   ];
 
   return (
-    <div className="h-full overflow-y-auto p-4">
-      {/* Header */}
-      <motion.div
-        className="text-center mb-8"
-        initial={{ y: -20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.5 }}
-      >
-        <div className="flex items-center justify-center mb-4">
-          <div className="w-16 h-16 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-2xl flex items-center justify-center mr-4">
-            <Info className="w-8 h-8 text-white" />
-          </div>
-          <div>
-            <h1 className="text-3xl font-display font-bold gradient-text">
-              About YessPLORA
-            </h1>
-            <p className="text-sm text-gray-600">NIT Campus Treasure Hunt</p>
-          </div>
-        </div>
-        
-        <p className="text-gray-600 text-sm max-w-md mx-auto">
-          An interactive treasure hunt game designed to explore the NIT campus through 
-          technology, puzzles, and adventure.
-        </p>
-      </motion.div>
-
-      {/* App Description */}
-      <motion.div
-        className="bg-white/70 backdrop-blur-sm rounded-xl p-6 border border-white/20 mb-6"
-        initial={{ y: 20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.5, delay: 0.2 }}
-      >
-        <h2 className="text-xl font-semibold text-gray-800 mb-4">About the Game</h2>
-        <div className="space-y-3 text-sm text-gray-600">
-          <p>
-            YessPLORA is a comprehensive Progressive Web Application (PWA) that transforms 
-            the NIT campus into an interactive treasure hunt experience. Teams navigate 
-            through 9 challenging levels, combining physical exploration with digital 
-            problem-solving.
-          </p>
-          <p>
-            The game features 70 unique QR codes, interactive 3D animations, and a 
-            real-time leaderboard system. Players must work together to solve puzzles, 
-            scan QR codes, and complete challenges to earn points and unlock new levels.
-          </p>
-        </div>
-      </motion.div>
-
-      {/* Features */}
-      <motion.div
-        className="mb-6"
-        initial={{ y: 20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.5, delay: 0.3 }}
-      >
-        <h2 className="text-xl font-semibold text-gray-800 mb-4">Key Features</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {features.map((feature, index) => (
-            <motion.div
-              key={index}
-              className="bg-white/70 backdrop-blur-sm rounded-xl p-4 border border-white/20"
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.4 + index * 0.1 }}
-            >
-              <div className="flex items-start space-x-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-lg flex items-center justify-center text-white">
-                  {feature.icon}
-                </div>
-                <div>
-                  <h3 className="font-semibold text-gray-800 mb-1">{feature.title}</h3>
-                  <p className="text-sm text-gray-600">{feature.description}</p>
-                </div>
+    <div className="min-h-screen bg-gradient-bg-dark flex items-center justify-center p-4 relative">
+      <div className="w-full max-w-6xl relative z-10">
+        {/* Header */}
+        <motion.div
+          className="text-center mb-8"
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.4 }}
+        >
+          <NeonHalo intensity={1.2}>
+            <div className="flex items-center justify-center mb-4">
+              <div className="w-16 h-16 bg-gradient-bg-primary rounded-2xl flex items-center justify-center mr-4">
+                <Info className="w-8 h-8 text-neutral-light" />
               </div>
-            </motion.div>
-          ))}
-        </div>
-      </motion.div>
-
-      {/* Development Team */}
-      <motion.div
-        className="bg-white/70 backdrop-blur-sm rounded-xl p-6 border border-white/20 mb-6"
-        initial={{ y: 20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.5, delay: 0.5 }}
-      >
-        <h2 className="text-xl font-semibold text-gray-800 mb-4">Development Team</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {teamMembers.map((member, index) => (
-            <motion.div
-              key={index}
-              className="bg-gradient-to-br from-primary-50 to-secondary-50 rounded-lg p-4 border border-primary-100"
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.6 + index * 0.1 }}
-            >
-              <div className="flex items-center space-x-3 mb-2">
-                <Users className="w-5 h-5 text-primary-500" />
-                <h3 className="font-semibold text-gray-800">{member.name}</h3>
+              <div>
+                <h1 className="text-3xl font-bold gradient-text">
+                  About YESSplora
+                </h1>
+                <p className="text-sm text-neutral-light text-opacity-80">NIT Campus Treasure Hunt</p>
               </div>
-              <p className="text-sm font-medium text-primary-600 mb-1">{member.role}</p>
-              <p className="text-xs text-gray-600">{member.description}</p>
-            </motion.div>
-          ))}
-        </div>
-      </motion.div>
-
-      {/* Technical Stack */}
-      <motion.div
-        className="bg-white/70 backdrop-blur-sm rounded-xl p-6 border border-white/20 mb-6"
-        initial={{ y: 20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.5, delay: 0.7 }}
-      >
-        <h2 className="text-xl font-semibold text-gray-800 mb-4">Technical Stack</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="text-center">
-            <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-2">
-              <Code className="w-6 h-6 text-blue-600" />
             </div>
-            <p className="text-sm font-medium text-gray-800">React 18+</p>
-            <p className="text-xs text-gray-500">Frontend Framework</p>
-          </div>
-          <div className="text-center">
-            <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-2">
-              <Sparkles className="w-6 h-6 text-purple-600" />
-            </div>
-            <p className="text-sm font-medium text-gray-800">Three.js</p>
-            <p className="text-xs text-gray-500">3D Graphics</p>
-          </div>
-          <div className="text-center">
-            <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-2">
-              <Globe className="w-6 h-6 text-green-600" />
-            </div>
-            <p className="text-sm font-medium text-gray-800">PWA</p>
-            <p className="text-xs text-gray-500">Progressive Web App</p>
-          </div>
-          <div className="text-center">
-            <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mx-auto mb-2">
-              <Target className="w-6 h-6 text-orange-600" />
-            </div>
-            <p className="text-sm font-medium text-gray-800">QR Scanner</p>
-            <p className="text-xs text-gray-500">Camera Integration</p>
-          </div>
-        </div>
-      </motion.div>
+          </NeonHalo>
+          
+          <p className="text-neutral-light text-opacity-80 text-sm">
+            An interactive treasure hunt game designed to explore the NIT campus through 
+            technology, puzzles, and adventure.
+          </p>
+        </motion.div>
 
-      {/* Game Stats */}
-      <motion.div
-        className="bg-gradient-to-r from-primary-500 to-secondary-500 text-white rounded-xl p-6 mb-6"
-        initial={{ y: 20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.5, delay: 0.8 }}
-      >
-        <h2 className="text-xl font-semibold mb-4">Game Statistics</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="text-center">
-            <div className="text-2xl font-bold">9</div>
-            <div className="text-sm opacity-90">Game Levels</div>
+        {/* App Description */}
+        <motion.div
+          className="glass-effect rounded-xl p-6 mb-8"
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.4, delay: 0.1 }}
+        >
+          <h2 className="text-xl font-semibold text-neutral-light mb-4">About the Game</h2>
+          <div className="space-y-3 text-sm text-neutral-light text-opacity-80">
+            <p>
+              YESSplora is a comprehensive Progressive Web Application (PWA) that transforms 
+              the NIT campus into an interactive treasure hunt experience. Teams navigate 
+              through 9 challenging levels, combining physical exploration with digital 
+              problem-solving.
+            </p>
+            <p>
+              The game features 70 unique QR codes, interactive 3D animations, and a 
+              real-time leaderboard system. Players must work together to solve puzzles, 
+              scan QR codes, and complete challenges to earn points and unlock new levels.
+            </p>
           </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold">70</div>
-            <div className="text-sm opacity-90">QR Codes</div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold">30</div>
-            <div className="text-sm opacity-90">Teams</div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold">300</div>
-            <div className="text-sm opacity-90">Max Points</div>
-          </div>
-        </div>
-      </motion.div>
+        </motion.div>
 
-      {/* Contact & Links */}
-      <motion.div
-        className="bg-white/70 backdrop-blur-sm rounded-xl p-6 border border-white/20 mb-6"
-        initial={{ y: 20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.5, delay: 0.9 }}
-      >
-        <h2 className="text-xl font-semibold text-gray-800 mb-4">Contact & Links</h2>
-        <div className="space-y-3">
-          <div className="flex items-center space-x-3">
-            <Mail className="w-5 h-5 text-primary-500" />
-            <span className="text-sm text-gray-600">support@yessplora.com</span>
+        {/* Features */}
+        <motion.div
+          className="mb-8"
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.4, delay: 0.2 }}
+        >
+          <h2 className="text-xl font-semibold text-neutral-light mb-4">Key Features</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {features.map((feature, index) => (
+              <NeonHalo key={index} intensity={0.6}>
+                <motion.div
+                  className="glass-effect rounded-xl p-4"
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ duration: 0.4, delay: 0.3 + index * 0.1 }}
+                >
+                  <div className="flex items-start space-x-3">
+                    <div className="w-10 h-10 bg-gradient-bg-primary rounded-lg flex items-center justify-center text-neutral-light">
+                      {feature.icon}
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-neutral-light mb-1">{feature.title}</h3>
+                      <p className="text-sm text-neutral-light text-opacity-80">{feature.description}</p>
+                    </div>
+                  </div>
+                </motion.div>
+              </NeonHalo>
+            ))}
           </div>
-          <div className="flex items-center space-x-3">
-            <Github className="w-5 h-5 text-primary-500" />
-            <span className="text-sm text-gray-600">github.com/yessplora</span>
-          </div>
-          <div className="flex items-center space-x-3">
-            <Globe className="w-5 h-5 text-primary-500" />
-            <span className="text-sm text-gray-600">yessplora.com</span>
-          </div>
-        </div>
-      </motion.div>
+        </motion.div>
 
-      {/* Footer */}
-      <motion.div
-        className="text-center"
-        initial={{ y: 20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.5, delay: 1 }}
-      >
-        <div className="flex items-center justify-center space-x-2 mb-2">
-          <Heart className="w-4 h-4 text-red-500" />
-          <span className="text-sm text-gray-600">Made with love for NIT Campus</span>
-        </div>
-        <p className="text-xs text-gray-500">
-          © 2024 YessPLORA. All rights reserved.
-        </p>
-      </motion.div>
+        {/* Development Team */}
+        <motion.div
+          className="mb-8"
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.4, delay: 0.4 }}
+        >
+          <h2 className="text-xl font-semibold text-neutral-light mb-6">Development Team</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {developers.map((developer, index) => (
+              <NeonHalo key={index} intensity={0.8}>
+                <motion.div
+                  className="glass-effect rounded-xl p-4 relative group cursor-pointer"
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ duration: 0.4, delay: 0.5 + index * 0.05 }}
+                  whileHover={{ scale: 1.02 }}
+                >
+                  {/* Profile Image */}
+                  <div className="w-16 h-16 bg-gradient-bg-primary rounded-full flex items-center justify-center mx-auto mb-3">
+                    <Users className="w-8 h-8 text-neutral-light" />
+                  </div>
+                  
+                  {/* Developer Info */}
+                  <div className="text-center mb-3">
+                    <h3 className="font-semibold text-neutral-light text-sm mb-1">{developer.name}</h3>
+                    <p className="text-xs text-primary-accent font-medium mb-1">{developer.role}</p>
+                    <p className="text-xs text-neutral-light text-opacity-60">{developer.description}</p>
+                  </div>
+                  
+                  {/* Hover Overlay with Social Links */}
+                  <div className="absolute inset-0 bg-gradient-bg-primary bg-opacity-90 rounded-xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <div className="flex space-x-3">
+                      <motion.a
+                        href={developer.linkedin}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center hover:bg-opacity-30 transition-colors"
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                      >
+                        <Linkedin className="w-5 h-5 text-neutral-light" />
+                      </motion.a>
+                      <motion.a
+                        href={developer.github}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center hover:bg-opacity-30 transition-colors"
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                      >
+                        <Github className="w-5 h-5 text-neutral-light" />
+                      </motion.a>
+                    </div>
+                  </div>
+                </motion.div>
+              </NeonHalo>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Game Stats */}
+        <motion.div
+          className="glass-effect rounded-xl p-6 mb-8"
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.4, delay: 0.6 }}
+        >
+          <h2 className="text-xl font-semibold text-neutral-light mb-4">Game Statistics</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-neutral-light">9</div>
+              <div className="text-sm text-neutral-light text-opacity-80">Game Levels</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-neutral-light">70</div>
+              <div className="text-sm text-neutral-light text-opacity-80">QR Codes</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-neutral-light">30</div>
+              <div className="text-sm text-neutral-light text-opacity-80">Teams</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-neutral-light">300</div>
+              <div className="text-sm text-neutral-light text-opacity-80">Max Points</div>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Contact & Links */}
+        <motion.div
+          className="glass-effect rounded-xl p-6 mb-8"
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.4, delay: 0.7 }}
+        >
+          <h2 className="text-xl font-semibold text-neutral-light mb-4">Contact & Links</h2>
+          <div className="space-y-3">
+            <div className="flex items-center space-x-3">
+              <Mail className="w-5 h-5 text-primary-accent" />
+              <span className="text-sm text-neutral-light text-opacity-80">support@yessplora.com</span>
+            </div>
+            <div className="flex items-center space-x-3">
+              <Github className="w-5 h-5 text-primary-accent" />
+              <span className="text-sm text-neutral-light text-opacity-80">github.com/yessplora</span>
+            </div>
+            <div className="flex items-center space-x-3">
+              <Globe className="w-5 h-5 text-primary-accent" />
+              <span className="text-sm text-neutral-light text-opacity-80">yessplora.com</span>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Footer */}
+        <motion.div
+          className="text-center"
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.4, delay: 0.8 }}
+        >
+          <div className="flex items-center justify-center space-x-2 mb-2">
+            <Heart className="w-4 h-4 text-primary-accent" />
+            <span className="text-sm text-neutral-light text-opacity-80">Made with love for NIT Campus</span>
+          </div>
+          <p className="text-xs text-neutral-light text-opacity-60">
+            © 2024 YESSplora. All rights reserved.
+          </p>
+        </motion.div>
+      </div>
     </div>
   );
 };

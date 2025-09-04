@@ -2,6 +2,7 @@
   "name": "yessplora-frontend",
   "version": "1.0.0",
   "description": "YessPLORA - NIT Campus Treasure Hunt PWA",
+  "homepage": "https://yourusername.github.io/YESSplora-Frontend",
   "private": true,
   "dependencies": {
     "@react-three/drei": "^9.88.13",
@@ -29,7 +30,9 @@
     "test": "craco test",
     "eject": "react-scripts eject",
     "pwa:build": "npm run build && npm run pwa:generate",
-    "pwa:generate": "npx workbox generateSW workbox-config.js"
+    "pwa:generate": "npx workbox generateSW workbox-config.js",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [
@@ -52,6 +55,7 @@
   "devDependencies": {
     "@craco/craco": "^7.1.0",
     "autoprefixer": "^10.4.16",
+    "gh-pages": "^6.3.0",
     "postcss": "^8.4.31",
     "tailwindcss": "^3.3.5",
     "workbox-cli": "^7.0.0"

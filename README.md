@@ -1,207 +1,37 @@
-# YESSplora Frontend - Campus Treasure Hunt PWA
+# YESSplora - NIT Campus Treasure Hunt PWA
 
-A cutting-edge Progressive Web Application for an interactive NIT campus treasure hunt game featuring 3D animations, real-time gameplay, team management, Unity game integration, and comprehensive QR-based progression system.
+A Progressive Web App (PWA) for the YESSplora campus treasure hunt at NIT. This interactive application allows teams to participate in a campus-wide scavenger hunt with QR code scanning, interactive games, and real-time leaderboards.
 
-## 🎯 Project Overview
+## 🌟 Features
 
-YESSplora is a modern PWA that combines physical campus exploration with digital challenges through Unity WebGL games, creating an immersive treasure hunt experience.
+- **Team Registration & Authentication**: Secure team registration with admin validation
+- **QR Code Scanner**: Camera-based QR code scanning for earning points
+- **Interactive Campus Map**: Clickable hotspots for level progression
+- **Unity Games Integration**: Embedded Unity games for interactive challenges
+- **Real-time Leaderboard**: Live team rankings and progress tracking
+- **PWA Capabilities**: Offline support, app-like experience
+- **Responsive Design**: Works seamlessly on mobile and desktop devices
 
-## 🎨 Design System & Color Palette
+## 🚀 Live Demo
 
-```css
-:root {
-  --primary-dark: #590404;    /* Deep burgundy red */
-  --primary-accent: #FE4A56;  /* Vibrant coral red */
-  --neutral-light: #FFFFFF;   /* Pure white */
-  --neutral-dark: #000000;    /* Deep black */
-}
-```
+Visit the live application: [YESSplora Frontend](https://yourusername.github.io/YESSplora-Frontend)
 
-### Gradient Effects
-- **Primary Gradient**: `linear-gradient(135deg, #590404 0%, #FE4A56 100%)`
-- **Secondary Gradient**: `linear-gradient(135deg, #FE4A56 0%, #590404 100%)`
-- **Dark Gradient**: `linear-gradient(135deg, #000000 0%, #590404 50%, #FE4A56 100%)`
+## 🛠️ Tech Stack
 
-## 🏗️ Technical Architecture
+- **Frontend**: React 18, Tailwind CSS, Framer Motion
+- **State Management**: Zustand
+- **Routing**: React Router DOM
+- **QR Scanning**: HTML5-QRCode
+- **Build Tool**: CRACO
+- **PWA**: Workbox
+- **Deployment**: GitHub Pages
 
-### Frontend Stack
-- **Framework**: React 18+ with JavaScript (ES6+)
-- **Styling**: Tailwind CSS + Custom CSS for 3D effects
-- **3D Graphics**: Three.js for mascot and isometric views
-- **Unity Integration**: WebGL builds embedded via iframe/canvas
-- **PWA**: Service Worker, Manifest, Offline-first
-- **Camera**: WebRTC for QR scanning
-- **State**: React Context + LocalStorage
-- **Build**: Vite for optimal performance
-
-### Unity Games Integration
-- **4 Software Games**: Embedded Unity WebGL builds
-- **Seamless Integration**: React-Unity communication bridge
-- **Progress Sync**: Unity game completion triggers React state updates
-- **Performance Optimization**: Lazy loading and resource management
-
-## 🎮 Unity Games
-
-### Available Games
-1. **Code Breaker Challenge** (Level 5)
-   - Solve programming puzzles and crack the code
-   - Skills: Logic, Problem Solving
-   - Estimated Time: 10 minutes
-
-2. **Logic Puzzle Master** (Level 6)
-   - Navigate through complex logic mazes
-   - Skills: Critical Thinking, Pattern Recognition
-   - Estimated Time: 8 minutes
-
-3. **Algorithm Racing** (Level 7)
-   - Race against time implementing algorithms
-   - Skills: Algorithm Design, Speed Coding
-   - Estimated Time: 12 minutes
-
-4. **Data Detective** (Level 8)
-   - Analyze data patterns and solve mysteries
-   - Skills: Data Analysis, Investigation
-   - Estimated Time: 15 minutes
-
-## 🌐 API Endpoints for Django Backend
-
-### Authentication
-```javascript
-POST /api/auth/register/          // Team registration
-POST /api/auth/admin/login/       // Admin login
-POST /api/auth/refresh/           // Token refresh
-POST /api/auth/logout/            // Logout
-```
-
-### Team Management
-```javascript
-GET    /api/teams/                // List all teams
-GET    /api/teams/{id}/           // Get team details
-POST   /api/teams/                // Create new team
-PUT    /api/teams/{id}/           // Update team
-GET    /api/teams/leaderboard/    // Get leaderboard
-```
-
-### Game Progress
-```javascript
-GET    /api/progress/{teamId}/    // Get team progress
-PUT    /api/progress/{teamId}/    // Update progress
-POST   /api/progress/complete-level/    // Complete level
-POST   /api/progress/unity-complete/    // Complete Unity game
-```
-
-### QR Code Management
-```javascript
-POST   /api/qr/validate/          // Validate QR code
-POST   /api/qr/scan/              // Scan QR code
-GET    /api/qr/team-codes/        // Get team QR codes
-GET    /api/qr/stall-codes/       // Get stall QR codes
-GET    /api/qr/treasure-codes/    // Get treasure QR codes
-```
-
-### Unity Games
-```javascript
-POST   /api/unity/start/          // Start Unity game
-POST   /api/unity/complete/       // Complete Unity game
-POST   /api/unity/{gameId}/progress/    // Get game progress
-GET    /api/unity/{gameId}/leaderboard/ // Get game leaderboard
-```
-
-### Statistics
-```javascript
-GET    /api/stats/overview/       // Get overview stats
-GET    /api/stats/team/{teamId}/  // Get team stats
-GET    /api/stats/games/          // Get game stats
-```
-
-## 📱 PWA Features
-
-### Service Worker
-- Offline functionality
-- Caching strategies
-- Background sync
-- Push notifications
-
-### Manifest
-- Standalone app experience
-- Custom theme colors
-- App shortcuts
-- Screenshots for app stores
-
-### Installation
-- Add to home screen prompt
-- Native app-like experience
-- Offline-first architecture
-
-## 🗂️ Project Structure
-
-```
-yessplora-frontend/
-├── public/
-│   ├── index.html
-│   ├── manifest.json
-│   ├── sw.js
-│   ├── unity-games/
-│   │   ├── code-breaker/
-│   │   │   └── Build/
-│   │   ├── logic-puzzle/
-│   │   │   └── Build/
-│   │   ├── algorithm-race/
-│   │   │   └── Build/
-│   │   └── data-detective/
-│   │       └── Build/
-│   └── qr-codes/
-│       ├── teams/
-│       ├── stalls/
-│       └── treasures/
-├── src/
-│   ├── components/
-│   │   ├── Animation/
-│   │   │   └── WelcomeScreen.jsx
-│   │   ├── Auth/
-│   │   │   ├── AuthScreen.jsx
-│   │   │   ├── TeamRegistration.jsx
-│   │   │   └── AdminLogin.jsx
-│   │   ├── Unity/
-│   │   │   ├── UnityGameWrapper.js
-│   │   │   └── UnityGamesManager.js
-│   │   ├── Map/
-│   │   │   ├── CampusMap.jsx
-│   │   │   └── HotspotModal.jsx
-│   │   ├── QRScanner/
-│   │   │   └── QRScannerScreen.js
-│   │   ├── Leaderboard/
-│   │   │   └── LeaderboardScreen.js
-│   │   └── Layout/
-│   │       └── MainLayout.js
-│   ├── hooks/
-│   │   ├── useAuthStore.js
-│   │   └── useGameStore.js
-│   ├── utils/
-│   │   ├── apiClient.js
-│   │   ├── gameDataLoader.js
-│   │   └── pwaUtils.js
-│   ├── App.js
-│   ├── index.js
-│   └── index.css
-├── package.json
-├── craco.config.js
-└── README.md
-```
-
-## 🚀 Getting Started
-
-### Prerequisites
-- Node.js 16+ 
-- npm or yarn
-- Unity WebGL builds for games
-
-### Installation
+## 📦 Installation
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
-   cd yessplora-frontend
+   git clone https://github.com/yourusername/YESSplora-Frontend.git
+   cd YESSplora-Frontend
    ```
 
 2. **Install dependencies**
@@ -209,137 +39,119 @@ yessplora-frontend/
    npm install
    ```
 
-3. **Add Unity WebGL builds**
-   - Place Unity WebGL builds in `public/unity-games/{game-name}/Build/`
-   - Ensure each build has `UnityLoader.js` and `{game-name}.json`
-
-4. **Configure environment**
-   ```bash
-   # Create .env file
-   echo "REACT_APP_API_BASE=http://localhost:8000/api" > .env
-   ```
-
-5. **Start development server**
+3. **Start development server**
    ```bash
    npm start
    ```
 
-### Building for Production
+4. **Build for production**
+   ```bash
+   npm run build
+   ```
 
-```bash
-# Build PWA
-npm run build
+## 🎮 Usage
 
-# Generate service worker
-npm run pwa:generate
-```
+### Team Registration
+1. Navigate to the registration page
+2. Enter team name and member details
+3. Use admin's 7-digit ticket number for validation
+4. Complete registration to access the game
 
-## 🎮 Game Flow
+### QR Code Scanning
+1. Access the QR Scanner from the home page
+2. Point camera at QR codes placed around campus
+3. Each QR code can only be scanned once per team
+4. Earn points for successful scans
 
-1. **Team Registration**: Teams register with 1-5 members
-2. **Physical Challenges**: Complete 4 physical challenges with QR scanning
-3. **Unity Games**: Complete 4 Unity software games
-4. **Treasure Hunt**: Final treasure hunt with 10 unique QR codes
-5. **Leaderboard**: Real-time team rankings
+### Interactive Games
+1. Click on map hotspots to start levels
+2. Play embedded Unity games for additional points
+3. Complete challenges to progress through levels
+
+### Leaderboard
+- View real-time team rankings
+- Track progress and points earned
+- Monitor completion status
 
 ## 🔧 Configuration
 
-### Unity Integration
+### Environment Variables
+Create a `.env` file in the root directory:
+
+```env
+REACT_APP_API_URL=your_api_url_here
+REACT_APP_GAME_ID=your_game_id_here
+```
+
+### Admin Ticket Numbers
+Configure valid admin ticket numbers in `src/hooks/useAuthStore.js`:
+
 ```javascript
-// Unity to React communication
-window.ReactUnityBridge = {
-  gameComplete: (score) => {
-    // Handle game completion
-  },
-  updateProgress: (progress) => {
-    // Update game progress
-  }
-};
+const validAdminTickets = ['1234567', '0000000', '9999999'];
 ```
 
-### API Configuration
-```javascript
-const API_BASE = process.env.NODE_ENV === 'development' 
-  ? 'http://localhost:8000/api' 
-  : 'https://your-backend.com/api';
-```
+## 📱 PWA Features
 
-## 📊 Features
-
-### Core Features
-- ✅ Progressive Web App (PWA)
-- ✅ Unity WebGL Game Integration
-- ✅ QR Code Scanning
-- ✅ Real-time Leaderboard
-- ✅ Team Management
-- ✅ Offline Support
-- ✅ Push Notifications
-- ✅ 3D Animations
-- ✅ Responsive Design
-
-### Game Features
-- ✅ 9 Game Levels (4 Physical + 4 Unity + 1 Treasure Hunt)
-- ✅ QR Code Validation
-- ✅ Point System
-- ✅ Progress Tracking
-- ✅ Achievement System
-
-### Technical Features
-- ✅ Service Worker
-- ✅ Web App Manifest
-- ✅ Offline Caching
-- ✅ Background Sync
-- ✅ Token Management
-- ✅ Error Handling
-
-## 🛠️ Development
-
-### Available Scripts
-```bash
-npm start          # Start development server
-npm run build      # Build for production
-npm run test       # Run tests
-npm run pwa:build  # Build PWA with service worker
-npm run pwa:generate # Generate service worker
-```
-
-### Code Style
-- ESLint configuration included
-- Prettier formatting
-- Consistent naming conventions
+- **Offline Support**: Works without internet connection
+- **App-like Experience**: Install as a native app
+- **Push Notifications**: Real-time updates
+- **Background Sync**: Sync data when online
 
 ## 🚀 Deployment
 
-### Build Process
-1. Run `npm run build`
-2. Generate service worker with `npm run pwa:generate`
-3. Deploy `build/` folder to web server
+### Automatic Deployment (GitHub Actions)
+The app automatically deploys to GitHub Pages when you push to the main branch.
 
-### PWA Requirements
-- HTTPS required for service worker
-- Valid manifest.json
-- Service worker registration
-- Offline functionality
+### Manual Deployment
+```bash
+npm run deploy
+```
+
+## 📁 Project Structure
+
+```
+src/
+├── components/
+│   ├── About/          # About page components
+│   ├── Animation/      # Animation and visual effects
+│   ├── Auth/          # Authentication components
+│   ├── Games/         # Games and challenges
+│   ├── Home/          # Home page components
+│   ├── Layout/        # Layout components
+│   ├── Leaderboard/   # Leaderboard components
+│   ├── QRScanner/     # QR code scanning
+│   ├── Tutorial/      # Tutorial components
+│   └── Unity/         # Unity game integration
+├── hooks/             # Custom React hooks
+├── utils/             # Utility functions
+└── index.js           # App entry point
+```
 
 ## 🤝 Contributing
 
 1. Fork the repository
-2. Create feature branch
-3. Commit changes
-4. Push to branch
-5. Create Pull Request
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ## 📄 License
 
-This project is licensed under the MIT License.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🆘 Support
+## 👥 Team
+
+- **Frontend Development**: [Your Name]
+- **UI/UX Design**: [Designer Name]
+- **Game Integration**: [Unity Developer]
+- **Backend Integration**: [Backend Developer]
+
+## 📞 Support
 
 For support and questions:
-- Create an issue in the repository
-- Contact the development team
-- Check documentation
+- Email: support@yessplora.com
+- GitHub Issues: [Create an issue](https://github.com/yourusername/YESSplora-Frontend/issues)
 
 ---
 
-**YESSplora Frontend** - Bringing campus exploration to life with modern web technologies and Unity integration! 🎮✨
+**YESSplora** - Making campus exploration exciting and interactive! 🎯
