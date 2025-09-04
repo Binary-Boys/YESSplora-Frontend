@@ -12,16 +12,104 @@ import {
   ArrowLeft
 } from 'lucide-react';
 
+// Custom hook for QR scanner management
+const useQRScanner = (onScanSuccess, onScanFailure) => {
+  const [scanner, setScanner] = useState(null);
+  const [isScanning, setIsScanning] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
+  const [error, setError] = useState(null);
+  const scannerRef = useRef(null);
+  const scannerInstanceRef = useRef(null);
+  const retryCountRef = useRef(0);
+  const maxRetries = 3;
+
+  const initializeScanner = useCallback(() => {
+    if (scannerInstanceRef.current || isInitialized) {
+      return;
+    }
+
+    const qrReaderElement = document.getElementById('qr-reader');
+    if (!qrReaderElement) {
+      if (retryCountRef.current < maxRetries) {
+        retryCountRef.current++;
+        setTimeout(initializeScanner, 300);
+      } else {
+        setError('Failed to initialize scanner. Please refresh the page.');
+      }
+      return;
+    }
+
+    try {
+      // Clear any existing content
+      qrReaderElement.innerHTML = '';
+      
+      const html5QrcodeScanner = new Html5QrcodeScanner(
+        "qr-reader",
+        { 
+          fps: 10, 
+          qrbox: { width: 250, height: 250 },
+          aspectRatio: 1.0,
+          supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA]
+        },
+        false
+      );
+
+      html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+      
+      scannerInstanceRef.current = html5QrcodeScanner;
+      setScanner(html5QrcodeScanner);
+      setIsScanning(true);
+      setIsInitialized(true);
+      setError(null);
+      retryCountRef.current = 0;
+      console.log('QR scanner initialized successfully');
+    } catch (error) {
+      console.error('Failed to initialize QR scanner:', error);
+      setError('Failed to initialize camera. Please check permissions and try again.');
+    }
+  }, [onScanSuccess, onScanFailure, isInitialized]);
+
+  const cleanupScanner = useCallback(() => {
+    if (scannerInstanceRef.current) {
+      try {
+        scannerInstanceRef.current.clear();
+      } catch (cleanupError) {
+        console.warn('Error during scanner cleanup:', cleanupError);
+      }
+      scannerInstanceRef.current = null;
+      setScanner(null);
+      setIsScanning(false);
+      setIsInitialized(false);
+    }
+  }, []);
+
+  const retryScanner = useCallback(() => {
+    cleanupScanner();
+    setError(null);
+    retryCountRef.current = 0;
+    
+    setTimeout(() => {
+      initializeScanner();
+    }, 500);
+  }, [cleanupScanner, initializeScanner]);
+
+  return {
+    scanner,
+    isScanning,
+    isInitialized,
+    error,
+    scannerRef,
+    initializeScanner,
+    cleanupScanner,
+    retryScanner
+  };
+};
+
 const QRScannerScreen = () => {
   const { team, isQRScanned } = useAuthStore();
   const { scanQRCode } = useGameStore();
-  const [scanner, setScanner] = useState(null);
-  const [isScanning, setIsScanning] = useState(false);
   const [scanResult, setScanResult] = useState(null);
   const [error, setError] = useState(null);
-  const [isInitialized, setIsInitialized] = useState(false);
-  const scannerRef = useRef(null);
-  const scannerInstanceRef = useRef(null);
 
   const processQRCode = useCallback((qrData) => {
     const qrId = qrData.id;
@@ -50,12 +138,6 @@ const QRScannerScreen = () => {
   const onScanSuccess = useCallback((decodedText, decodedResult) => {
     console.log('QR Code scanned:', decodedText);
     
-    // Stop scanning
-    if (scannerInstanceRef.current) {
-      scannerInstanceRef.current.clear();
-      setIsScanning(false);
-    }
-
     // Process the QR code
     try {
       const qrData = JSON.parse(decodedText);
@@ -71,108 +153,37 @@ const QRScannerScreen = () => {
     console.warn('QR scan failed:', error);
   }, []);
 
+  const {
+    isScanning,
+    isInitialized,
+    error: scannerError,
+    scannerRef,
+    initializeScanner,
+    cleanupScanner,
+    retryScanner
+  } = useQRScanner(onScanSuccess, onScanFailure);
+
   // Initialize scanner when component mounts
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
-    let mounted = true;
+    const timer = setTimeout(initializeScanner, 300);
     
-    const initializeScanner = () => {
-      if (!mounted || !scannerRef.current || scannerInstanceRef.current || isInitialized) {
-        return;
-      }
-
-      try {
-        console.log('Initializing QR scanner...');
-        
-        const html5QrcodeScanner = new Html5QrcodeScanner(
-          "qr-reader",
-          { 
-            fps: 10, 
-            qrbox: { width: 250, height: 250 },
-            aspectRatio: 1.0,
-            supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA]
-          },
-          false
-        );
-
-        html5QrcodeScanner.render(onScanSuccess, onScanFailure);
-        
-        if (mounted) {
-          scannerInstanceRef.current = html5QrcodeScanner;
-          setScanner(html5QrcodeScanner);
-          setIsScanning(true);
-          setIsInitialized(true);
-          console.log('QR scanner initialized successfully');
-        }
-      } catch (error) {
-        console.error('Failed to initialize QR scanner:', error);
-        if (mounted) {
-          setError('Failed to initialize camera. Please check permissions and try again.');
-        }
-      }
-    };
-
-    // Small delay to ensure DOM is ready
-    const timer = setTimeout(initializeScanner, 100);
-
     return () => {
-      mounted = false;
       clearTimeout(timer);
-      
-      if (scannerInstanceRef.current) {
-        console.log('Cleaning up QR scanner...');
-        scannerInstanceRef.current.clear();
-        scannerInstanceRef.current = null;
-        setScanner(null);
-        setIsScanning(false);
-        setIsInitialized(false);
-      }
+      cleanupScanner();
     };
-  }, []); // Empty dependency array - only run on mount/unmount
+  }, [initializeScanner, cleanupScanner]);
 
   const handleRetry = useCallback(() => {
     setScanResult(null);
     setError(null);
-    setIsInitialized(false);
-    
-    // Clear existing scanner
-    if (scannerInstanceRef.current) {
-      console.log('Clearing existing scanner...');
-      scannerInstanceRef.current.clear();
-      scannerInstanceRef.current = null;
-      setScanner(null);
-      setIsScanning(false);
-    }
-    
-    // Recreate scanner after cleanup
-    setTimeout(() => {
-      if (scannerRef.current && !scannerInstanceRef.current) {
-        console.log('Reinitializing scanner...');
-        const html5QrcodeScanner = new Html5QrcodeScanner(
-          "qr-reader",
-          { 
-            fps: 10, 
-            qrbox: { width: 250, height: 250 },
-            aspectRatio: 1.0,
-            supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA]
-          },
-          false
-        );
-
-        html5QrcodeScanner.render(onScanSuccess, onScanFailure);
-        scannerInstanceRef.current = html5QrcodeScanner;
-        setScanner(html5QrcodeScanner);
-        setIsScanning(true);
-        setIsInitialized(true);
-      }
-    }, 500);
-  }, [onScanSuccess, onScanFailure]);
+    retryScanner();
+  }, [retryScanner]);
 
   const handleClose = useCallback(() => {
     setScanResult(null);
     setError(null);
-    handleRetry();
-  }, [handleRetry]);
+    retryScanner();
+  }, [retryScanner]);
 
   return (
     <div className="min-h-screen bg-gradient-bg-dark flex items-center justify-center p-4 relative">
@@ -261,7 +272,7 @@ const QRScannerScreen = () => {
           )}
 
           {/* Error State */}
-          {error && (
+          {(error || scannerError) && (
             <motion.div
               className="text-center mt-4 p-4 bg-red-500 bg-opacity-20 border border-red-500 border-opacity-30 rounded-lg"
               initial={{ opacity: 0 }}
@@ -272,7 +283,7 @@ const QRScannerScreen = () => {
                 <span className="text-sm text-red-400">Camera Error</span>
               </div>
               <p className="text-xs text-red-400 text-opacity-80 mb-3">
-                {error}
+                {error || scannerError}
               </p>
               <NeonHalo intensity={1}>
                 <motion.button
