@@ -1,12 +1,15 @@
 {
   "files": {
-    "main.css": "/YESSplora-Frontend/static/css/main.c5f358fe.css",
-    "main.js": "/YESSplora-Frontend/static/js/main.c9db4edc.js",
-    "static/js/206.883e0a5b.chunk.js": "/YESSplora-Frontend/static/js/206.883e0a5b.chunk.js",
-    "index.html": "/YESSplora-Frontend/index.html"
+    "main.css": "/YESSplora-Frontend/static/css/main.5e445143.css",
+    "main.js": "/YESSplora-Frontend/static/js/main.5f9a9b84.js",
+    "static/js/488.035892b3.chunk.js": "/YESSplora-Frontend/static/js/488.035892b3.chunk.js",
+    "index.html": "/YESSplora-Frontend/index.html",
+    "main.5e445143.css.map": "/YESSplora-Frontend/static/css/main.5e445143.css.map",
+    "main.5f9a9b84.js.map": "/YESSplora-Frontend/static/js/main.5f9a9b84.js.map",
+    "488.035892b3.chunk.js.map": "/YESSplora-Frontend/static/js/488.035892b3.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.c5f358fe.css",
-    "static/js/main.c9db4edc.js"
+    "static/css/main.5e445143.css",
+    "static/js/main.5f9a9b84.js"
   ]
 }
