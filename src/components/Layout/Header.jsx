@@ -22,12 +22,13 @@ const Header = () => {
         left: 0,
         right: 0,
         height: '200px', // Increased height to accommodate larger text
-        backgroundColor: theme.colors.primary,
+        backgroundColor: theme.colors.background,
         zIndex: theme.zIndex.sticky,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: `0 ${theme.spacing.xl}`
+        padding: `0 ${theme.spacing.xl}`,
+        boxShadow: `0 4px 8px ${theme.colors.shadowDark}, 0 -4px 8px ${theme.colors.shadowLight}`
       }}
     >
       {/* Team Name - Left Side */}
@@ -44,10 +45,11 @@ const Header = () => {
           style={{
             fontSize: `${parseInt(theme.typography.fontSize.xl) * 80}px`, // 10x larger (was 8x, now 80x)
             fontWeight: theme.typography.fontWeight.bold,
-            color: theme.colors.accent,
+            color: theme.colors.textPrimary,
             margin: 0,
             fontFamily: 'sans-serif',
-            letterSpacing: '8px' // Increased letter spacing for larger text
+            letterSpacing: '8px', // Increased letter spacing for larger text
+            textShadow: `2px 2px 4px ${theme.colors.shadowDark}, -2px -2px 4px ${theme.colors.shadowLight}`
           }}
         >
           {team.name}
@@ -65,21 +67,25 @@ const Header = () => {
           style={{
             width: '400px',
             height: '240px',
-            backgroundColor: theme.colors.accent,
+            backgroundColor: theme.colors.surface,
             borderRadius: theme.borderRadius.lg,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             cursor: 'pointer',
             transition: theme.transitions.fast,
-            boxShadow: ui.showMinimap ? theme.shadows.glow : theme.shadows.sm,
+            boxShadow: ui.showMinimap 
+              ? `inset 8px 8px 16px ${theme.colors.shadowDark}, inset -8px -8px 16px ${theme.colors.shadowLight}`
+              : `8px 8px 16px ${theme.colors.shadowDark}, -8px -8px 16px ${theme.colors.shadowLight}`,
             border: 'none'
           }}
         onMouseEnter={(e) => {
-          e.target.style.boxShadow = theme.shadows.glow;
+          e.target.style.boxShadow = `12px 12px 24px ${theme.colors.shadowDark}, -12px -12px 24px ${theme.colors.shadowLight}`;
         }}
         onMouseLeave={(e) => {
-          e.target.style.boxShadow = ui.showMinimap ? theme.shadows.glow : theme.shadows.sm;
+          e.target.style.boxShadow = ui.showMinimap 
+            ? `inset 8px 8px 16px ${theme.colors.shadowDark}, inset -8px -8px 16px ${theme.colors.shadowLight}`
+            : `8px 8px 16px ${theme.colors.shadowDark}, -8px -8px 16px ${theme.colors.shadowLight}`;
         }}
       >
         {/* Campus Map Image */}
@@ -91,7 +97,7 @@ const Header = () => {
             height: '240px',
             borderRadius: theme.borderRadius.full,
             objectFit: 'cover',
-            border: `8px solid ${theme.colors.primary}`,
+            border: `8px solid ${theme.colors.surface}`,
             boxShadow: theme.shadows.md
           }}
           onError={(e) => {

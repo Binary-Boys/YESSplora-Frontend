@@ -31,12 +31,13 @@ const ActionBar = () => {
         left: 0,
         right: 0,
         height: '320px',
-        backgroundColor: theme.colors.primary,
+        backgroundColor: theme.colors.background,
         zIndex: theme.zIndex.sticky,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: `0 ${theme.spacing.xl}`
+        padding: `0 ${theme.spacing.xl}`,
+        boxShadow: `0 -4px 8px ${theme.colors.shadowDark}, 0 4px 8px ${theme.colors.shadowLight}`
       }}
     >
       {/* Camera Button - Left Side */}
@@ -50,23 +51,27 @@ const ActionBar = () => {
         style={{
           width: '320px', // 4x larger (80px * 4)
           height: '240px', // 4x larger (60px * 4)
-          backgroundColor: theme.colors.secondary,
-          borderRadius: theme.borderRadius.md,
+          backgroundColor: theme.colors.surface,
+          borderRadius: theme.borderRadius.lg,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           cursor: 'pointer',
           transition: theme.transitions.fast,
-          boxShadow: ui.showQRScanner ? theme.shadows.glow : theme.shadows.sm,
-          border: `4px solid ${theme.colors.primary}`, // Boxed design
+          boxShadow: ui.showQRScanner 
+            ? `inset 8px 8px 16px ${theme.colors.shadowDark}, inset -8px -8px 16px ${theme.colors.shadowLight}`
+            : `8px 8px 16px ${theme.colors.shadowDark}, -8px -8px 16px ${theme.colors.shadowLight}`,
+          border: 'none',
           flexDirection: 'column',
           gap: '16px'
         }}
         onMouseEnter={(e) => {
-          e.target.style.boxShadow = theme.shadows.glow;
+          e.target.style.boxShadow = `12px 12px 24px ${theme.colors.shadowDark}, -12px -12px 24px ${theme.colors.shadowLight}`;
         }}
         onMouseLeave={(e) => {
-          e.target.style.boxShadow = ui.showQRScanner ? theme.shadows.glow : theme.shadows.sm;
+          e.target.style.boxShadow = ui.showQRScanner 
+            ? `inset 8px 8px 16px ${theme.colors.shadowDark}, inset -8px -8px 16px ${theme.colors.shadowLight}`
+            : `8px 8px 16px ${theme.colors.shadowDark}, -8px -8px 16px ${theme.colors.shadowLight}`;
         }}
       >
         {/* Camera Emoji */}
@@ -84,7 +89,7 @@ const ActionBar = () => {
           style={{
             fontSize: '32px', // 4x larger text
             fontWeight: theme.typography.fontWeight.bold,
-            color: theme.colors.accent,
+            color: theme.colors.textPrimary,
             textAlign: 'center'
           }}
         >
@@ -103,22 +108,26 @@ const ActionBar = () => {
         style={{
           width: '70px',
           height: '70px',
-          backgroundColor: theme.colors.secondary,
+          backgroundColor: theme.colors.surface,
           borderRadius: theme.borderRadius.full,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           cursor: 'pointer',
           transition: theme.transitions.fast,
-          boxShadow: ui.showProfile ? theme.shadows.glow : theme.shadows.sm,
+          boxShadow: ui.showProfile 
+            ? `inset 8px 8px 16px ${theme.colors.shadowDark}, inset -8px -8px 16px ${theme.colors.shadowLight}`
+            : `8px 8px 16px ${theme.colors.shadowDark}, -8px -8px 16px ${theme.colors.shadowLight}`,
           border: 'none',
           position: 'relative'
         }}
         onMouseEnter={(e) => {
-          e.target.style.boxShadow = theme.shadows.glow;
+          e.target.style.boxShadow = `12px 12px 24px ${theme.colors.shadowDark}, -12px -12px 24px ${theme.colors.shadowLight}`;
         }}
         onMouseLeave={(e) => {
-          e.target.style.boxShadow = ui.showProfile ? theme.shadows.glow : theme.shadows.sm;
+          e.target.style.boxShadow = ui.showProfile 
+            ? `inset 8px 8px 16px ${theme.colors.shadowDark}, inset -8px -8px 16px ${theme.colors.shadowLight}`
+            : `8px 8px 16px ${theme.colors.shadowDark}, -8px -8px 16px ${theme.colors.shadowLight}`;
         }}
       >
         {/* Profile Icon - Exact design from image */}
@@ -137,7 +146,7 @@ const ActionBar = () => {
             style={{
               width: '30px',
               height: '30px',
-              backgroundColor: theme.colors.accent,
+                      backgroundColor: theme.colors.textPrimary,
               borderRadius: '50%',
               position: 'relative'
             }}
@@ -151,7 +160,7 @@ const ActionBar = () => {
                 transform: 'translateX(-50%)',
                 width: '18px',
                 height: '18px',
-                backgroundColor: theme.colors.accent,
+                      backgroundColor: theme.colors.textPrimary,
                 borderRadius: '50%'
               }}
             />
@@ -164,7 +173,7 @@ const ActionBar = () => {
                 transform: 'translateX(-50%)',
                 width: '24px',
                 height: '12px',
-                backgroundColor: theme.colors.accent,
+                      backgroundColor: theme.colors.textPrimary,
                 borderRadius: '12px 12px 0 0'
               }}
             />
@@ -186,7 +195,7 @@ const ActionBar = () => {
               style={{
                 width: '4px',
                 height: '4px',
-                backgroundColor: theme.colors.accent,
+                      backgroundColor: theme.colors.textPrimary,
                 borderRadius: '50%'
               }}
             />
@@ -194,7 +203,7 @@ const ActionBar = () => {
               style={{
                 width: '4px',
                 height: '4px',
-                backgroundColor: theme.colors.accent,
+                      backgroundColor: theme.colors.textPrimary,
                 borderRadius: '50%'
               }}
             />
@@ -202,7 +211,7 @@ const ActionBar = () => {
               style={{
                 width: '4px',
                 height: '4px',
-                backgroundColor: theme.colors.accent,
+                      backgroundColor: theme.colors.textPrimary,
                 borderRadius: '50%'
               }}
             />

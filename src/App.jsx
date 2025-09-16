@@ -23,7 +23,7 @@ function App() {
             paddingTop: '200px', // Header height (increased)
             paddingBottom: '320px', // Action bar height
             minHeight: '100vh',
-            backgroundColor: '#580404',
+            backgroundColor: '#E8E8E8',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
