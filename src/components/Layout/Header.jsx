@@ -40,10 +40,10 @@ const Header = () => {
           whileTap={{ scale: 0.95 }}
           onClick={handleMinimapClick}
           style={{
-            width: '500px',
-            height: '300px',
+            width: '100px', // Smaller to fit in header
+            height: '100px', // Smaller to fit in header
             backgroundColor: theme.colors.accent,
-            borderRadius: theme.borderRadius.lg,
+            borderRadius: theme.borderRadius.full, // Make it round
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -65,8 +65,8 @@ const Header = () => {
           src="/Campus-Map-Sample-Apartment-Complex-Full-Illustration.jpg"
           alt="Campus Map"
           style={{
-            width: '300px',
-            height: '300px',
+            width: '80px', // Smaller to fit in round button
+            height: '80px', // Smaller to fit in round button
             borderRadius: theme.borderRadius.full,
             objectFit: 'cover',
             border: 'none',
