@@ -1,22 +1,20 @@
-// YessPlora Neumorphic Design System
+// YessPlora Design System
 export const theme = {
   colors: {
-    // Neumorphic color palette - soft grays
-    primary: '#E0E0E0', // Light gray base
-    secondary: '#F5F5F5', // Lighter gray
-    accent: '#2C2C2C', // Dark text
-    background: '#E8E8E8', // Main background
-    surface: '#F0F0F0', // Card/button surface
-    textPrimary: '#2C2C2C',
-    textSecondary: '#666666',
-    border: '#D0D0D0',
-    success: '#4CAF50', // Green for completed
-    info: '#2196F3',    // Blue for in-progress
-    warning: '#FF9800', // Orange for upcoming
-    error: '#F44336',   // Red for errors
-    // Neumorphic shadows
-    shadowLight: '#FFFFFF',
-    shadowDark: '#BEBEBE',
+    primary: '#580404', // Main red color
+    primaryDark: '#3D0303', // Darker red for hover states
+    primaryLight: '#7A0505', // Lighter red for active states
+    secondary: '#000000', // Black
+    accent: '#FFFFFF', // White
+    background: '#580404', // Red background
+    surface: '#000000', // Black surfaces
+    text: '#FFFFFF', // White text
+    textSecondary: '#CCCCCC', // Light gray text
+    border: '#333333', // Dark gray borders
+    success: '#00FF00', // Green for success states
+    warning: '#FFA500', // Orange for warnings
+    error: '#FF0000', // Red for errors
+    info: '#00BFFF' // Blue for info
   },
   
   typography: {
@@ -61,26 +59,22 @@ export const theme = {
   
   borderRadius: {
     none: '0',
-    sm: '0.5rem', // 8px - larger for neumorphic
-    md: '1rem', // 16px
-    lg: '1.5rem', // 24px
-    xl: '2rem', // 32px
-    '2xl': '2.5rem', // 40px
+    sm: '0.125rem', // 2px
+    md: '0.375rem', // 6px
+    lg: '0.5rem', // 8px
+    xl: '0.75rem', // 12px
+    '2xl': '1rem', // 16px
     full: '9999px'
   },
   
-  // Neumorphic shadows
   shadows: {
-    // Inset shadows (pressed/active state)
-    inset: `inset 8px 8px 16px ${theme?.colors?.shadowDark || '#BEBEBE'}, inset -8px -8px 16px ${theme?.colors?.shadowLight || '#FFFFFF'}`,
-    // Outset shadows (raised state)
-    outset: `8px 8px 16px ${theme?.colors?.shadowDark || '#BEBEBE'}, -8px -8px 16px ${theme?.colors?.shadowLight || '#FFFFFF'}`,
-    // Soft shadows
-    soft: `4px 4px 8px ${theme?.colors?.shadowDark || '#BEBEBE'}, -4px -4px 8px ${theme?.colors?.shadowLight || '#FFFFFF'}`,
-    // Large shadows
-    large: `12px 12px 24px ${theme?.colors?.shadowDark || '#BEBEBE'}, -12px -12px 24px ${theme?.colors?.shadowLight || '#FFFFFF'}`,
-    // Glow effect
-    glow: `0 0 20px rgba(44, 44, 44, 0.3)`
+    sm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+    md: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+    lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+    xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+    '2xl': '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+    inner: 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)',
+    glow: '0 0 20px rgba(88, 4, 4, 0.5)' // Red glow effect
   },
   
   breakpoints: {
@@ -114,69 +108,64 @@ export const theme = {
   }
 };
 
-// Neumorphic component styles
+// Component-specific styles
 export const componentStyles = {
   button: {
-    neumorphic: {
-      backgroundColor: theme.colors.surface,
-      color: theme.colors.textPrimary,
-      border: 'none',
+    primary: {
+      backgroundColor: theme.colors.primary,
+      color: theme.colors.accent,
+      border: `2px solid ${theme.colors.primary}`,
       borderRadius: theme.borderRadius.lg,
-      padding: `${theme.spacing.md} ${theme.spacing.lg}`,
+      padding: `${theme.spacing.sm} ${theme.spacing.lg}`,
       fontSize: theme.typography.fontSize.base,
       fontWeight: theme.typography.fontWeight.semibold,
       cursor: 'pointer',
       transition: theme.transitions.fast,
-      boxShadow: `8px 8px 16px ${theme.colors.shadowDark}, -8px -8px 16px ${theme.colors.shadowLight}`,
       '&:hover': {
-        boxShadow: `4px 4px 8px ${theme.colors.shadowDark}, -4px -4px 8px ${theme.colors.shadowLight}`,
-        transform: 'translateY(1px)'
+        backgroundColor: theme.colors.primaryDark,
+        borderColor: theme.colors.primaryDark,
+        boxShadow: theme.shadows.glow
       },
       '&:active': {
-        boxShadow: `inset 8px 8px 16px ${theme.colors.shadowDark}, inset -8px -8px 16px ${theme.colors.shadowLight}`,
-        transform: 'translateY(2px)'
+        backgroundColor: theme.colors.primaryLight,
+        transform: 'translateY(1px)'
       },
       '&:disabled': {
         opacity: 0.5,
-        cursor: 'not-allowed',
-        boxShadow: `inset 4px 4px 8px ${theme.colors.shadowDark}, inset -4px -4px 8px ${theme.colors.shadowLight}`
+        cursor: 'not-allowed'
       }
     },
-    neumorphicPrimary: {
-      backgroundColor: theme.colors.surface,
-      color: theme.colors.textPrimary,
-      border: 'none',
+    secondary: {
+      backgroundColor: 'transparent',
+      color: theme.colors.accent,
+      border: `2px solid ${theme.colors.accent}`,
       borderRadius: theme.borderRadius.lg,
-      padding: `${theme.spacing.md} ${theme.spacing.lg}`,
+      padding: `${theme.spacing.sm} ${theme.spacing.lg}`,
       fontSize: theme.typography.fontSize.base,
       fontWeight: theme.typography.fontWeight.semibold,
       cursor: 'pointer',
       transition: theme.transitions.fast,
-      boxShadow: `8px 8px 16px ${theme.colors.shadowDark}, -8px -8px 16px ${theme.colors.shadowLight}`,
       '&:hover': {
-        boxShadow: `12px 12px 24px ${theme.colors.shadowDark}, -12px -12px 24px ${theme.colors.shadowLight}`,
-        transform: 'translateY(-1px)'
-      },
-      '&:active': {
-        boxShadow: `inset 8px 8px 16px ${theme.colors.shadowDark}, inset -8px -8px 16px ${theme.colors.shadowLight}`,
-        transform: 'translateY(1px)'
+        backgroundColor: theme.colors.accent,
+        color: theme.colors.primary,
+        boxShadow: theme.shadows.glow
       }
     }
   },
   
   input: {
-    neumorphic: {
+    base: {
       backgroundColor: theme.colors.surface,
-      color: theme.colors.textPrimary,
-      border: 'none',
+      color: theme.colors.text,
+      border: `2px solid ${theme.colors.border}`,
       borderRadius: theme.borderRadius.md,
-      padding: `${theme.spacing.md} ${theme.spacing.lg}`,
+      padding: `${theme.spacing.sm} ${theme.spacing.md}`,
       fontSize: theme.typography.fontSize.base,
       transition: theme.transitions.fast,
-      boxShadow: `inset 4px 4px 8px ${theme.colors.shadowDark}, inset -4px -4px 8px ${theme.colors.shadowLight}`,
       '&:focus': {
         outline: 'none',
-        boxShadow: `inset 6px 6px 12px ${theme.colors.shadowDark}, inset -6px -6px 12px ${theme.colors.shadowLight}`
+        borderColor: theme.colors.primary,
+        boxShadow: `0 0 0 3px ${theme.colors.primary}20`
       },
       '&::placeholder': {
         color: theme.colors.textSecondary
@@ -185,26 +174,26 @@ export const componentStyles = {
   },
   
   card: {
-    neumorphic: {
+    base: {
       backgroundColor: theme.colors.surface,
-      border: 'none',
-      borderRadius: theme.borderRadius.xl,
-      padding: theme.spacing.xl,
-      boxShadow: `8px 8px 16px ${theme.colors.shadowDark}, -8px -8px 16px ${theme.colors.shadowLight}`
+      border: `1px solid ${theme.colors.border}`,
+      borderRadius: theme.borderRadius.lg,
+      padding: theme.spacing.lg,
+      boxShadow: theme.shadows.md
     }
   },
   
   popup: {
-    neumorphic: {
+    base: {
       position: 'fixed',
       top: '50%',
       left: '50%',
       transform: 'translate(-50%, -50%)',
       backgroundColor: theme.colors.surface,
-      border: 'none',
-      borderRadius: theme.borderRadius['2xl'],
-      padding: theme.spacing['2xl'],
-      boxShadow: `12px 12px 24px ${theme.colors.shadowDark}, -12px -12px 24px ${theme.colors.shadowLight}`,
+      border: `2px solid ${theme.colors.primary}`,
+      borderRadius: theme.borderRadius.xl,
+      padding: theme.spacing.xl,
+      boxShadow: theme.shadows['2xl'],
       zIndex: theme.zIndex.modal,
       maxWidth: '90vw',
       maxHeight: '90vh',
@@ -216,7 +205,7 @@ export const componentStyles = {
       left: 0,
       right: 0,
       bottom: 0,
-      backgroundColor: 'rgba(232, 232, 232, 0.8)',
+      backgroundColor: 'rgba(0, 0, 0, 0.8)',
       zIndex: theme.zIndex.overlay
     }
   }

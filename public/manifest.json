@@ -12,10 +12,24 @@
   "categories": ["games", "entertainment", "education"],
   "icons": [
     {
-      "src": "/vite.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
       "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshot-mobile.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow"
     }
   ],
   "features": [
@@ -32,8 +46,8 @@
       "url": "/?action=scan",
       "icons": [
         {
-          "src": "/vite.svg",
-          "sizes": "any"
+          "src": "/icon-192x192.png",
+          "sizes": "192x192"
         }
       ]
     },
@@ -44,8 +58,8 @@
       "url": "/?action=map",
       "icons": [
         {
-          "src": "/vite.svg",
-          "sizes": "any"
+          "src": "/icon-192x192.png",
+          "sizes": "192x192"
         }
       ]
     }
