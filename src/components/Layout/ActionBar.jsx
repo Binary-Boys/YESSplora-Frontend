@@ -34,7 +34,7 @@ const ActionBar = ({ dynamicSpacing, isHighHeight, dimensions }) => {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between', // Always use space-between to align profile to right
-        padding: isNarrowScreen || isRotated ? '0 30px 30px 30px' : `0 ${theme.spacing.lg} 30px ${theme.spacing.lg}`, // 150% padding
+        padding: isNarrowScreen || isRotated ? '0 30px 0 30px' : `0 ${theme.spacing.lg} 0 ${theme.spacing.lg}`, // Remove bottom padding
         borderRadius: theme.borderRadius.lg,
         marginTop: isRotated ? '1px' : '4px', // Minimal margin when rotated
         marginLeft: '0', // No margin left adjustment needed

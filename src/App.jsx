@@ -30,7 +30,7 @@ function App() {
             width: '100%',
             position: 'relative',
             overflow: 'visible', // Allow content to be visible
-            padding: `${dynamicSpacing} ${dynamicSpacing} 20px 20px`, // Add 20px bottom and right padding to main container
+            padding: `${dynamicSpacing} ${dynamicSpacing} 0 20px`, // Remove bottom padding, keep right padding
             gap: alwaysRotated ? '2px' : dynamicSpacing, // Always use tight gap since we're always rotated
             boxSizing: 'border-box'
           }}
