@@ -21,13 +21,14 @@ const Header = () => {
         top: 0,
         left: 0,
         right: 0,
-        height: '80px',
+        height: '100px', // Increased height
         backgroundColor: theme.colors.primary,
         zIndex: theme.zIndex.sticky,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: `0 ${theme.spacing.xl}`
+        padding: `0 ${theme.spacing.xl}`,
+        borderBottom: `4px solid ${theme.colors.accent}` // Added border for visibility
       }}
     >
       {/* Team Name - Left Side */}
@@ -63,8 +64,8 @@ const Header = () => {
           whileTap={{ scale: 0.95 }}
           onClick={handleMinimapClick}
           style={{
-            width: '400px',
-            height: '240px',
+            width: '500px', // Increased width
+            height: '300px', // Increased height
             backgroundColor: theme.colors.accent,
             borderRadius: theme.borderRadius.lg,
             display: 'flex',
@@ -73,7 +74,8 @@ const Header = () => {
             cursor: 'pointer',
             transition: theme.transitions.fast,
             boxShadow: ui.showMinimap ? theme.shadows.glow : theme.shadows.sm,
-            border: 'none'
+            border: `6px solid ${theme.colors.primary}`, // Added border for visibility
+            position: 'relative'
           }}
         onMouseEnter={(e) => {
           e.target.style.boxShadow = theme.shadows.glow;
@@ -87,11 +89,11 @@ const Header = () => {
           src="/Campus-Map-Sample-Apartment-Complex-Full-Illustration.jpg"
           alt="Campus Map"
           style={{
-            width: '240px',
-            height: '240px',
+            width: '300px', // Increased size
+            height: '300px', // Increased size
             borderRadius: theme.borderRadius.full,
             objectFit: 'cover',
-            border: `8px solid ${theme.colors.primary}`,
+            border: `10px solid ${theme.colors.primary}`, // Increased border
             boxShadow: theme.shadows.md
           }}
           onError={(e) => {

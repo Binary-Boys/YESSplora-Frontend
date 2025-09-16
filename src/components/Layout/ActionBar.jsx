@@ -30,13 +30,14 @@ const ActionBar = () => {
         bottom: 0,
         left: 0,
         right: 0,
-        height: '320px',
+        height: '400px', // Increased height
         backgroundColor: theme.colors.primary,
         zIndex: theme.zIndex.sticky,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: `0 ${theme.spacing.xl}`
+        padding: `0 ${theme.spacing.xl}`,
+        borderTop: `4px solid ${theme.colors.accent}` // Added border for visibility
       }}
     >
       {/* Camera Button - Left Side */}
@@ -48,8 +49,8 @@ const ActionBar = () => {
         whileTap={{ scale: 0.95 }}
         onClick={handleCameraClick}
         style={{
-          width: '320px', // 4x larger (80px * 4)
-          height: '240px', // 4x larger (60px * 4)
+          width: '400px', // Increased width
+          height: '280px', // Increased height
           backgroundColor: theme.colors.secondary,
           borderRadius: theme.borderRadius.md,
           display: 'flex',
@@ -58,9 +59,9 @@ const ActionBar = () => {
           cursor: 'pointer',
           transition: theme.transitions.fast,
           boxShadow: ui.showQRScanner ? theme.shadows.glow : theme.shadows.sm,
-          border: `4px solid ${theme.colors.primary}`, // Boxed design
+          border: `8px solid ${theme.colors.primary}`, // Increased border
           flexDirection: 'column',
-          gap: '16px'
+          gap: '20px'
         }}
         onMouseEnter={(e) => {
           e.target.style.boxShadow = theme.shadows.glow;
@@ -72,7 +73,7 @@ const ActionBar = () => {
         {/* Camera Emoji */}
         <div
           style={{
-            fontSize: '120px', // Large camera emoji
+            fontSize: '150px', // Increased emoji size
             lineHeight: 1
           }}
         >
@@ -82,10 +83,11 @@ const ActionBar = () => {
         {/* Camera Label */}
         <div
           style={{
-            fontSize: '32px', // 4x larger text
+            fontSize: '40px', // Increased text size
             fontWeight: theme.typography.fontWeight.bold,
             color: theme.colors.accent,
-            textAlign: 'center'
+            textAlign: 'center',
+            textShadow: `2px 2px 4px ${theme.colors.primary}` // Added text shadow for visibility
           }}
         >
           CAMERA
@@ -101,8 +103,8 @@ const ActionBar = () => {
         whileTap={{ scale: 0.95 }}
         onClick={handleProfileClick}
         style={{
-          width: '70px',
-          height: '70px',
+          width: '280px', // Increased width
+          height: '280px', // Increased height
           backgroundColor: theme.colors.secondary,
           borderRadius: theme.borderRadius.full,
           display: 'flex',
@@ -111,8 +113,10 @@ const ActionBar = () => {
           cursor: 'pointer',
           transition: theme.transitions.fast,
           boxShadow: ui.showProfile ? theme.shadows.glow : theme.shadows.sm,
-          border: 'none',
-          position: 'relative'
+          border: `8px solid ${theme.colors.primary}`, // Added border
+          position: 'relative',
+          flexDirection: 'column',
+          gap: '16px'
         }}
         onMouseEnter={(e) => {
           e.target.style.boxShadow = theme.shadows.glow;
@@ -121,92 +125,27 @@ const ActionBar = () => {
           e.target.style.boxShadow = ui.showProfile ? theme.shadows.glow : theme.shadows.sm;
         }}
       >
-        {/* Profile Icon - Exact design from image */}
+        {/* Profile Icon - Larger design */}
         <div
           style={{
-            width: '40px',
-            height: '40px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            position: 'relative'
+            fontSize: '120px', // Large profile emoji
+            lineHeight: 1
           }}
         >
-          {/* Person silhouette */}
-          <div
-            style={{
-              width: '30px',
-              height: '30px',
-              backgroundColor: theme.colors.accent,
-              borderRadius: '50%',
-              position: 'relative'
-            }}
-          >
-            {/* Head */}
-            <div
-              style={{
-                position: 'absolute',
-                top: '3px',
-                left: '50%',
-                transform: 'translateX(-50%)',
-                width: '18px',
-                height: '18px',
-                backgroundColor: theme.colors.accent,
-                borderRadius: '50%'
-              }}
-            />
-            {/* Body */}
-            <div
-              style={{
-                position: 'absolute',
-                bottom: '3px',
-                left: '50%',
-                transform: 'translateX(-50%)',
-                width: '24px',
-                height: '12px',
-                backgroundColor: theme.colors.accent,
-                borderRadius: '12px 12px 0 0'
-              }}
-            />
-          </div>
-          
-          {/* Three dots indicator */}
-          <div
-            style={{
-              position: 'absolute',
-              right: '-12px',
-              top: '50%',
-              transform: 'translateY(-50%)',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '3px'
-            }}
-          >
-            <div
-              style={{
-                width: '4px',
-                height: '4px',
-                backgroundColor: theme.colors.accent,
-                borderRadius: '50%'
-              }}
-            />
-            <div
-              style={{
-                width: '4px',
-                height: '4px',
-                backgroundColor: theme.colors.accent,
-                borderRadius: '50%'
-              }}
-            />
-            <div
-              style={{
-                width: '4px',
-                height: '4px',
-                backgroundColor: theme.colors.accent,
-                borderRadius: '50%'
-              }}
-            />
-          </div>
+          👤
+        </div>
+        
+        {/* Profile Label */}
+        <div
+          style={{
+            fontSize: '32px', // Profile text
+            fontWeight: theme.typography.fontWeight.bold,
+            color: theme.colors.accent,
+            textAlign: 'center',
+            textShadow: `2px 2px 4px ${theme.colors.primary}` // Added text shadow for visibility
+          }}
+        >
+          PROFILE
         </div>
       </motion.button>
     </motion.footer>

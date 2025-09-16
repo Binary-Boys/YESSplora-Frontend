@@ -133,17 +133,19 @@ const RobotSprite = () => {
           justifyContent: 'center'
         }}
       >
-        <img
-          src="/robot-character.png"
-          alt="Robot Character"
-          style={{
-            maxWidth: '300px',
-            maxHeight: '400px',
-            width: 'auto',
-            height: 'auto',
-            objectFit: 'contain',
-            filter: 'drop-shadow(0 10px 20px rgba(0, 0, 0, 0.3))'
-          }}
+                <img
+                  src="/robot-character.png"
+                  alt="Robot Character"
+                  style={{
+                    maxWidth: '500px', // Increased size
+                    maxHeight: '600px', // Increased size
+                    width: 'auto',
+                    height: 'auto',
+                    objectFit: 'contain',
+                    filter: 'drop-shadow(0 20px 40px rgba(0, 0, 0, 0.5))', // Enhanced shadow
+                    border: `6px solid ${theme.colors.accent}`, // Added border
+                    borderRadius: theme.borderRadius.lg
+                  }}
           onError={(e) => {
             console.error('Failed to load robot image:', e);
             // Fallback to a placeholder if image fails to load
@@ -162,38 +164,41 @@ const RobotSprite = () => {
           marginTop: theme.spacing.lg
         }}
       >
-        <h2
-          style={{
-            fontSize: theme.typography.fontSize.xl,
-            fontWeight: theme.typography.fontWeight.bold,
-            color: theme.colors.accent,
-            marginBottom: theme.spacing.sm
-          }}
-        >
+                <h2
+                  style={{
+                    fontSize: `${parseInt(theme.typography.fontSize.xl) * 2}px`, // 2x larger
+                    fontWeight: theme.typography.fontWeight.bold,
+                    color: theme.colors.accent,
+                    marginBottom: theme.spacing.sm,
+                    textShadow: `2px 2px 4px ${theme.colors.primary}` // Added text shadow
+                  }}
+                >
           {currentAnimation === 'victory' ? 'Mission Complete!' : 
            currentAnimation === 'celebrate' ? 'Great Job!' :
            currentAnimation === 'determined' ? 'Keep Going!' :
            currentAnimation === 'excited' ? 'You\'re Doing Great!' :
            'Ready to Explore!'}
         </h2>
-        <p
-          style={{
-            fontSize: theme.typography.fontSize.base,
-            color: theme.colors.textSecondary,
-            marginBottom: theme.spacing.sm
-          }}
-        >
-          Completed: {state.gameProgress.completedLevels.length}/9 locations
-        </p>
-        <p
-          style={{
-            fontSize: theme.typography.fontSize.lg,
-            fontWeight: theme.typography.fontWeight.semibold,
-            color: theme.colors.accent
-          }}
-        >
-          Score: {state.gameProgress.totalScore} points
-        </p>
+                <p
+                  style={{
+                    fontSize: `${parseInt(theme.typography.fontSize.base) * 1.5}px`, // 1.5x larger
+                    color: theme.colors.textSecondary,
+                    marginBottom: theme.spacing.sm,
+                    textShadow: `1px 1px 2px ${theme.colors.primary}` // Added text shadow
+                  }}
+                >
+                  Completed: {state.gameProgress.completedLevels.length}/9 locations
+                </p>
+                <p
+                  style={{
+                    fontSize: `${parseInt(theme.typography.fontSize.lg) * 1.5}px`, // 1.5x larger
+                    fontWeight: theme.typography.fontWeight.semibold,
+                    color: theme.colors.accent,
+                    textShadow: `2px 2px 4px ${theme.colors.primary}` // Added text shadow
+                  }}
+                >
+                  Score: {state.gameProgress.totalScore} points
+                </p>
       </motion.div>
     </motion.div>
   );

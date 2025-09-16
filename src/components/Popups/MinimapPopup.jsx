@@ -87,19 +87,20 @@ const MinimapPopup = () => {
                   position: 'absolute',
                   top: theme.spacing.md,
                   right: theme.spacing.md,
-                  width: '50px',
-                  height: '50px',
+                  width: '80px', // Increased size
+                  height: '80px', // Increased size
                   backgroundColor: theme.colors.primary,
                   color: theme.colors.accent,
-                  border: 'none',
+                  border: `4px solid ${theme.colors.accent}`, // Added border
                   borderRadius: theme.borderRadius.full,
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  fontSize: theme.typography.fontSize['2xl'],
+                  fontSize: `${parseInt(theme.typography.fontSize['2xl']) * 2}px`, // 2x larger font
                   fontWeight: theme.typography.fontWeight.bold,
-                  zIndex: 10
+                  zIndex: 10,
+                  boxShadow: theme.shadows.lg // Added shadow
                 }}
               >
                 ×
