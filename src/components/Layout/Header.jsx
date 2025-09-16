@@ -23,9 +23,9 @@ const Header = ({ dynamicSpacing, isHighHeight, isRotated }) => {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: isRotated ? '0 22px' : `0 ${theme.spacing.lg}`, // 150% padding
+        padding: isRotated ? '0 10px' : '0 15px', // Minimal padding for closer to edges
         borderRadius: theme.borderRadius.lg,
-        marginBottom: isRotated ? '1px' : dynamicSpacing, // Minimal margin when rotated
+        marginBottom: '2px', // Very minimal margin for all cases
         boxShadow: theme.shadows.neumorphism.raised,
         border: 'none',
         flexShrink: 0 // Prevent header from shrinking

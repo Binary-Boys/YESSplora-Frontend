@@ -29,8 +29,9 @@ function App() {
             justifyContent: 'space-between',
             width: '100%',
             position: 'relative',
+            zIndex: 10, // Ensure content appears above floating dots
             overflow: 'visible', // Allow content to be visible
-            padding: `${dynamicSpacing} ${dynamicSpacing} 0 20px`, // Remove bottom padding, keep right padding
+            padding: `${dynamicSpacing} 10px 0 10px`, // Minimal side padding to match header/footer
             gap: alwaysRotated ? '2px' : dynamicSpacing, // Always use tight gap since we're always rotated
             boxSizing: 'border-box'
           }}

@@ -9,6 +9,9 @@ const MinimapPopup = () => {
 
   const handleClose = () => {
     actions.closeAllPopups();
+    // Navigate back to home page for consistency
+    console.log('Minimap closed - navigating back to home page');
+    window.location.href = '/';
   };
 
   const handleLocationClick = (locationId) => {

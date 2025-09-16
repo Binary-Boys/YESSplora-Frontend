@@ -166,8 +166,37 @@ const QRScannerPopup = () => {
   };
 
   const handleClose = () => {
-    stopScanner();
-    actions.closeAllPopups();
+    try {
+      // Stop the scanner first
+      stopScanner();
+      
+      // Close all popups
+      actions.closeAllPopups();
+      
+      // Clear any error states
+      setError(null);
+      setScanResult(null);
+      setHasPermission(false);
+      
+      // Navigate to home page using browser History API
+      console.log('QR Scanner closed - navigating back to home page');
+      
+      // Method 1: Navigate to home page (root)
+      window.location.href = '/';
+      
+      // Alternative Method 2: Use history API (commented out as backup)
+      // window.history.pushState({}, '', '/');
+      // window.dispatchEvent(new PopStateEvent('popstate'));
+      
+      // Alternative Method 3: Reload current page to reset state (commented out)
+      // window.location.reload();
+      
+    } catch (err) {
+      console.error('Error closing QR Scanner:', err);
+      // Fallback: still try to close the popup and navigate
+      actions.closeAllPopups();
+      window.location.href = '/';
+    }
   };
 
   const handleRetry = () => {
@@ -192,80 +221,99 @@ const QRScannerPopup = () => {
               left: 0,
               right: 0,
               bottom: 0,
-              backgroundColor: 'rgba(0, 0, 0, 0.9)',
+              backgroundColor: 'rgba(0, 0, 0, 0.8)',
               zIndex: theme.zIndex.overlay,
               display: 'flex',
-              flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
-              padding: theme.spacing.lg
+              padding: theme.spacing.lg,
+              transform: 'rotate(90deg)', // Counter-rotate to show normal orientation
+              transformOrigin: 'center center'
+            }}
+            onClick={(e) => {
+              if (e.target === e.currentTarget) {
+                handleClose();
+              }
             }}
           >
-            {/* Header */}
+            {/* Popup Content - Similar wrapper to minimap */}
             <motion.div
-              initial={{ y: -50, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.2, duration: 0.5 }}
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              transition={{ duration: 0.3, type: "spring", stiffness: 300 }}
               style={{
-                position: 'absolute',
-                top: theme.spacing.lg,
-                left: theme.spacing.lg,
-                right: theme.spacing.lg,
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                zIndex: 1
+                backgroundColor: theme.colors.surface,
+                border: `3px solid ${theme.colors.primary}`,
+                borderRadius: theme.borderRadius.xl,
+                padding: theme.spacing.xl,
+                maxWidth: '90vw',
+                maxHeight: '90vh',
+                overflow: 'auto',
+                position: 'relative',
+                boxShadow: theme.shadows['2xl']
               }}
+              onClick={(e) => e.stopPropagation()}
             >
-              <h2
-                style={{
-                  fontSize: theme.typography.fontSize.xl,
-                  fontWeight: theme.typography.fontWeight.bold,
-                  color: theme.colors.accent,
-                  margin: 0
-                }}
-              >
-                QR Scanner
-              </h2>
+              {/* Close Button - Positioned exactly like minimap */}
               <button
-                onClick={handleClose}
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  handleClose();
+                }}
                 style={{
-                  width: '50px',
-                  height: '50px',
+                  position: 'absolute',
+                  top: theme.spacing.md,
+                  right: theme.spacing.md,
+                  width: '80px', // Increased size
+                  height: '80px', // Increased size
                   backgroundColor: theme.colors.primary,
                   color: theme.colors.accent,
-                  border: 'none',
+                  border: `4px solid ${theme.colors.accent}`, // Added border
                   borderRadius: theme.borderRadius.full,
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  fontSize: theme.typography.fontSize['2xl'],
+                  fontSize: `${parseInt(theme.typography.fontSize['2xl']) * 2}px`, // 2x larger font
                   fontWeight: theme.typography.fontWeight.bold,
-                  zIndex: 10
+                  zIndex: 10,
+                  boxShadow: theme.shadows.lg // Added shadow
                 }}
               >
                 ×
               </button>
-            </motion.div>
 
-            {/* Scanner Area */}
-            <motion.div
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ delay: 0.3, duration: 0.5 }}
-              style={{
-                position: 'relative',
-                width: '100%',
-                maxWidth: '1600px', // 4x larger (400px * 4)
-                aspectRatio: '1',
-                backgroundColor: theme.colors.surface,
-                borderRadius: theme.borderRadius.xl,
-                border: `12px solid ${theme.colors.primary}`, // 4x larger border (3px * 4)
-                overflow: 'hidden',
-                boxShadow: theme.shadows['2xl']
-              }}
-            >
+              {/* Title */}
+              <h2
+                style={{
+                  fontSize: theme.typography.fontSize['2xl'],
+                  fontWeight: theme.typography.fontWeight.bold,
+                  color: theme.colors.accent,
+                  textAlign: 'center',
+                  marginBottom: theme.spacing.lg,
+                  marginTop: theme.spacing.sm
+                }}
+              >
+                QR Scanner
+              </h2>
+
+              {/* Scanner Area */}
+              <div
+                style={{
+                  position: 'relative',
+                  width: '100%',
+                  maxWidth: '500px',
+                  aspectRatio: '1',
+                  backgroundColor: theme.colors.background,
+                  borderRadius: theme.borderRadius.lg,
+                  border: `2px solid ${theme.colors.border}`,
+                  overflow: 'hidden',
+                  marginBottom: theme.spacing.md
+                }}
+              >
               {/* Video Element */}
               <video
                 ref={videoRef}
@@ -445,38 +493,33 @@ const QRScannerPopup = () => {
                   </p>
                 </div>
               )}
-            </motion.div>
+              </div>
 
-            {/* Instructions */}
-            <motion.div
-              initial={{ y: 50, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.4, duration: 0.5 }}
-              style={{
-                position: 'absolute',
-                bottom: theme.spacing.lg,
-                left: theme.spacing.lg,
-                right: theme.spacing.lg,
-                textAlign: 'center'
-              }}
-            >
-              <p
+              {/* Instructions */}
+              <div
                 style={{
-                  color: theme.colors.textSecondary,
-                  fontSize: theme.typography.fontSize.sm,
-                  marginBottom: theme.spacing.sm
+                  textAlign: 'center',
+                  marginTop: theme.spacing.md
                 }}
               >
-                Point your camera at a QR code to scan
-              </p>
-              <p
-                style={{
-                  color: theme.colors.textSecondary,
-                  fontSize: theme.typography.fontSize.xs
-                }}
-              >
-                Make sure the QR code is within the frame
-              </p>
+                <p
+                  style={{
+                    color: theme.colors.textSecondary,
+                    fontSize: theme.typography.fontSize.sm,
+                    marginBottom: theme.spacing.sm
+                  }}
+                >
+                  Point your camera at a QR code to scan
+                </p>
+                <p
+                  style={{
+                    color: theme.colors.textSecondary,
+                    fontSize: theme.typography.fontSize.xs
+                  }}
+                >
+                  Make sure the QR code is within the frame
+                </p>
+              </div>
             </motion.div>
           </motion.div>
         </>

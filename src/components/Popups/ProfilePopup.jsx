@@ -13,6 +13,9 @@ const ProfilePopup = () => {
     actions.closeAllPopups();
     setIsEditing(false);
     setEditedMembers(team.members);
+    // Navigate back to home page for consistency
+    console.log('Profile popup closed - navigating back to home page');
+    window.location.href = '/';
   };
 
   const handleEditToggle = () => {
