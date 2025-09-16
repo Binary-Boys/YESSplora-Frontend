@@ -1,248 +1,214 @@
-// Comprehensive theme system with proper scaling
+// YessPlora Design System
 export const theme = {
   colors: {
-    primary: '#580404', // Dark red background
-    secondary: '#000000', // Black for buttons
-    accent: '#FFFFFF', // White for text and borders
-    background: '#1A1A1A', // Dark background for popups
-    textPrimary: '#FFFFFF',
-    textSecondary: '#CCCCCC',
-    border: '#333333',
-    success: '#22C55E',
-    info: '#8B5CF6',
-    warning: '#F59E0B',
-    error: '#EF4444',
+    primary: '#580404', // Main red color
+    primaryDark: '#3D0303', // Darker red for hover states
+    primaryLight: '#7A0505', // Lighter red for active states
+    secondary: '#000000', // Black
+    accent: '#FFFFFF', // White
+    background: '#580404', // Red background
+    surface: '#000000', // Black surfaces
+    text: '#FFFFFF', // White text
+    textSecondary: '#CCCCCC', // Light gray text
+    border: '#333333', // Dark gray borders
+    success: '#00FF00', // Green for success states
+    warning: '#FFA500', // Orange for warnings
+    error: '#FF0000', // Red for errors
+    info: '#00BFFF' // Blue for info
   },
   
-  // Responsive typography scale
   typography: {
-    fontFamily: 'Roboto, sans-serif',
+    fontFamily: {
+      primary: '"Inter", "Segoe UI", "Roboto", sans-serif',
+      mono: '"Fira Code", "Monaco", "Consolas", monospace'
+    },
     fontSize: {
-      xs: '0.75rem',    // 12px
-      sm: '0.875rem',   // 14px
-      base: '1rem',     // 16px
-      lg: '1.125rem',   // 18px
-      xl: '1.25rem',    // 20px
-      '2xl': '1.5rem',  // 24px
+      xs: '0.75rem', // 12px
+      sm: '0.875rem', // 14px
+      base: '1rem', // 16px
+      lg: '1.125rem', // 18px
+      xl: '1.25rem', // 20px
+      '2xl': '1.5rem', // 24px
       '3xl': '1.875rem', // 30px
       '4xl': '2.25rem', // 36px
-      '5xl': '3rem',    // 48px
-      '6xl': '3.75rem', // 60px
-      '7xl': '4.5rem',  // 72px
-      '8xl': '6rem',    // 96px
-      '9xl': '8rem',    // 128px
+      '5xl': '3rem' // 48px
     },
     fontWeight: {
-      light: 300,
       normal: 400,
       medium: 500,
       semibold: 600,
-      bold: 700,
-      extrabold: 800,
+      bold: 700
     },
     lineHeight: {
       tight: 1.25,
-      snug: 1.375,
       normal: 1.5,
-      relaxed: 1.625,
-      loose: 2,
-    },
+      relaxed: 1.75
+    }
   },
   
-  // Responsive spacing scale
   spacing: {
-    0: '0',
-    1: '0.25rem',   // 4px
-    2: '0.5rem',    // 8px
-    3: '0.75rem',   // 12px
-    4: '1rem',      // 16px
-    5: '1.25rem',   // 20px
-    6: '1.5rem',    // 24px
-    8: '2rem',      // 32px
-    10: '2.5rem',   // 40px
-    12: '3rem',     // 48px
-    16: '4rem',     // 64px
-    20: '5rem',     // 80px
-    24: '6rem',     // 96px
-    32: '8rem',     // 128px
-    40: '10rem',    // 160px
-    48: '12rem',    // 192px
-    56: '14rem',    // 224px
-    64: '16rem',    // 256px
+    xs: '0.25rem', // 4px
+    sm: '0.5rem', // 8px
+    md: '1rem', // 16px
+    lg: '1.5rem', // 24px
+    xl: '2rem', // 32px
+    '2xl': '3rem', // 48px
+    '3xl': '4rem', // 64px
+    '4xl': '6rem' // 96px
   },
   
-  // Border radius scale
   borderRadius: {
     none: '0',
-    sm: '0.125rem',   // 2px
-    base: '0.25rem',  // 4px
-    md: '0.375rem',   // 6px
-    lg: '0.5rem',     // 8px
-    xl: '0.75rem',    // 12px
-    '2xl': '1rem',    // 16px
-    '3xl': '1.5rem',  // 24px
-    full: '9999px',
+    sm: '0.125rem', // 2px
+    md: '0.375rem', // 6px
+    lg: '0.5rem', // 8px
+    xl: '0.75rem', // 12px
+    '2xl': '1rem', // 16px
+    full: '9999px'
   },
   
-  // Shadow scale
   shadows: {
-    none: 'none',
     sm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
-    base: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
     md: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
     lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
     xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
     '2xl': '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
     inner: 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)',
-    glow: '0 0 15px rgba(255, 255, 255, 0.6)',
+    glow: '0 0 20px rgba(88, 4, 4, 0.5)' // Red glow effect
   },
   
-  // Z-index scale
-  zIndex: {
-    auto: 'auto',
-    0: '0',
-    10: '10',
-    20: '20',
-    30: '30',
-    40: '40',
-    50: '50',
-    modal: '1000',
-    popover: '1010',
-    tooltip: '1020',
-    overlay: '1030',
-  },
-  
-  // Transition scale
-  transitions: {
-    none: 'none',
-    all: 'all 150ms cubic-bezier(0.4, 0, 0.2, 1)',
-    default: 'all 150ms ease-in-out',
-    colors: 'color 150ms ease-in-out, background-color 150ms ease-in-out, border-color 150ms ease-in-out',
-    opacity: 'opacity 150ms ease-in-out',
-    shadow: 'box-shadow 150ms ease-in-out',
-    transform: 'transform 150ms ease-in-out',
-  },
-  
-  // Breakpoints for responsive design
   breakpoints: {
     sm: '640px',
     md: '768px',
     lg: '1024px',
     xl: '1280px',
-    '2xl': '1536px',
+    '2xl': '1536px'
   },
   
-  // Component-specific scales
-  components: {
-    button: {
-      sizes: {
-        sm: {
-          height: '2rem',      // 32px
-          padding: '0.5rem 1rem',
-          fontSize: '0.875rem',
-        },
-        md: {
-          height: '2.5rem',    // 40px
-          padding: '0.625rem 1.25rem',
-          fontSize: '1rem',
-        },
-        lg: {
-          height: '3rem',      // 48px
-          padding: '0.75rem 1.5rem',
-          fontSize: '1.125rem',
-        },
-        xl: {
-          height: '3.5rem',    // 56px
-          padding: '1rem 2rem',
-          fontSize: '1.25rem',
-        },
-        '2xl': {
-          height: '4rem',      // 64px
-          padding: '1.25rem 2.5rem',
-          fontSize: '1.5rem',
-        },
-      },
-    },
-    
-    header: {
-      height: '7.5rem',        // 120px
-      padding: '0 2rem',
-    },
-    
-    footer: {
-      height: '25rem',         // 400px
-      padding: '0 2rem',
-    },
-    
-    minimap: {
-      width: '31.25rem',       // 500px
-      height: '18.75rem',      // 300px
-      imageSize: '18.75rem',   // 300px
-    },
-    
-    camera: {
-      width: '25rem',          // 400px
-      height: '17.5rem',       // 280px
-      emojiSize: '9.375rem',   // 150px
-      textSize: '2.5rem',      // 40px
-    },
-    
-    profile: {
-      width: '17.5rem',        // 280px
-      height: '17.5rem',       // 280px
-      emojiSize: '7.5rem',     // 120px
-      textSize: '2rem',        // 32px
-    },
-    
-    robot: {
-      maxWidth: '31.25rem',    // 500px
-      maxHeight: '37.5rem',    // 600px
-    },
+  zIndex: {
+    hide: -1,
+    auto: 'auto',
+    base: 0,
+    docked: 10,
+    dropdown: 1000,
+    sticky: 1100,
+    banner: 1200,
+    overlay: 1300,
+    modal: 1400,
+    popover: 1500,
+    skipLink: 1600,
+    toast: 1700,
+    tooltip: 1800
   },
-};
-
-// Utility functions for responsive design
-export const getResponsiveValue = (values) => {
-  if (typeof values === 'object') {
-    return values;
+  
+  transitions: {
+    fast: '150ms ease-in-out',
+    normal: '250ms ease-in-out',
+    slow: '350ms ease-in-out'
   }
-  return values;
 };
 
-// Media query helpers
-export const mediaQueries = {
-  sm: `@media (min-width: ${theme.breakpoints.sm})`,
-  md: `@media (min-width: ${theme.breakpoints.md})`,
-  lg: `@media (min-width: ${theme.breakpoints.lg})`,
-  xl: `@media (min-width: ${theme.breakpoints.xl})`,
-  '2xl': `@media (min-width: ${theme.breakpoints['2xl']})`,
+// Component-specific styles
+export const componentStyles = {
+  button: {
+    primary: {
+      backgroundColor: theme.colors.primary,
+      color: theme.colors.accent,
+      border: `2px solid ${theme.colors.primary}`,
+      borderRadius: theme.borderRadius.lg,
+      padding: `${theme.spacing.sm} ${theme.spacing.lg}`,
+      fontSize: theme.typography.fontSize.base,
+      fontWeight: theme.typography.fontWeight.semibold,
+      cursor: 'pointer',
+      transition: theme.transitions.fast,
+      '&:hover': {
+        backgroundColor: theme.colors.primaryDark,
+        borderColor: theme.colors.primaryDark,
+        boxShadow: theme.shadows.glow
+      },
+      '&:active': {
+        backgroundColor: theme.colors.primaryLight,
+        transform: 'translateY(1px)'
+      },
+      '&:disabled': {
+        opacity: 0.5,
+        cursor: 'not-allowed'
+      }
+    },
+    secondary: {
+      backgroundColor: 'transparent',
+      color: theme.colors.accent,
+      border: `2px solid ${theme.colors.accent}`,
+      borderRadius: theme.borderRadius.lg,
+      padding: `${theme.spacing.sm} ${theme.spacing.lg}`,
+      fontSize: theme.typography.fontSize.base,
+      fontWeight: theme.typography.fontWeight.semibold,
+      cursor: 'pointer',
+      transition: theme.transitions.fast,
+      '&:hover': {
+        backgroundColor: theme.colors.accent,
+        color: theme.colors.primary,
+        boxShadow: theme.shadows.glow
+      }
+    }
+  },
+  
+  input: {
+    base: {
+      backgroundColor: theme.colors.surface,
+      color: theme.colors.text,
+      border: `2px solid ${theme.colors.border}`,
+      borderRadius: theme.borderRadius.md,
+      padding: `${theme.spacing.sm} ${theme.spacing.md}`,
+      fontSize: theme.typography.fontSize.base,
+      transition: theme.transitions.fast,
+      '&:focus': {
+        outline: 'none',
+        borderColor: theme.colors.primary,
+        boxShadow: `0 0 0 3px ${theme.colors.primary}20`
+      },
+      '&::placeholder': {
+        color: theme.colors.textSecondary
+      }
+    }
+  },
+  
+  card: {
+    base: {
+      backgroundColor: theme.colors.surface,
+      border: `1px solid ${theme.colors.border}`,
+      borderRadius: theme.borderRadius.lg,
+      padding: theme.spacing.lg,
+      boxShadow: theme.shadows.md
+    }
+  },
+  
+  popup: {
+    base: {
+      position: 'fixed',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      backgroundColor: theme.colors.surface,
+      border: `2px solid ${theme.colors.primary}`,
+      borderRadius: theme.borderRadius.xl,
+      padding: theme.spacing.xl,
+      boxShadow: theme.shadows['2xl'],
+      zIndex: theme.zIndex.modal,
+      maxWidth: '90vw',
+      maxHeight: '90vh',
+      overflow: 'auto'
+    },
+    overlay: {
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      backgroundColor: 'rgba(0, 0, 0, 0.8)',
+      zIndex: theme.zIndex.overlay
+    }
+  }
 };
 
-// Animation presets
-export const animations = {
-  fadeIn: {
-    initial: { opacity: 0 },
-    animate: { opacity: 1 },
-    exit: { opacity: 0 },
-  },
-  slideInFromTop: {
-    initial: { y: -100, opacity: 0 },
-    animate: { y: 0, opacity: 1 },
-    exit: { y: -100, opacity: 0 },
-  },
-  slideInFromBottom: {
-    initial: { y: 100, opacity: 0 },
-    animate: { y: 0, opacity: 1 },
-    exit: { y: 100, opacity: 0 },
-  },
-  scaleIn: {
-    initial: { scale: 0, opacity: 0 },
-    animate: { scale: 1, opacity: 1 },
-    exit: { scale: 0, opacity: 0 },
-  },
-  slideInFromRight: {
-    initial: { x: '100%', opacity: 0 },
-    animate: { x: 0, opacity: 1 },
-    exit: { x: '100%', opacity: 0 },
-  },
-};
+export default theme;

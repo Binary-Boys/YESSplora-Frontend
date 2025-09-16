@@ -10,7 +10,7 @@ const ProfilePopup = () => {
   const [editedMembers, setEditedMembers] = useState(team.members);
 
   const handleClose = () => {
-    actions.toggleProfile();
+    actions.closeAllPopups();
     setIsEditing(false);
     setEditedMembers(team.members);
   };

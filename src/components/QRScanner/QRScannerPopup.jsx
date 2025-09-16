@@ -139,14 +139,14 @@ const QRScannerPopup = () => {
   const handleSoftwareGame = (data) => {
     console.log('Software game QR:', data);
     // TODO: Implement software game redirection
-    actions.toggleQRScanner();
+    actions.closeAllPopups();
     // For now, just show an alert
     alert(`Software Game: ${data.gameId}\nLevel: ${data.level}`);
   };
 
   const handleVolunteerScoring = (data) => {
     console.log('Volunteer QR:', data);
-    actions.toggleQRScanner();
+    actions.closeAllPopups();
     actions.toggleVolunteerScoring();
     // TODO: Pass volunteer data to scoring interface
   };
@@ -154,20 +154,20 @@ const QRScannerPopup = () => {
   const handleLocationCheckIn = (data) => {
     console.log('Location QR:', data);
     // TODO: Implement location validation and check-in
-    actions.toggleQRScanner();
+    actions.closeAllPopups();
     alert(`Location Check-in: ${data.locationId}`);
   };
 
   const handleSimpleQR = (data) => {
     console.log('Simple QR:', data);
     // TODO: Handle simple QR codes
-    actions.toggleQRScanner();
+    actions.closeAllPopups();
     alert(`QR Code: ${data}`);
   };
 
   const handleClose = () => {
     stopScanner();
-    actions.toggleQRScanner();
+    actions.closeAllPopups();
   };
 
   const handleRetry = () => {

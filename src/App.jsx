@@ -3,6 +3,7 @@ import { GameProvider } from './contexts/GameContext';
 import RotatableContainer from './components/Layout/RotatableContainer';
 import Header from './components/Layout/Header';
 import ActionBar from './components/Layout/ActionBar';
+import RobotSprite from './components/Robot/RobotSprite';
 import MinimapPopup from './components/Popups/MinimapPopup';
 import ProfilePopup from './components/Popups/ProfilePopup';
 import QRScannerPopup from './components/QRScanner/QRScannerPopup';
@@ -32,6 +33,8 @@ function App() {
           {/* Header Bar */}
           <Header />
           
+          {/* Robot Character - Center */}
+          <RobotSprite />
           
           {/* Action Bar */}
           <ActionBar />

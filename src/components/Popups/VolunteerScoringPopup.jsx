@@ -26,7 +26,7 @@ const VolunteerScoringPopup = () => {
   }, [ui.showVolunteerScoring]);
 
   const handleClose = () => {
-    actions.toggleVolunteerScoring();
+    actions.closeAllPopups();
     setScore('');
     setSelectedLevel(5);
     setVolunteerId('');

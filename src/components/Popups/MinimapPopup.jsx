@@ -8,7 +8,7 @@ const MinimapPopup = () => {
   const { ui, gameProgress } = state;
 
   const handleClose = () => {
-    actions.toggleMinimap();
+    actions.closeAllPopups();
   };
 
   const handleLocationClick = (locationId) => {
