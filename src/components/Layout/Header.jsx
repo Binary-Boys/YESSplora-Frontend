@@ -18,14 +18,14 @@ const Header = () => {
       transition={{ duration: 0.5, ease: "easeOut" }}
       style={{
         width: '100%',
-        height: '120px',
+        height: '80px', // Reduced height
         backgroundColor: theme.colors.primary,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'flex-end',
-        padding: `0 ${theme.spacing.xl}`,
+        padding: `0 ${theme.spacing.md}`, // Reduced padding
         borderRadius: theme.borderRadius.lg,
-        marginBottom: theme.spacing.lg,
+        marginBottom: '4px', // Reduced margin
         boxShadow: theme.shadows.neumorphism.raised,
         border: 'none'
       }}
@@ -40,10 +40,10 @@ const Header = () => {
           whileTap={{ scale: 0.95 }}
           onClick={handleMinimapClick}
           style={{
-            width: '100px', // Smaller to fit in header
-            height: '100px', // Smaller to fit in header
+            width: '60px', // Smaller to fit reduced header
+            height: '60px', // Smaller to fit reduced header
             backgroundColor: theme.colors.accent,
-            borderRadius: theme.borderRadius.full, // Make it round
+            borderRadius: theme.borderRadius.full,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -65,8 +65,8 @@ const Header = () => {
           src="/Campus-Map-Sample-Apartment-Complex-Full-Illustration.jpg"
           alt="Campus Map"
           style={{
-            width: '80px', // Smaller to fit in round button
-            height: '80px', // Smaller to fit in round button
+            width: '50px', // Smaller to fit reduced button
+            height: '50px', // Smaller to fit reduced button
             borderRadius: theme.borderRadius.full,
             objectFit: 'cover',
             border: 'none',

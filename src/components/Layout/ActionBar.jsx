@@ -27,14 +27,14 @@ const ActionBar = () => {
       transition={{ duration: 0.5, ease: "easeOut", delay: 0.2 }}
       style={{
         width: '100%',
-        height: '120px', // Same height as header
+        height: '80px', // Same reduced height as header
         backgroundColor: theme.colors.primary,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: `0 ${theme.spacing.xl}`,
+        padding: `0 ${theme.spacing.md}`, // Reduced padding
         borderRadius: theme.borderRadius.lg,
-        marginTop: theme.spacing.lg,
+        marginTop: '4px', // Reduced margin
         boxShadow: theme.shadows.neumorphism.raised,
         border: 'none'
       }}
@@ -48,10 +48,10 @@ const ActionBar = () => {
         whileTap={{ scale: 0.95 }}
         onClick={handleCameraClick}
         style={{
-          width: '100px', // Same size as minimap
-          height: '100px', // Same size as minimap
+          width: '60px', // Smaller to fit reduced footer
+          height: '60px', // Smaller to fit reduced footer
           backgroundColor: theme.colors.secondary,
-          borderRadius: theme.borderRadius.full, // Round like minimap
+          borderRadius: theme.borderRadius.full,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -60,7 +60,7 @@ const ActionBar = () => {
           boxShadow: ui.showQRScanner ? theme.shadows.neumorphism.pressed : theme.shadows.neumorphism.raised,
           border: 'none',
           flexDirection: 'column',
-          gap: '8px' // Reduced gap for smaller button
+          gap: '4px' // Further reduced gap
         }}
         onMouseEnter={(e) => {
           e.target.style.boxShadow = theme.shadows.neumorphism.soft;
@@ -72,7 +72,7 @@ const ActionBar = () => {
         {/* Camera Emoji */}
         <div
           style={{
-            fontSize: '40px', // Smaller to fit round button
+            fontSize: '24px', // Smaller to fit reduced button
             lineHeight: 1
           }}
         >
@@ -82,7 +82,7 @@ const ActionBar = () => {
         {/* Camera Label */}
         <div
           style={{
-            fontSize: '10px', // Much smaller text to fit
+            fontSize: '8px', // Smaller text to fit
             fontWeight: theme.typography.fontWeight.bold,
             color: theme.colors.accent,
             textAlign: 'center',
@@ -102,8 +102,8 @@ const ActionBar = () => {
         whileTap={{ scale: 0.95 }}
         onClick={handleProfileClick}
         style={{
-          width: '100px', // Same size as minimap and camera
-          height: '100px', // Same size as minimap and camera
+          width: '60px', // Same size as camera button
+          height: '60px', // Same size as camera button
           backgroundColor: theme.colors.secondary,
           borderRadius: theme.borderRadius.full,
           display: 'flex',
@@ -115,7 +115,7 @@ const ActionBar = () => {
           border: 'none',
           position: 'relative',
           flexDirection: 'column',
-          gap: '8px' // Reduced gap for smaller button
+          gap: '4px' // Further reduced gap
         }}
         onMouseEnter={(e) => {
           e.target.style.boxShadow = theme.shadows.neumorphism.soft;
@@ -127,7 +127,7 @@ const ActionBar = () => {
         {/* Profile Icon - Smaller design */}
         <div
           style={{
-            fontSize: '40px', // Smaller to fit round button
+            fontSize: '24px', // Same as camera emoji
             lineHeight: 1
           }}
         >
@@ -137,7 +137,7 @@ const ActionBar = () => {
         {/* Profile Label */}
         <div
           style={{
-            fontSize: '10px', // Much smaller text to fit
+            fontSize: '8px', // Same as camera text
             fontWeight: theme.typography.fontWeight.bold,
             color: theme.colors.accent,
             textAlign: 'center',

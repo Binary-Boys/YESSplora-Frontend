@@ -120,7 +120,8 @@ const RobotSprite = () => {
         justifyContent: 'center',
         flex: 1,
         width: '100%',
-        padding: theme.spacing.xl
+        padding: '8px', // Reduced padding
+        minHeight: '200px' // Ensure minimum height
       }}
     >
       {/* Robot Character Image */}
@@ -138,9 +139,9 @@ const RobotSprite = () => {
                   src="/robot-character.png"
                   alt="Robot Character"
                   style={{
-                    maxWidth: '500px',
-                    maxHeight: '600px',
-                    width: 'auto',
+                    maxWidth: '300px', // Smaller for better fit
+                    maxHeight: '400px', // Smaller for better fit
+                    width: '100%',
                     height: 'auto',
                     objectFit: 'contain',
                     filter: 'drop-shadow(8px 8px 16px rgba(0, 0, 0, 0.3)) drop-shadow(-8px -8px 16px rgba(255, 255, 255, 0.1))',

@@ -27,7 +27,8 @@ function App() {
             height: '100%',
             position: 'relative',
             overflow: 'hidden',
-            padding: '20px'
+            padding: '8px', // Reduced padding
+            gap: '4px' // Reduced gap between components
           }}
         >
           {/* Header Bar */}
