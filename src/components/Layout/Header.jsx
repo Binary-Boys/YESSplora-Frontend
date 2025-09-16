@@ -22,7 +22,7 @@ const Header = () => {
         backgroundColor: theme.colors.primary,
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'flex-end',
         padding: `0 ${theme.spacing.xl}`,
         borderBottom: `4px solid ${theme.colors.accent}`,
         borderRadius: theme.borderRadius.lg,
