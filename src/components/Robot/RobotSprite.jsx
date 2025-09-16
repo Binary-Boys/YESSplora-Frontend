@@ -138,13 +138,13 @@ const RobotSprite = () => {
                   src="/robot-character.png"
                   alt="Robot Character"
                   style={{
-                    maxWidth: '500px', // Increased size
-                    maxHeight: '600px', // Increased size
+                    maxWidth: '500px',
+                    maxHeight: '600px',
                     width: 'auto',
                     height: 'auto',
                     objectFit: 'contain',
-                    filter: 'drop-shadow(0 20px 40px rgba(0, 0, 0, 0.5))', // Enhanced shadow
-                    border: `6px solid ${theme.colors.accent}`, // Added border
+                    filter: 'drop-shadow(8px 8px 16px rgba(0, 0, 0, 0.3)) drop-shadow(-8px -8px 16px rgba(255, 255, 255, 0.1))',
+                    border: 'none',
                     borderRadius: theme.borderRadius.lg
                   }}
           onError={(e) => {

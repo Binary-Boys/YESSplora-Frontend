@@ -74,7 +74,14 @@ export const theme = {
     xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
     '2xl': '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
     inner: 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)',
-    glow: '0 0 20px rgba(88, 4, 4, 0.5)' // Red glow effect
+    glow: '0 0 20px rgba(88, 4, 4, 0.5)', // Red glow effect
+    // Neumorphism shadows
+    neumorphism: {
+      raised: '8px 8px 16px rgba(0, 0, 0, 0.3), -8px -8px 16px rgba(255, 255, 255, 0.1)',
+      pressed: 'inset 8px 8px 16px rgba(0, 0, 0, 0.3), inset -8px -8px 16px rgba(255, 255, 255, 0.1)',
+      soft: '6px 6px 12px rgba(0, 0, 0, 0.2), -6px -6px 12px rgba(255, 255, 255, 0.1)',
+      inner: 'inset 6px 6px 12px rgba(0, 0, 0, 0.2), inset -6px -6px 12px rgba(255, 255, 255, 0.1)',
+    },
   },
   
   breakpoints: {

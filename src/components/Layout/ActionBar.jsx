@@ -27,15 +27,16 @@ const ActionBar = () => {
       transition={{ duration: 0.5, ease: "easeOut", delay: 0.2 }}
       style={{
         width: '100%',
-        height: '400px', // Increased height
+        height: '400px',
         backgroundColor: theme.colors.primary,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         padding: `0 ${theme.spacing.xl}`,
-        borderTop: `4px solid ${theme.colors.accent}`,
         borderRadius: theme.borderRadius.lg,
-        marginTop: theme.spacing.lg
+        marginTop: theme.spacing.lg,
+        boxShadow: theme.shadows.neumorphism.raised,
+        border: 'none'
       }}
     >
       {/* Camera Button - Left Side */}
@@ -47,8 +48,8 @@ const ActionBar = () => {
         whileTap={{ scale: 0.95 }}
         onClick={handleCameraClick}
         style={{
-          width: '400px', // Increased width
-          height: '280px', // Increased height
+          width: '400px',
+          height: '280px',
           backgroundColor: theme.colors.secondary,
           borderRadius: theme.borderRadius.md,
           display: 'flex',
@@ -56,16 +57,16 @@ const ActionBar = () => {
           justifyContent: 'center',
           cursor: 'pointer',
           transition: theme.transitions.fast,
-          boxShadow: ui.showQRScanner ? theme.shadows.glow : theme.shadows.sm,
-          border: `8px solid ${theme.colors.primary}`, // Increased border
+          boxShadow: ui.showQRScanner ? theme.shadows.neumorphism.pressed : theme.shadows.neumorphism.raised,
+          border: 'none',
           flexDirection: 'column',
           gap: '20px'
         }}
         onMouseEnter={(e) => {
-          e.target.style.boxShadow = theme.shadows.glow;
+          e.target.style.boxShadow = theme.shadows.neumorphism.soft;
         }}
         onMouseLeave={(e) => {
-          e.target.style.boxShadow = ui.showQRScanner ? theme.shadows.glow : theme.shadows.sm;
+          e.target.style.boxShadow = ui.showQRScanner ? theme.shadows.neumorphism.pressed : theme.shadows.neumorphism.raised;
         }}
       >
         {/* Camera Emoji */}
@@ -101,8 +102,8 @@ const ActionBar = () => {
         whileTap={{ scale: 0.95 }}
         onClick={handleProfileClick}
         style={{
-          width: '280px', // Increased width
-          height: '280px', // Increased height
+          width: '280px',
+          height: '280px',
           backgroundColor: theme.colors.secondary,
           borderRadius: theme.borderRadius.full,
           display: 'flex',
@@ -110,17 +111,17 @@ const ActionBar = () => {
           justifyContent: 'center',
           cursor: 'pointer',
           transition: theme.transitions.fast,
-          boxShadow: ui.showProfile ? theme.shadows.glow : theme.shadows.sm,
-          border: `8px solid ${theme.colors.primary}`, // Added border
+          boxShadow: ui.showProfile ? theme.shadows.neumorphism.pressed : theme.shadows.neumorphism.raised,
+          border: 'none',
           position: 'relative',
           flexDirection: 'column',
           gap: '16px'
         }}
         onMouseEnter={(e) => {
-          e.target.style.boxShadow = theme.shadows.glow;
+          e.target.style.boxShadow = theme.shadows.neumorphism.soft;
         }}
         onMouseLeave={(e) => {
-          e.target.style.boxShadow = ui.showProfile ? theme.shadows.glow : theme.shadows.sm;
+          e.target.style.boxShadow = ui.showProfile ? theme.shadows.neumorphism.pressed : theme.shadows.neumorphism.raised;
         }}
       >
         {/* Profile Icon - Larger design */}

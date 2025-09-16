@@ -18,15 +18,16 @@ const Header = () => {
       transition={{ duration: 0.5, ease: "easeOut" }}
       style={{
         width: '100%',
-        height: '120px', // Increased height
+        height: '120px',
         backgroundColor: theme.colors.primary,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'flex-end',
         padding: `0 ${theme.spacing.xl}`,
-        borderBottom: `4px solid ${theme.colors.accent}`,
         borderRadius: theme.borderRadius.lg,
-        marginBottom: theme.spacing.lg
+        marginBottom: theme.spacing.lg,
+        boxShadow: theme.shadows.neumorphism.raised,
+        border: 'none'
       }}
     >
 
@@ -39,8 +40,8 @@ const Header = () => {
           whileTap={{ scale: 0.95 }}
           onClick={handleMinimapClick}
           style={{
-            width: '500px', // Increased width
-            height: '300px', // Increased height
+            width: '500px',
+            height: '300px',
             backgroundColor: theme.colors.accent,
             borderRadius: theme.borderRadius.lg,
             display: 'flex',
@@ -48,15 +49,15 @@ const Header = () => {
             justifyContent: 'center',
             cursor: 'pointer',
             transition: theme.transitions.fast,
-            boxShadow: ui.showMinimap ? theme.shadows.glow : theme.shadows.sm,
-            border: `6px solid ${theme.colors.primary}`, // Added border for visibility
+            boxShadow: ui.showMinimap ? theme.shadows.neumorphism.pressed : theme.shadows.neumorphism.raised,
+            border: 'none',
             position: 'relative'
           }}
         onMouseEnter={(e) => {
-          e.target.style.boxShadow = theme.shadows.glow;
+          e.target.style.boxShadow = theme.shadows.neumorphism.soft;
         }}
         onMouseLeave={(e) => {
-          e.target.style.boxShadow = ui.showMinimap ? theme.shadows.glow : theme.shadows.sm;
+          e.target.style.boxShadow = ui.showMinimap ? theme.shadows.neumorphism.pressed : theme.shadows.neumorphism.raised;
         }}
       >
         {/* Campus Map Image */}
@@ -64,12 +65,12 @@ const Header = () => {
           src="/Campus-Map-Sample-Apartment-Complex-Full-Illustration.jpg"
           alt="Campus Map"
           style={{
-            width: '300px', // Increased size
-            height: '300px', // Increased size
+            width: '300px',
+            height: '300px',
             borderRadius: theme.borderRadius.full,
             objectFit: 'cover',
-            border: `10px solid ${theme.colors.primary}`, // Increased border
-            boxShadow: theme.shadows.md
+            border: 'none',
+            boxShadow: theme.shadows.neumorphism.inner
           }}
           onError={(e) => {
             console.error('Failed to load campus map image:', e);
