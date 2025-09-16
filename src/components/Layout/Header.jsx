@@ -22,38 +22,13 @@ const Header = () => {
         backgroundColor: theme.colors.primary,
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'space-between',
+        justifyContent: 'center',
         padding: `0 ${theme.spacing.xl}`,
         borderBottom: `4px solid ${theme.colors.accent}`,
         borderRadius: theme.borderRadius.lg,
         marginBottom: theme.spacing.lg
       }}
     >
-      {/* Team Name - Left Side */}
-      <motion.div
-        initial={{ x: -50, opacity: 0 }}
-        animate={{ x: 0, opacity: 1 }}
-        transition={{ delay: 0.2, duration: 0.5 }}
-        style={{
-          display: 'flex',
-          alignItems: 'center'
-        }}
-      >
-        <h1
-          style={{
-            fontSize: `${parseInt(theme.typography.fontSize.xl) * 8}px`, // 8x larger (was 4x)
-            fontWeight: theme.typography.fontWeight.bold,
-            color: theme.colors.accent,
-            margin: 0,
-            fontFamily: 'sans-serif',
-            letterSpacing: '4px', // Increased letter spacing
-            textShadow: `4px 4px 8px ${theme.colors.primary}`, // Added text shadow
-            textAlign: 'center'
-          }}
-        >
-          {team.name}
-        </h1>
-      </motion.div>
 
         {/* Minimap Icon - Right Side */}
         <motion.button
