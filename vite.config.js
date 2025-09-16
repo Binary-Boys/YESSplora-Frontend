@@ -8,10 +8,9 @@ export default defineConfig({
     host: '0.0.0.0', // Listen on all interfaces
     port: 5173,
     strictPort: true,
-    headers: {
-      'Cross-Origin-Embedder-Policy': 'require-corp',
-      'Cross-Origin-Opener-Policy': 'same-origin',
-    },
+    fs: {
+      strict: false
+    }
   },
   build: {
     rollupOptions: {
