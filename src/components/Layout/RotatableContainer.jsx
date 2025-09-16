@@ -17,8 +17,7 @@ const RotatableContainer = ({ children }) => {
 
   // Always apply rotation since we're forcing tilt mode
   if (alwaysRotated) {
-    // Calculate responsive scaling based on screen size
-    const scale = Math.min(1, Math.min(window.innerWidth / 800, window.innerHeight / 600));
+    // Fixed size - no scaling based on screen size
     
     // When rotated, we need to swap width/height and adjust positioning
     Object.assign(containerStyle, {
@@ -27,7 +26,7 @@ const RotatableContainer = ({ children }) => {
       position: 'fixed', // Use fixed positioning for better control
       top: '50%',
       left: '50%',
-      transform: `translate(-50%, -50%) rotate(-90deg) scale(${scale})`,
+      transform: `translate(-50%, -50%) rotate(-90deg)`, // Remove scale
       transformOrigin: 'center center',
       zIndex: 1000, // Ensure it stays on top
       maxWidth: '100vh', // Ensure it doesn't exceed viewport bounds
