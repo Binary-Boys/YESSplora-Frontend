@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { useGame } from '../../contexts/GameContext';
 import { theme } from '../../styles/theme';
 
-const RobotSprite = () => {
+const RobotSprite = ({ dynamicSpacing, isHighHeight }) => {
   const { state } = useGame();
   const [currentAnimation, setCurrentAnimation] = useState('idle');
   const [isAnimating, setIsAnimating] = useState(false);
@@ -120,7 +120,7 @@ const RobotSprite = () => {
         justifyContent: 'center',
         flex: 1,
         width: '100%',
-        padding: '8px', // Reduced padding
+        padding: dynamicSpacing, // Dynamic padding based on screen height
         minHeight: '200px' // Ensure minimum height
       }}
     >
@@ -139,8 +139,8 @@ const RobotSprite = () => {
                   src="/robot-character.png"
                   alt="Robot Character"
                   style={{
-                    maxWidth: '300px', // Smaller for better fit
-                    maxHeight: '400px', // Smaller for better fit
+                    maxWidth: isHighHeight ? '250px' : '300px', // Smaller on high screens
+                    maxHeight: isHighHeight ? '300px' : '400px', // Smaller on high screens
                     width: '100%',
                     height: 'auto',
                     objectFit: 'contain',

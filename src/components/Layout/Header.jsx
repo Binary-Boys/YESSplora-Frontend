@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { useGame } from '../../contexts/GameContext';
 import { theme } from '../../styles/theme';
 
-const Header = () => {
+const Header = ({ dynamicSpacing, isHighHeight }) => {
   const { state, actions } = useGame();
   const { team, ui } = state;
 
@@ -25,7 +25,7 @@ const Header = () => {
         justifyContent: 'flex-end',
         padding: `0 ${theme.spacing.md}`, // Reduced padding
         borderRadius: theme.borderRadius.lg,
-        marginBottom: '4px', // Reduced margin
+        marginBottom: dynamicSpacing, // Dynamic margin based on screen height
         boxShadow: theme.shadows.neumorphism.raised,
         border: 'none'
       }}

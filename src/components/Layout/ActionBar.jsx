@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { useGame } from '../../contexts/GameContext';
 import { theme } from '../../styles/theme';
 
-const ActionBar = () => {
+const ActionBar = ({ dynamicSpacing, isHighHeight }) => {
   const { state, actions } = useGame();
   const { ui } = state;
 
@@ -34,7 +34,7 @@ const ActionBar = () => {
         justifyContent: 'space-between',
         padding: `0 ${theme.spacing.md}`, // Reduced padding
         borderRadius: theme.borderRadius.lg,
-        marginTop: '4px', // Reduced margin
+        marginTop: dynamicSpacing, // Dynamic margin based on screen height
         boxShadow: theme.shadows.neumorphism.raised,
         border: 'none'
       }}

@@ -1,5 +1,6 @@
 import React from 'react';
 import { GameProvider } from './contexts/GameContext';
+import { useOrientation } from './hooks/useOrientation';
 import RotatableContainer from './components/Layout/RotatableContainer';
 import Header from './components/Layout/Header';
 import ActionBar from './components/Layout/ActionBar';
@@ -11,6 +12,8 @@ import VolunteerScoringPopup from './components/Popups/VolunteerScoringPopup';
 import './styles/global.css';
 
 function App() {
+  const { dynamicSpacing, isHighHeight, isNarrowWidth } = useOrientation();
+
   return (
     <GameProvider>
       <RotatableContainer>
@@ -27,18 +30,18 @@ function App() {
             height: '100%',
             position: 'relative',
             overflow: 'hidden',
-            padding: '8px', // Reduced padding
-            gap: '4px' // Reduced gap between components
+            padding: dynamicSpacing, // Dynamic padding based on screen height
+            gap: dynamicSpacing // Dynamic gap between components
           }}
         >
           {/* Header Bar */}
-          <Header />
+          <Header dynamicSpacing={dynamicSpacing} isHighHeight={isHighHeight} />
           
           {/* Robot Character - Center */}
-          <RobotSprite />
+          <RobotSprite dynamicSpacing={dynamicSpacing} isHighHeight={isHighHeight} />
           
           {/* Action Bar */}
-          <ActionBar />
+          <ActionBar dynamicSpacing={dynamicSpacing} isHighHeight={isHighHeight} isNarrowWidth={isNarrowWidth} />
         </main>
         
         {/* Popup Components */}
