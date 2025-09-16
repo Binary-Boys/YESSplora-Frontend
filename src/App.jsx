@@ -20,7 +20,7 @@ function App() {
         {/* Main Content Area */}
         <main
           style={{
-            paddingTop: '80px', // Header height
+            paddingTop: '200px', // Header height (increased)
             paddingBottom: '320px', // Action bar height
             minHeight: '100vh',
             backgroundColor: '#580404',

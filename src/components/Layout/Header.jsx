@@ -21,7 +21,7 @@ const Header = () => {
         top: 0,
         left: 0,
         right: 0,
-        height: '80px',
+        height: '200px', // Increased height to accommodate larger text
         backgroundColor: theme.colors.primary,
         zIndex: theme.zIndex.sticky,
         display: 'flex',
@@ -42,12 +42,12 @@ const Header = () => {
       >
         <h1
           style={{
-            fontSize: `${parseInt(theme.typography.fontSize.xl) * 8}px`, // 8x larger (was 4x)
+            fontSize: `${parseInt(theme.typography.fontSize.xl) * 80}px`, // 10x larger (was 8x, now 80x)
             fontWeight: theme.typography.fontWeight.bold,
             color: theme.colors.accent,
             margin: 0,
             fontFamily: 'sans-serif',
-            letterSpacing: '4px' // Increased letter spacing
+            letterSpacing: '8px' // Increased letter spacing for larger text
           }}
         >
           {team.name}
