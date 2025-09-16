@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { useGame } from '../../contexts/GameContext';
 import { theme } from '../../styles/theme';
 
-const RobotSprite = ({ dynamicSpacing, isHighHeight }) => {
+const RobotSprite = ({ dynamicSpacing, isHighHeight, dimensions }) => {
   const { state } = useGame();
   const [currentAnimation, setCurrentAnimation] = useState('idle');
   const [isAnimating, setIsAnimating] = useState(false);
@@ -34,6 +34,54 @@ const RobotSprite = ({ dynamicSpacing, isHighHeight }) => {
       }, 2000);
     }
   }, [state.gameProgress.totalScore]);
+
+  // Calculate responsive dimensions based on screen width
+  const getResponsiveDimensions = () => {
+    if (!dimensions) return { minHeight: '200px', maxWidth: '300px', maxHeight: '400px' };
+    
+    const { width } = dimensions;
+    
+    // Define responsive breakpoints and corresponding dimensions
+    if (width > 1570) {
+      return {
+        minHeight: '150px', // Reduced height for very wide screens
+        maxWidth: '200px',
+        maxHeight: '250px'
+      };
+    } else if (width > 1400) {
+      return {
+        minHeight: '170px',
+        maxWidth: '220px',
+        maxHeight: '280px'
+      };
+    } else if (width > 1200) {
+      return {
+        minHeight: '180px',
+        maxWidth: '240px',
+        maxHeight: '320px'
+      };
+    } else if (width > 1000) {
+      return {
+        minHeight: '190px',
+        maxWidth: '260px',
+        maxHeight: '350px'
+      };
+    } else if (width > 800) {
+      return {
+        minHeight: '200px',
+        maxWidth: '280px',
+        maxHeight: '380px'
+      };
+    } else {
+      return {
+        minHeight: '210px',
+        maxWidth: '300px',
+        maxHeight: '400px'
+      };
+    }
+  };
+
+  const responsiveDimensions = getResponsiveDimensions();
 
   const getAnimationVariants = () => {
     switch (currentAnimation) {
@@ -118,10 +166,12 @@ const RobotSprite = ({ dynamicSpacing, isHighHeight }) => {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        flex: 1,
+        flex: '1 1 0%',
         width: '100%',
-        padding: dynamicSpacing, // Dynamic padding based on screen height
-        minHeight: '200px' // Ensure minimum height
+        padding: dynamicSpacing,
+        minHeight: responsiveDimensions.minHeight, // Responsive minimum height
+        maxHeight: dimensions?.width > 1570 ? responsiveDimensions.minHeight : 'none', // Constrain height for wide screens
+        overflow: 'hidden' // Prevent content from spilling out
       }}
     >
       {/* Robot Character Image */}
@@ -139,8 +189,8 @@ const RobotSprite = ({ dynamicSpacing, isHighHeight }) => {
                   src="/robot-character.png"
                   alt="Robot Character"
                   style={{
-                    maxWidth: isHighHeight ? '250px' : '300px', // Smaller on high screens
-                    maxHeight: isHighHeight ? '300px' : '400px', // Smaller on high screens
+                    maxWidth: responsiveDimensions.maxWidth, // Responsive width based on screen size
+                    maxHeight: responsiveDimensions.maxHeight, // Responsive height based on screen size
                     width: '100%',
                     height: 'auto',
                     objectFit: 'contain',

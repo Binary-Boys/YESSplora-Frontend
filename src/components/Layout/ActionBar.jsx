@@ -1,11 +1,12 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { useGame } from '../../contexts/GameContext';
+import { useOrientation } from '../../hooks/useOrientation';
 import { theme } from '../../styles/theme';
 
-const ActionBar = ({ dynamicSpacing, isHighHeight }) => {
+const ActionBar = ({ dynamicSpacing, isHighHeight, dimensions }) => {
   const { state, actions } = useGame();
   const { ui } = state;
+  const { isPortraitMode, shouldRotate, alwaysRotated } = useOrientation();
 
   const handlePlayClick = () => {
     // TODO: Implement game start logic
@@ -20,90 +21,84 @@ const ActionBar = ({ dynamicSpacing, isHighHeight }) => {
     actions.toggleProfile();
   };
 
+  // Determine if we should use responsive layout for narrow screens or when rotated
+  const isNarrowScreen = dimensions && dimensions.width < 1600;
+  const isRotated = alwaysRotated; // Always rotated now
+  
   return (
-    <motion.footer
-      initial={{ y: 100, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.5, ease: "easeOut", delay: 0.2 }}
+    <div
       style={{
-        width: '100%',
-        height: '80px', // Same reduced height as header
+        width: '100%', // Always full width
+        height: isRotated ? '90px' : '120px', // 150% of original size
         backgroundColor: theme.colors.primary,
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: `0 ${theme.spacing.md}`, // Reduced padding
+        justifyContent: 'space-between', // Always use space-between to align profile to right
+        padding: isNarrowScreen || isRotated ? '0 30px 30px 30px' : `0 ${theme.spacing.lg} 30px ${theme.spacing.lg}`, // 150% padding
         borderRadius: theme.borderRadius.lg,
-        marginTop: dynamicSpacing, // Dynamic margin based on screen height
+        marginTop: isRotated ? '1px' : '4px', // Minimal margin when rotated
+        marginLeft: '0', // No margin left adjustment needed
         boxShadow: theme.shadows.neumorphism.raised,
-        border: 'none'
+        border: 'none',
+        flexShrink: 0 // Prevent footer from shrinking
       }}
     >
-      {/* Camera Button - Left Side */}
-      <motion.button
-        initial={{ scale: 0, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ delay: 0.4, duration: 0.5, type: "spring", stiffness: 200 }}
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        onClick={handleCameraClick}
-        style={{
-          width: '60px', // Smaller to fit reduced footer
-          height: '60px', // Smaller to fit reduced footer
-          backgroundColor: theme.colors.secondary,
-          borderRadius: theme.borderRadius.full,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          cursor: 'pointer',
-          transition: theme.transitions.fast,
-          boxShadow: ui.showQRScanner ? theme.shadows.neumorphism.pressed : theme.shadows.neumorphism.raised,
-          border: 'none',
-          flexDirection: 'column',
-          gap: '4px' // Further reduced gap
-        }}
-        onMouseEnter={(e) => {
-          e.target.style.boxShadow = theme.shadows.neumorphism.soft;
-        }}
-        onMouseLeave={(e) => {
-          e.target.style.boxShadow = ui.showQRScanner ? theme.shadows.neumorphism.pressed : theme.shadows.neumorphism.raised;
-        }}
-      >
-        {/* Camera Emoji */}
-        <div
+      {/* Camera Button - Left Side - Always show since we're managing layout differently now */}
+      <button
+          onClick={handleCameraClick}
           style={{
-            fontSize: '24px', // Smaller to fit reduced button
-            lineHeight: 1
+            width: '90px', // 150% of original size
+            height: '90px', // 150% of original size
+            backgroundColor: theme.colors.secondary,
+            borderRadius: theme.borderRadius.full,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            transition: theme.transitions.fast,
+            boxShadow: ui.showQRScanner ? theme.shadows.neumorphism.pressed : theme.shadows.neumorphism.raised,
+            border: 'none',
+            flexDirection: 'column',
+            gap: '6px', // 150% of original gap
+            marginRight: '0' // No margin needed with space-between layout
+          }}
+          onMouseEnter={(e) => {
+            e.target.style.boxShadow = theme.shadows.neumorphism.soft;
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.boxShadow = ui.showQRScanner ? theme.shadows.neumorphism.pressed : theme.shadows.neumorphism.raised;
           }}
         >
-          📷
-        </div>
-        
-        {/* Camera Label */}
-        <div
-          style={{
-            fontSize: '8px', // Smaller text to fit
-            fontWeight: theme.typography.fontWeight.bold,
-            color: theme.colors.accent,
-            textAlign: 'center',
-            textShadow: `1px 1px 2px ${theme.colors.primary}`
-          }}
-        >
-          CAM
-        </div>
-      </motion.button>
+          {/* Camera Emoji */}
+          <div
+            style={{
+              fontSize: '36px', // 150% of original size
+              lineHeight: 1
+            }}
+          >
+            📷
+          </div>
+          
+          {/* Camera Label */}
+          <div
+            style={{
+              fontSize: '12px', // 150% of original size
+              fontWeight: theme.typography.fontWeight.bold,
+              color: theme.colors.accent,
+              textAlign: 'center',
+              textShadow: `1px 1px 2px ${theme.colors.primary}`
+            }}
+          >
+            CAM
+          </div>
+        </button>
 
       {/* Profile Button - Right Side */}
-      <motion.button
-        initial={{ scale: 0, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ delay: 0.6, duration: 0.5, type: "spring", stiffness: 200 }}
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
+      <button
         onClick={handleProfileClick}
         style={{
-          width: '60px', // Same size as camera button
-          height: '60px', // Same size as camera button
+          width: isRotated ? '75px' : '90px', // 150% of original size
+          height: isRotated ? '75px' : '90px', // 150% of original size
           backgroundColor: theme.colors.secondary,
           borderRadius: theme.borderRadius.full,
           display: 'flex',
@@ -115,7 +110,7 @@ const ActionBar = ({ dynamicSpacing, isHighHeight }) => {
           border: 'none',
           position: 'relative',
           flexDirection: 'column',
-          gap: '4px' // Further reduced gap
+          gap: '6px' // 150% of original gap
         }}
         onMouseEnter={(e) => {
           e.target.style.boxShadow = theme.shadows.neumorphism.soft;
@@ -127,7 +122,7 @@ const ActionBar = ({ dynamicSpacing, isHighHeight }) => {
         {/* Profile Icon - Smaller design */}
         <div
           style={{
-            fontSize: '24px', // Same as camera emoji
+            fontSize: isRotated ? '30px' : '36px', // 150% of original size
             lineHeight: 1
           }}
         >
@@ -137,7 +132,7 @@ const ActionBar = ({ dynamicSpacing, isHighHeight }) => {
         {/* Profile Label */}
         <div
           style={{
-            fontSize: '8px', // Same as camera text
+            fontSize: isRotated ? '9px' : '12px', // 150% of original size
             fontWeight: theme.typography.fontWeight.bold,
             color: theme.colors.accent,
             textAlign: 'center',
@@ -146,8 +141,8 @@ const ActionBar = ({ dynamicSpacing, isHighHeight }) => {
         >
           PRO
         </div>
-      </motion.button>
-    </motion.footer>
+      </button>
+    </div>
   );
 };
 

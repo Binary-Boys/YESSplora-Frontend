@@ -14,8 +14,8 @@ export const useOrientation = () => {
       
       setDimensions({ width, height });
       
-      // If height > width, we're in portrait mode and should rotate to landscape
-      setIsLandscape(height > width);
+      // Always force landscape mode (always rotate)
+      setIsLandscape(true);
     };
 
     // Initial check
@@ -32,46 +32,61 @@ export const useOrientation = () => {
   }, []);
 
   // Calculate dynamic spacing based on screen height
+  // When display height increases, spacing decreases to bring header and footer closer
+  // If rotated, use the effective height (which would be the original width)
   const getDynamicSpacing = () => {
-    const { height } = dimensions;
+    const { height, width } = dimensions;
+    const effectiveHeight = isLandscape ? width : height; // Use width as height when rotated
     
-    // When display height increases (tilted orientation), reduce distance between header and footer
+    // When rotated (portrait mode), use even tighter spacing to fit all components
     if (isLandscape) {
-      // Tilted orientation - reduce spacing
-      if (height < 600) {
-        return '1px'; // Very tight spacing when tilted
-      } else if (height < 800) {
-        return '2px'; // Tight spacing when tilted
-      } else if (height < 1000) {
-        return '3px'; // Medium spacing when tilted
+      if (effectiveHeight < 400) {
+        return '1px'; // Very tight for small rotated screens
+      } else if (effectiveHeight < 600) {
+        return '2px'; // Tight spacing
       } else {
-        return '4px'; // Loose spacing when tilted
+        return '3px'; // Minimal spacing for larger rotated screens
       }
+    }
+    
+    // Normal spacing for landscape orientation
+    // Inverse relationship: higher screens get tighter spacing
+    if (effectiveHeight < 600) {
+      return '8px'; // More spacing for small screens
+    } else if (effectiveHeight < 800) {
+      return '6px'; // Medium spacing
+    } else if (effectiveHeight < 1000) {
+      return '4px'; // Tighter spacing
+    } else if (effectiveHeight < 1200) {
+      return '2px'; // Very tight spacing
     } else {
-      // Normal orientation - default spacing
-      if (height < 600) {
-        return '2px'; // Very tight spacing
-      } else if (height < 800) {
-        return '4px'; // Tight spacing
-      } else if (height < 1000) {
-        return '8px'; // Medium spacing
-      } else if (height < 1200) {
-        return '12px'; // Loose spacing
-      } else {
-        return '16px'; // Very loose spacing for large screens
-      }
+      return '1px'; // Minimal spacing for very large screens
     }
   };
 
-  // Check if width is below 1600px for footer alignment
-  const isNarrowWidth = dimensions.width < 1600;
+  // Calculate effective dimensions for rotated viewport
+  const getEffectiveDimensions = () => {
+    if (isLandscape) {
+      // When rotated, width becomes height and height becomes width
+      return {
+        width: dimensions.height,
+        height: dimensions.width
+      };
+    }
+    return dimensions;
+  };
+
+  const effectiveDimensions = getEffectiveDimensions();
 
   return {
     isLandscape,
     dimensions,
-    shouldRotate: isLandscape,
+    effectiveDimensions,
+    shouldRotate: true, // Always rotate
     dynamicSpacing: getDynamicSpacing(),
-    isHighHeight: dimensions.height > 800,
-    isNarrowWidth
+    isHighHeight: effectiveDimensions.height > 800,
+    isPortraitMode: true, // Always treat as portrait to force rotation
+    alwaysRotated: true // New flag to indicate forced rotation
   };
 };
+

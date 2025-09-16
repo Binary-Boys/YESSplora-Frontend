@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { useGame } from '../../contexts/GameContext';
 import { theme } from '../../styles/theme';
 
-const Header = ({ dynamicSpacing, isHighHeight }) => {
+const Header = ({ dynamicSpacing, isHighHeight, isRotated }) => {
   const { state, actions } = useGame();
   const { team, ui } = state;
 
@@ -18,18 +18,31 @@ const Header = ({ dynamicSpacing, isHighHeight }) => {
       transition={{ duration: 0.5, ease: "easeOut" }}
       style={{
         width: '100%',
-        height: '80px', // Reduced height
+        height: isRotated ? '90px' : '120px', // 150% of original size
         backgroundColor: theme.colors.primary,
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'flex-end',
-        padding: `0 ${theme.spacing.md}`, // Reduced padding
+        justifyContent: 'space-between',
+        padding: isRotated ? '0 22px' : `0 ${theme.spacing.lg}`, // 150% padding
         borderRadius: theme.borderRadius.lg,
-        marginBottom: dynamicSpacing, // Dynamic margin based on screen height
+        marginBottom: isRotated ? '1px' : dynamicSpacing, // Minimal margin when rotated
         boxShadow: theme.shadows.neumorphism.raised,
-        border: 'none'
+        border: 'none',
+        flexShrink: 0 // Prevent header from shrinking
       }}
     >
+        {/* App Name - Left Side */}
+        <div
+          style={{
+            fontSize: isRotated ? '24px' : '32px',
+            fontWeight: theme.typography.fontWeight.bold,
+            color: theme.colors.accent,
+            textShadow: `2px 2px 4px rgba(0, 0, 0, 0.3)`,
+            letterSpacing: '2px'
+          }}
+        >
+          YESSPLORA
+        </div>
 
         {/* Minimap Icon - Right Side */}
         <motion.button
@@ -40,8 +53,8 @@ const Header = ({ dynamicSpacing, isHighHeight }) => {
           whileTap={{ scale: 0.95 }}
           onClick={handleMinimapClick}
           style={{
-            width: '60px', // Smaller to fit reduced header
-            height: '60px', // Smaller to fit reduced header
+            width: isRotated ? '75px' : '90px', // 150% of original size
+            height: isRotated ? '75px' : '90px', // 150% of original size
             backgroundColor: theme.colors.accent,
             borderRadius: theme.borderRadius.full,
             display: 'flex',
@@ -65,8 +78,8 @@ const Header = ({ dynamicSpacing, isHighHeight }) => {
           src="/Campus-Map-Sample-Apartment-Complex-Full-Illustration.jpg"
           alt="Campus Map"
           style={{
-            width: '50px', // Smaller to fit reduced button
-            height: '50px', // Smaller to fit reduced button
+            width: isRotated ? '60px' : '75px', // 150% of original size
+            height: isRotated ? '60px' : '75px', // 150% of original size
             borderRadius: theme.borderRadius.full,
             objectFit: 'cover',
             border: 'none',

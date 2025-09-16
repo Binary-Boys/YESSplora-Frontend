@@ -62,22 +62,22 @@ const ProfilePopup = () => {
               zIndex: theme.zIndex.overlay,
               display: 'flex',
               alignItems: 'stretch',
-              justifyContent: 'flex-end'
+              justifyContent: 'flex-start'
             }}
             onClick={handleClose}
           >
             {/* Sidebar Content */}
             <motion.div
-              initial={{ x: '100%', opacity: 0 }}
+              initial={{ x: '-100%', opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
-              exit={{ x: '100%', opacity: 0 }}
+              exit={{ x: '-100%', opacity: 0 }}
               transition={{ duration: 0.3, type: "spring", stiffness: 300 }}
               style={{
                 backgroundColor: theme.colors.surface,
                 border: `3px solid ${theme.colors.primary}`,
-                borderRight: 'none',
-                borderTopLeftRadius: theme.borderRadius.xl,
-                borderBottomLeftRadius: theme.borderRadius.xl,
+                borderLeft: 'none',
+                borderTopRightRadius: theme.borderRadius.xl,
+                borderBottomRightRadius: theme.borderRadius.xl,
                 padding: theme.spacing.xl,
                 width: '400px',
                 maxWidth: '90vw',
@@ -94,7 +94,7 @@ const ProfilePopup = () => {
                 style={{
                   position: 'absolute',
                   top: theme.spacing.md,
-                  right: theme.spacing.md,
+                  left: theme.spacing.md,
                   width: '50px',
                   height: '50px',
                   backgroundColor: theme.colors.primary,
@@ -122,7 +122,7 @@ const ProfilePopup = () => {
                   textAlign: 'center',
                   marginBottom: theme.spacing.lg,
                   marginTop: theme.spacing.sm,
-                  paddingRight: '60px' // Make room for close button
+                  paddingLeft: '60px' // Make room for close button
                 }}
               >
                 Team Profile

@@ -23,7 +23,10 @@ body {
   background-color: #580404;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden;
+  overflow: hidden; /* Prevent scrolling when rotated */
+  position: fixed; /* Ensure body stays in place */
+  width: 100vw;
+  height: 100vh;
 }
 
 /* Mobile-first responsive design */
