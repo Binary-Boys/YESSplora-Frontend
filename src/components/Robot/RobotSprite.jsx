@@ -118,7 +118,8 @@ const RobotSprite = () => {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        height: '100%',
+        flex: 1,
+        width: '100%',
         padding: theme.spacing.xl
       }}
     >
@@ -154,52 +155,6 @@ const RobotSprite = () => {
         />
       </motion.div>
 
-      {/* Game Status Text */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5, duration: 0.5 }}
-        style={{
-          textAlign: 'center',
-          marginTop: theme.spacing.lg
-        }}
-      >
-                <h2
-                  style={{
-                    fontSize: `${parseInt(theme.typography.fontSize.xl) * 2}px`, // 2x larger
-                    fontWeight: theme.typography.fontWeight.bold,
-                    color: theme.colors.accent,
-                    marginBottom: theme.spacing.sm,
-                    textShadow: `2px 2px 4px ${theme.colors.primary}` // Added text shadow
-                  }}
-                >
-          {currentAnimation === 'victory' ? 'Mission Complete!' : 
-           currentAnimation === 'celebrate' ? 'Great Job!' :
-           currentAnimation === 'determined' ? 'Keep Going!' :
-           currentAnimation === 'excited' ? 'You\'re Doing Great!' :
-           'Ready to Explore!'}
-        </h2>
-                <p
-                  style={{
-                    fontSize: `${parseInt(theme.typography.fontSize.base) * 1.5}px`, // 1.5x larger
-                    color: theme.colors.textSecondary,
-                    marginBottom: theme.spacing.sm,
-                    textShadow: `1px 1px 2px ${theme.colors.primary}` // Added text shadow
-                  }}
-                >
-                  Completed: {state.gameProgress.completedLevels.length}/9 locations
-                </p>
-                <p
-                  style={{
-                    fontSize: `${parseInt(theme.typography.fontSize.lg) * 1.5}px`, // 1.5x larger
-                    fontWeight: theme.typography.fontWeight.semibold,
-                    color: theme.colors.accent,
-                    textShadow: `2px 2px 4px ${theme.colors.primary}` // Added text shadow
-                  }}
-                >
-                  Score: {state.gameProgress.totalScore} points
-                </p>
-      </motion.div>
     </motion.div>
   );
 };

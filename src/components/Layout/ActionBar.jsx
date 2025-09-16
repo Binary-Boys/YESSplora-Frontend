@@ -26,18 +26,16 @@ const ActionBar = () => {
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5, ease: "easeOut", delay: 0.2 }}
       style={{
-        position: 'fixed',
-        bottom: 0,
-        left: 0,
-        right: 0,
+        width: '100%',
         height: '400px', // Increased height
         backgroundColor: theme.colors.primary,
-        zIndex: theme.zIndex.sticky,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         padding: `0 ${theme.spacing.xl}`,
-        borderTop: `4px solid ${theme.colors.accent}` // Added border for visibility
+        borderTop: `4px solid ${theme.colors.accent}`,
+        borderRadius: theme.borderRadius.lg,
+        marginTop: theme.spacing.lg
       }}
     >
       {/* Camera Button - Left Side */}

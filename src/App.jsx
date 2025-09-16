@@ -14,31 +14,31 @@ function App() {
   return (
     <GameProvider>
       <RotatableContainer>
-        {/* Header Bar */}
-        <Header />
-        
-        {/* Main Content Area */}
+        {/* Main Content Area with all components */}
         <main
           style={{
-            paddingTop: '100px', // Increased header height
-            paddingBottom: '400px', // Increased action bar height
             minHeight: '100vh',
             backgroundColor: '#580404',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            justifyContent: 'center',
+            justifyContent: 'space-between',
             width: '100%',
             height: '100%',
-            flex: 1
+            position: 'relative',
+            overflow: 'hidden',
+            padding: '20px'
           }}
         >
-          {/* Robot Character */}
+          {/* Header Bar */}
+          <Header />
+          
+          {/* Robot Character - Center */}
           <RobotSprite />
+          
+          {/* Action Bar */}
+          <ActionBar />
         </main>
-        
-        {/* Action Bar */}
-        <ActionBar />
         
         {/* Popup Components */}
         <MinimapPopup />

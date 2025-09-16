@@ -17,18 +17,16 @@ const Header = () => {
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
       style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        height: '100px', // Increased height
+        width: '100%',
+        height: '120px', // Increased height
         backgroundColor: theme.colors.primary,
-        zIndex: theme.zIndex.sticky,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         padding: `0 ${theme.spacing.xl}`,
-        borderBottom: `4px solid ${theme.colors.accent}` // Added border for visibility
+        borderBottom: `4px solid ${theme.colors.accent}`,
+        borderRadius: theme.borderRadius.lg,
+        marginBottom: theme.spacing.lg
       }}
     >
       {/* Team Name - Left Side */}
@@ -43,12 +41,14 @@ const Header = () => {
       >
         <h1
           style={{
-            fontSize: `${parseInt(theme.typography.fontSize.xl) * 4}px`,
+            fontSize: `${parseInt(theme.typography.fontSize.xl) * 8}px`, // 8x larger (was 4x)
             fontWeight: theme.typography.fontWeight.bold,
             color: theme.colors.accent,
             margin: 0,
             fontFamily: 'sans-serif',
-            letterSpacing: '2px'
+            letterSpacing: '4px', // Increased letter spacing
+            textShadow: `4px 4px 8px ${theme.colors.primary}`, // Added text shadow
+            textAlign: 'center'
           }}
         >
           {team.name}
