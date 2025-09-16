@@ -27,7 +27,7 @@ const ActionBar = () => {
       transition={{ duration: 0.5, ease: "easeOut", delay: 0.2 }}
       style={{
         width: '100%',
-        height: '400px',
+        height: '120px', // Same height as header
         backgroundColor: theme.colors.primary,
         display: 'flex',
         alignItems: 'center',
