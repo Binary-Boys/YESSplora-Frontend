@@ -48,10 +48,10 @@ const ActionBar = () => {
         whileTap={{ scale: 0.95 }}
         onClick={handleCameraClick}
         style={{
-          width: '400px',
-          height: '280px',
+          width: '100px', // Same size as minimap
+          height: '100px', // Same size as minimap
           backgroundColor: theme.colors.secondary,
-          borderRadius: theme.borderRadius.md,
+          borderRadius: theme.borderRadius.full, // Round like minimap
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -60,7 +60,7 @@ const ActionBar = () => {
           boxShadow: ui.showQRScanner ? theme.shadows.neumorphism.pressed : theme.shadows.neumorphism.raised,
           border: 'none',
           flexDirection: 'column',
-          gap: '20px'
+          gap: '8px' // Reduced gap for smaller button
         }}
         onMouseEnter={(e) => {
           e.target.style.boxShadow = theme.shadows.neumorphism.soft;
@@ -72,7 +72,7 @@ const ActionBar = () => {
         {/* Camera Emoji */}
         <div
           style={{
-            fontSize: '150px', // Increased emoji size
+            fontSize: '40px', // Smaller to fit round button
             lineHeight: 1
           }}
         >
@@ -82,14 +82,14 @@ const ActionBar = () => {
         {/* Camera Label */}
         <div
           style={{
-            fontSize: '40px', // Increased text size
+            fontSize: '10px', // Much smaller text to fit
             fontWeight: theme.typography.fontWeight.bold,
             color: theme.colors.accent,
             textAlign: 'center',
-            textShadow: `2px 2px 4px ${theme.colors.primary}` // Added text shadow for visibility
+            textShadow: `1px 1px 2px ${theme.colors.primary}`
           }}
         >
-          CAMERA
+          CAM
         </div>
       </motion.button>
 
@@ -102,8 +102,8 @@ const ActionBar = () => {
         whileTap={{ scale: 0.95 }}
         onClick={handleProfileClick}
         style={{
-          width: '280px',
-          height: '280px',
+          width: '100px', // Same size as minimap and camera
+          height: '100px', // Same size as minimap and camera
           backgroundColor: theme.colors.secondary,
           borderRadius: theme.borderRadius.full,
           display: 'flex',
@@ -115,7 +115,7 @@ const ActionBar = () => {
           border: 'none',
           position: 'relative',
           flexDirection: 'column',
-          gap: '16px'
+          gap: '8px' // Reduced gap for smaller button
         }}
         onMouseEnter={(e) => {
           e.target.style.boxShadow = theme.shadows.neumorphism.soft;
@@ -124,10 +124,10 @@ const ActionBar = () => {
           e.target.style.boxShadow = ui.showProfile ? theme.shadows.neumorphism.pressed : theme.shadows.neumorphism.raised;
         }}
       >
-        {/* Profile Icon - Larger design */}
+        {/* Profile Icon - Smaller design */}
         <div
           style={{
-            fontSize: '120px', // Large profile emoji
+            fontSize: '40px', // Smaller to fit round button
             lineHeight: 1
           }}
         >
@@ -137,14 +137,14 @@ const ActionBar = () => {
         {/* Profile Label */}
         <div
           style={{
-            fontSize: '32px', // Profile text
+            fontSize: '10px', // Much smaller text to fit
             fontWeight: theme.typography.fontWeight.bold,
             color: theme.colors.accent,
             textAlign: 'center',
-            textShadow: `2px 2px 4px ${theme.colors.primary}` // Added text shadow for visibility
+            textShadow: `1px 1px 2px ${theme.colors.primary}`
           }}
         >
-          PROFILE
+          PRO
         </div>
       </motion.button>
     </motion.footer>
