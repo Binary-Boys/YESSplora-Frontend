@@ -73,11 +73,6 @@ function App() {
             isHighHeight={isHighHeight} 
             isRotated={false}
             isVisible={isVisible}
-            onLogout={() => {
-              try { localStorage.removeItem('yess_auth'); } catch {}
-              setIsAuthenticated(false);
-              setCurrentView('auth');
-            }}
           />
           
           {/* Robot Character - Center */}

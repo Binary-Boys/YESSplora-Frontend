@@ -32,7 +32,7 @@ const AuthPage = ({ onLoginSuccess }) => {
   return (
     <div
       style={{
-        minHeight: '100vh',
+        height: '100vh',
         width: '100%',
         background: 'linear-gradient(-45deg, #580404, #000000, #580404, #2a0202)',
         backgroundSize: '400% 400%',
@@ -40,9 +40,12 @@ const AuthPage = ({ onLoginSuccess }) => {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
         position: 'relative',
-        overflow: 'hidden'
+        overflowX: 'hidden',
+        overflowY: 'auto',
+        WebkitOverflowScrolling: 'touch',
+        overscrollBehavior: 'contain'
       }}
     >
       {/* Floating dots background */}
@@ -148,7 +151,7 @@ const AuthPage = ({ onLoginSuccess }) => {
         style={{
           width: '100%',
           maxWidth: '1000px',
-          padding: '40px 20px 20px',
+          padding: '60px 20px 40px',
           zIndex: 10,
           position: 'relative'
         }}

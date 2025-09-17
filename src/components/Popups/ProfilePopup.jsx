@@ -9,6 +9,20 @@ const ProfilePopup = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedMembers, setEditedMembers] = useState(team.members);
 
+  const handleLogout = () => {
+    try {
+      actions.logout();
+    } catch {}
+    try {
+      localStorage.removeItem('yess_auth');
+      // Optional: clear cached game state
+      // localStorage.removeItem('yessplora-game-state');
+    } catch {}
+    actions.closeAllPopups();
+    // Redirect to initial screen (Auth)
+    window.location.href = '/';
+  };
+
   const handleClose = () => {
     actions.closeAllPopups();
     setIsEditing(false);
@@ -443,6 +457,34 @@ const ProfilePopup = () => {
                     </p>
                   </div>
                 </div>
+              </div>
+
+              {/* Logout Section */}
+              <div
+                style={{
+                  marginTop: theme.spacing.lg,
+                  display: 'flex',
+                  justifyContent: 'center'
+                }}
+              >
+                <button
+                  onClick={handleLogout}
+                  className="shimmer-button"
+                  style={{
+                    padding: `${theme.spacing.sm} ${theme.spacing.lg}`,
+                    borderRadius: theme.borderRadius.lg,
+                    border: 'none',
+                    background: 'linear-gradient(90deg, #ff6b6b 0%, #ff8b8b 50%, #ff6b6b 100%)',
+                    backgroundSize: '200% 100%',
+                    animation: 'shimmer 2s ease-in-out infinite',
+                    color: theme.colors.accent,
+                    fontWeight: theme.typography.fontWeight.bold,
+                    cursor: 'pointer',
+                    boxShadow: theme.shadows.neumorphism.raised
+                  }}
+                >
+                  Logout
+                </button>
               </div>
             </motion.div>
           </motion.div>

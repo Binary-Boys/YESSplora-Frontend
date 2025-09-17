@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { useGame } from '../../contexts/GameContext';
 import { theme } from '../../styles/theme';
 
-const Header = ({ dynamicSpacing, isHighHeight, isRotated, isVisible = true, onLogout }) => {
+const Header = ({ dynamicSpacing, isHighHeight, isRotated, isVisible = true }) => {
   const { state, actions } = useGame();
   const { team, ui } = state;
 
@@ -64,12 +64,12 @@ const Header = ({ dynamicSpacing, isHighHeight, isRotated, isVisible = true, onL
           YESSPLORA
         </div>
 
-        {/* Right Side Button Group - Leaderboard, Minimap, Logout */}
+        {/* Right Side Button Group - Leaderboard and Minimap */}
         <div
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '10px' // Small gap between buttons
+            gap: '10px' // Small gap between leaderboard and minimap buttons
           }}
         >
           {/* Leaderboard Button */}
@@ -176,31 +176,6 @@ const Header = ({ dynamicSpacing, isHighHeight, isRotated, isVisible = true, onL
           }}
         />
       </motion.button>
-          {/* Logout Button */}
-          <motion.button
-            initial={{ x: 50, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ delay: 0.35, duration: 0.5 }}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={onLogout}
-            className="shimmer-button"
-            style={{
-              padding: isMobile ? '6px 10px' : '8px 14px',
-              borderRadius: '10px',
-              border: 'none',
-              background: 'linear-gradient(90deg, #c0c0c0 0%, #e8e8e8 25%, #f0f0f0 50%, #e8e8e8 75%, #c0c0c0 100%)',
-              backgroundSize: '200% 100%',
-              color: theme.colors.primary,
-              fontSize: isMobile ? '12px' : '14px',
-              fontWeight: theme.typography.fontWeight.bold,
-              cursor: 'pointer',
-              transition: theme.transitions.fast,
-              boxShadow: theme.shadows.neumorphism.raised
-            }}
-          >
-            Logout
-          </motion.button>
         </div> {/* End of Right Side Button Group */}
     </motion.header>
   );
