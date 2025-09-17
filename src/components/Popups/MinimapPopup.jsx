@@ -74,9 +74,11 @@ const MinimapPopup = () => {
                 backgroundColor: theme.colors.surface,
                 border: `3px solid ${theme.colors.primary}`,
                 borderRadius: theme.borderRadius.xl,
-                padding: theme.spacing.xl,
-                maxWidth: '90vw',
-                maxHeight: '90vh',
+                padding: theme.spacing.lg, // Reduced padding for more compact appearance
+                width: 'auto', // Auto width to fit content
+                maxWidth: '95vw', // Still respect viewport width
+                height: 'auto', // Auto height to fit content
+                maxHeight: '90vh', // Allow scrolling if needed
                 overflow: 'auto',
                 position: 'relative',
                 boxShadow: theme.shadows['2xl']
@@ -116,7 +118,7 @@ const MinimapPopup = () => {
                   fontWeight: theme.typography.fontWeight.bold,
                   color: theme.colors.accent,
                   textAlign: 'center',
-                  marginBottom: theme.spacing.lg,
+                  marginBottom: theme.spacing.sm, // Reduced bottom margin
                   marginTop: theme.spacing.sm
                 }}
               >
@@ -128,13 +130,13 @@ const MinimapPopup = () => {
                 style={{
                   position: 'relative',
                   width: '100%',
-                  maxWidth: '800px',
-                  aspectRatio: '4/3',
+                  maxWidth: '1000px', // Increased max width for more rectangular shape
+                  aspectRatio: '16/9', // Changed from 4/3 to 16/9 for more rectangular appearance
                   backgroundColor: theme.colors.background,
                   borderRadius: theme.borderRadius.lg,
                   border: `4px solid ${theme.colors.border}`,
                   overflow: 'hidden',
-                  marginBottom: theme.spacing.lg,
+                  marginBottom: theme.spacing.sm, // Reduced bottom margin for more compact appearance
                   margin: '0 auto'
                 }}
               >
@@ -385,7 +387,7 @@ const MinimapPopup = () => {
               <div
                 style={{
                   backgroundColor: theme.colors.background,
-                  padding: theme.spacing.md,
+                  padding: theme.spacing.sm, // Reduced padding for more compact appearance
                   borderRadius: theme.borderRadius.md,
                   border: `1px solid ${theme.colors.border}`,
                   textAlign: 'center'

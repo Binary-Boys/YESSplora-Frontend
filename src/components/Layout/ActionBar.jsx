@@ -1,9 +1,10 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import { useGame } from '../../contexts/GameContext';
 import { useOrientation } from '../../hooks/useOrientation';
 import { theme } from '../../styles/theme';
 
-const ActionBar = ({ dynamicSpacing, isHighHeight, dimensions }) => {
+const ActionBar = ({ dynamicSpacing, isHighHeight, dimensions, isVisible = true }) => {
   const { state, actions } = useGame();
   const { ui } = state;
   const { isPortraitMode, shouldRotate, alwaysRotated } = useOrientation();
@@ -25,15 +26,26 @@ const ActionBar = ({ dynamicSpacing, isHighHeight, dimensions }) => {
   const isNarrowScreen = dimensions && dimensions.width < 1600;
   const isRotated = alwaysRotated; // Always rotated now
   
+  // Mobile detection based on viewport width
+  const isMobile = window.innerWidth <= 768;
+  
   return (
-    <div
+    <motion.div
+      initial={{ y: 100, opacity: 0 }}
+      animate={{ 
+        y: isVisible ? 0 : 100, 
+        opacity: isVisible ? 1 : 0 
+      }}
+      transition={{ duration: 0.5, ease: "easeInOut" }}
       style={{
         width: '100%', // Always full width
-        height: isRotated ? '90px' : '120px', // 150% of original size
+        height: isMobile 
+          ? (isRotated ? '63px' : '84px') // 30% reduction for mobile (90*0.7=63, 120*0.7=84)
+          : (isRotated ? '90px' : '120px'), // 150% of original size for desktop
         backgroundColor: theme.colors.primary,
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'space-between', // Always use space-between to align profile to right
+        justifyContent: 'space-between', // Camera on left, support+profile grouped on right
         padding: isNarrowScreen || isRotated ? '0 10px 0 10px' : '0 15px 0 15px', // Minimal padding for closer to edges
         borderRadius: theme.borderRadius.lg,
         marginTop: '2px', // Very minimal margin for all cases
@@ -44,13 +56,13 @@ const ActionBar = ({ dynamicSpacing, isHighHeight, dimensions }) => {
       }}
     >
       {/* Camera Button - Left Side - Always show since we're managing layout differently now */}
-      <button
+        <button
           onClick={handleCameraClick}
+          className="shimmer-button"
           style={{
-            width: '90px', // 150% of original size
-            height: '90px', // 150% of original size
-            backgroundColor: theme.colors.secondary,
-            borderRadius: theme.borderRadius.full,
+            width: isMobile ? '63px' : '90px', // 30% reduction for mobile
+            height: isMobile ? '63px' : '90px', // 30% reduction for mobile
+            borderRadius: '12px', // Squaricle - square with rounded corners
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -72,7 +84,7 @@ const ActionBar = ({ dynamicSpacing, isHighHeight, dimensions }) => {
           {/* Camera Emoji */}
           <div
             style={{
-              fontSize: '36px', // 150% of original size
+              fontSize: isMobile ? '25px' : '36px', // 30% reduction for mobile
               lineHeight: 1
             }}
           >
@@ -82,7 +94,7 @@ const ActionBar = ({ dynamicSpacing, isHighHeight, dimensions }) => {
           {/* Camera Label */}
           <div
             style={{
-              fontSize: '12px', // 150% of original size
+              fontSize: isMobile ? '8px' : '12px', // 30% reduction for mobile
               fontWeight: theme.typography.fontWeight.bold,
               color: theme.colors.accent,
               textAlign: 'center',
@@ -93,14 +105,86 @@ const ActionBar = ({ dynamicSpacing, isHighHeight, dimensions }) => {
           </div>
         </button>
 
-      {/* Profile Button - Right Side */}
+      {/* Right Side Button Group - Support and Profile */}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '10px' // Small gap between support and profile buttons
+        }}
+      >
+        {/* Support Button */}
+        <button
+          onClick={() => {
+            actions.toggleSupport();
+          }}
+          className="shimmer-button"
+          style={{
+            width: isMobile 
+              ? (isRotated ? '53px' : '63px') // 30% reduction for mobile
+              : (isRotated ? '75px' : '90px'), // 150% of original size for desktop
+            height: isMobile 
+              ? (isRotated ? '53px' : '63px') // 30% reduction for mobile
+              : (isRotated ? '75px' : '90px'), // 150% of original size for desktop
+            borderRadius: '12px', // Squaricle - square with rounded corners
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            transition: theme.transitions.fast,
+            boxShadow: theme.shadows.neumorphism.raised,
+            border: 'none',
+            position: 'relative',
+            flexDirection: 'column',
+            gap: '6px' // 150% of original gap
+          }}
+          onMouseEnter={(e) => {
+            e.target.style.boxShadow = theme.shadows.neumorphism.soft;
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.boxShadow = theme.shadows.neumorphism.raised;
+          }}
+        >
+          {/* Support Icon */}
+          <div
+            style={{
+              fontSize: isMobile 
+                ? (isRotated ? '21px' : '25px') // 30% reduction for mobile
+                : (isRotated ? '30px' : '36px'), // 150% of original size for desktop
+              lineHeight: 1
+            }}
+          >
+            📞
+          </div>
+          
+          {/* Support Label */}
+          <div
+            style={{
+              fontSize: isMobile 
+                ? (isRotated ? '6px' : '8px') // 30% reduction for mobile
+                : (isRotated ? '9px' : '12px'), // 150% of original size for desktop
+              fontWeight: theme.typography.fontWeight.bold,
+              color: theme.colors.accent,
+              textAlign: 'center',
+              textShadow: `1px 1px 2px ${theme.colors.primary}`
+            }}
+          >
+            SUPPORT
+          </div>
+        </button>
+
+        {/* Profile Button */}
       <button
         onClick={handleProfileClick}
+        className="shimmer-button"
         style={{
-          width: isRotated ? '75px' : '90px', // 150% of original size
-          height: isRotated ? '75px' : '90px', // 150% of original size
-          backgroundColor: theme.colors.secondary,
-          borderRadius: theme.borderRadius.full,
+            width: isMobile 
+              ? (isRotated ? '53px' : '63px') // 30% reduction for mobile
+              : (isRotated ? '75px' : '90px'), // 150% of original size for desktop
+            height: isMobile 
+              ? (isRotated ? '53px' : '63px') // 30% reduction for mobile
+              : (isRotated ? '75px' : '90px'), // 150% of original size for desktop
+          borderRadius: '12px', // Squaricle - square with rounded corners
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -122,7 +206,9 @@ const ActionBar = ({ dynamicSpacing, isHighHeight, dimensions }) => {
         {/* Profile Icon - Smaller design */}
         <div
           style={{
-            fontSize: isRotated ? '30px' : '36px', // 150% of original size
+            fontSize: isMobile 
+              ? (isRotated ? '21px' : '25px') // 30% reduction for mobile
+              : (isRotated ? '30px' : '36px'), // 150% of original size for desktop
             lineHeight: 1
           }}
         >
@@ -132,7 +218,9 @@ const ActionBar = ({ dynamicSpacing, isHighHeight, dimensions }) => {
         {/* Profile Label */}
         <div
           style={{
-            fontSize: isRotated ? '9px' : '12px', // 150% of original size
+            fontSize: isMobile 
+              ? (isRotated ? '6px' : '8px') // 30% reduction for mobile
+              : (isRotated ? '9px' : '12px'), // 150% of original size for desktop
             fontWeight: theme.typography.fontWeight.bold,
             color: theme.colors.accent,
             textAlign: 'center',
@@ -142,7 +230,8 @@ const ActionBar = ({ dynamicSpacing, isHighHeight, dimensions }) => {
           PRO
         </div>
       </button>
-    </div>
+      </div> {/* End of Right Side Button Group */}
+    </motion.div>
   );
 };
 

@@ -14,8 +14,8 @@ export const useOrientation = () => {
       
       setDimensions({ width, height });
       
-      // Always force landscape mode (always rotate)
-      setIsLandscape(true);
+      // Always force vertical mode (no rotation)
+      setIsLandscape(false);
     };
 
     // Initial check
@@ -82,11 +82,11 @@ export const useOrientation = () => {
     isLandscape,
     dimensions,
     effectiveDimensions,
-    shouldRotate: true, // Always rotate
+    shouldRotate: false, // Never rotate - stay vertical
     dynamicSpacing: getDynamicSpacing(),
     isHighHeight: effectiveDimensions.height > 800,
-    isPortraitMode: true, // Always treat as portrait to force rotation
-    alwaysRotated: true // New flag to indicate forced rotation
+    isPortraitMode: false, // Natural vertical mode
+    alwaysRotated: false // No rotation - vertical mode
   };
 };
 

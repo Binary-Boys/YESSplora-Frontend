@@ -3,9 +3,12 @@ import { motion } from 'framer-motion';
 import { useGame } from '../../contexts/GameContext';
 import { theme } from '../../styles/theme';
 
-const Header = ({ dynamicSpacing, isHighHeight, isRotated }) => {
+const Header = ({ dynamicSpacing, isHighHeight, isRotated, isVisible = true }) => {
   const { state, actions } = useGame();
   const { team, ui } = state;
+
+  // Mobile detection based on viewport width
+  const isMobile = window.innerWidth <= 768;
 
   const handleMinimapClick = () => {
     actions.toggleMinimap();
@@ -14,17 +17,22 @@ const Header = ({ dynamicSpacing, isHighHeight, isRotated }) => {
   return (
     <motion.header
       initial={{ y: -100, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.5, ease: "easeOut" }}
+      animate={{ 
+        y: isVisible ? 0 : -100, 
+        opacity: isVisible ? 1 : 0 
+      }}
+      transition={{ duration: 0.5, ease: "easeInOut" }}
       style={{
         width: '100%',
-        height: isRotated ? '90px' : '120px', // 150% of original size
+        height: isMobile 
+          ? (isRotated ? '63px' : '84px') // 30% reduction for mobile (90*0.7=63, 120*0.7=84)
+          : (isRotated ? '90px' : '120px'), // 150% of original size for desktop
         backgroundColor: theme.colors.primary,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         padding: isRotated ? '0 10px' : '0 15px', // Minimal padding for closer to edges
-        borderRadius: theme.borderRadius.lg,
+         borderRadius: '20px', // Increased corner radius for more rounded appearance
         marginBottom: '2px', // Very minimal margin for all cases
         boxShadow: theme.shadows.neumorphism.raised,
         border: 'none',
@@ -33,12 +41,17 @@ const Header = ({ dynamicSpacing, isHighHeight, isRotated }) => {
     >
         {/* App Name - Left Side */}
         <div
+          className="distorted-text"
           style={{
-            fontSize: isRotated ? '24px' : '32px',
+            fontSize: isMobile 
+              ? (isRotated ? '17px' : '22px') // 30% reduction for mobile
+              : (isRotated ? '24px' : '32px'),
             fontWeight: theme.typography.fontWeight.bold,
             color: theme.colors.accent,
             textShadow: `2px 2px 4px rgba(0, 0, 0, 0.3)`,
-            letterSpacing: '2px'
+            letterSpacing: '2px',
+            transformStyle: 'preserve-3d',
+            backfaceVisibility: 'hidden'
           }}
         >
           YESSPLORA
@@ -52,11 +65,15 @@ const Header = ({ dynamicSpacing, isHighHeight, isRotated }) => {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={handleMinimapClick}
+          className="shimmer-button"
           style={{
-            width: isRotated ? '75px' : '90px', // 150% of original size
-            height: isRotated ? '75px' : '90px', // 150% of original size
-            backgroundColor: theme.colors.accent,
-            borderRadius: theme.borderRadius.full,
+            width: isMobile 
+              ? (isRotated ? '53px' : '63px') // 30% reduction for mobile
+              : (isRotated ? '75px' : '90px'), // 150% of original size for desktop
+            height: isMobile 
+              ? (isRotated ? '53px' : '63px') // 30% reduction for mobile
+              : (isRotated ? '75px' : '90px'), // 150% of original size for desktop
+            borderRadius: '12px', // Squaricle - square with rounded corners
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -78,8 +95,12 @@ const Header = ({ dynamicSpacing, isHighHeight, isRotated }) => {
           src="/Campus-Map-Sample-Apartment-Complex-Full-Illustration.jpg"
           alt="Campus Map"
           style={{
-            width: isRotated ? '60px' : '75px', // 150% of original size
-            height: isRotated ? '60px' : '75px', // 150% of original size
+              width: isMobile 
+                ? (isRotated ? '42px' : '53px') // 30% reduction for mobile
+                : (isRotated ? '60px' : '75px'), // 150% of original size for desktop
+              height: isMobile 
+                ? (isRotated ? '42px' : '53px') // 30% reduction for mobile
+                : (isRotated ? '60px' : '75px'), // 150% of original size for desktop
             borderRadius: theme.borderRadius.full,
             objectFit: 'cover',
             border: 'none',

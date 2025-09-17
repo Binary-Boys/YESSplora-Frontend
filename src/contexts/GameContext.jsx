@@ -46,6 +46,8 @@ const initialState = {
     showProfile: false,
     showQRScanner: false,
     showVolunteerScoring: false,
+    showLeaderboard: false,
+    showSupport: false,
     currentPopup: null
   },
   
@@ -78,6 +80,8 @@ const ActionTypes = {
   TOGGLE_PROFILE: 'TOGGLE_PROFILE',
   TOGGLE_QR_SCANNER: 'TOGGLE_QR_SCANNER',
   TOGGLE_VOLUNTEER_SCORING: 'TOGGLE_VOLUNTEER_SCORING',
+  TOGGLE_LEADERBOARD: 'TOGGLE_LEADERBOARD',
+  TOGGLE_SUPPORT: 'TOGGLE_SUPPORT',
   SET_CURRENT_POPUP: 'SET_CURRENT_POPUP',
   CLOSE_ALL_POPUPS: 'CLOSE_ALL_POPUPS',
   
@@ -237,7 +241,38 @@ const gameReducer = (state, action) => {
           showMinimap: false,
           showProfile: false,
           showQRScanner: false,
+          showLeaderboard: false,
           currentPopup: state.ui.showVolunteerScoring ? null : 'volunteer'
+        }
+      };
+      
+    case ActionTypes.TOGGLE_LEADERBOARD:
+      return {
+        ...state,
+        ui: {
+          ...state.ui,
+          showLeaderboard: !state.ui.showLeaderboard,
+          showMinimap: false,
+          showProfile: false,
+          showQRScanner: false,
+          showVolunteerScoring: false,
+          showSupport: false,
+          currentPopup: state.ui.showLeaderboard ? null : 'leaderboard'
+        }
+      };
+      
+    case ActionTypes.TOGGLE_SUPPORT:
+      return {
+        ...state,
+        ui: {
+          ...state.ui,
+          showSupport: !state.ui.showSupport,
+          showMinimap: false,
+          showProfile: false,
+          showQRScanner: false,
+          showVolunteerScoring: false,
+          showLeaderboard: false,
+          currentPopup: state.ui.showSupport ? null : 'support'
         }
       };
       
@@ -370,6 +405,8 @@ export const GameProvider = ({ children }) => {
     toggleProfile: () => dispatch({ type: ActionTypes.TOGGLE_PROFILE }),
     toggleQRScanner: () => dispatch({ type: ActionTypes.TOGGLE_QR_SCANNER }),
     toggleVolunteerScoring: () => dispatch({ type: ActionTypes.TOGGLE_VOLUNTEER_SCORING }),
+    toggleLeaderboard: () => dispatch({ type: ActionTypes.TOGGLE_LEADERBOARD }),
+    toggleSupport: () => dispatch({ type: ActionTypes.TOGGLE_SUPPORT }),
     setCurrentPopup: (popup) => dispatch({ type: ActionTypes.SET_CURRENT_POPUP, payload: popup }),
     closeAllPopups: () => dispatch({ type: ActionTypes.CLOSE_ALL_POPUPS }),
     

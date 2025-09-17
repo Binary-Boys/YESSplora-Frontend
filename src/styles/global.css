@@ -85,6 +85,118 @@ body::after {
   animation: floatUp 25s linear infinite;
 }
 
+/* Silver shimmer animation for buttons */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Text distortion effects */
+@keyframes textDistortion {
+  0% {
+    transform: perspective(400px) rotateX(0deg) rotateY(0deg) scale(1);
+    filter: hue-rotate(0deg) saturate(1);
+  }
+  25% {
+    transform: perspective(400px) rotateX(5deg) rotateY(-3deg) scale(1.02);
+    filter: hue-rotate(90deg) saturate(1.2);
+  }
+  50% {
+    transform: perspective(400px) rotateX(-3deg) rotateY(5deg) scale(0.98);
+    filter: hue-rotate(180deg) saturate(0.8);
+  }
+  75% {
+    transform: perspective(400px) rotateX(3deg) rotateY(-2deg) scale(1.01);
+    filter: hue-rotate(270deg) saturate(1.1);
+  }
+  100% {
+    transform: perspective(400px) rotateX(0deg) rotateY(0deg) scale(1);
+    filter: hue-rotate(360deg) saturate(1);
+  }
+}
+
+@keyframes textGlitch {
+  0% {
+    text-shadow: 
+      2px 2px 4px rgba(0, 0, 0, 0.3),
+      0 0 10px rgba(255, 255, 255, 0.1);
+  }
+  20% {
+    text-shadow: 
+      2px 2px 4px rgba(0, 0, 0, 0.3),
+      0 0 10px rgba(255, 255, 255, 0.1),
+      2px 0 0 #ff0000,
+      -2px 0 0 #00ffff;
+  }
+  40% {
+    text-shadow: 
+      2px 2px 4px rgba(0, 0, 0, 0.3),
+      0 0 10px rgba(255, 255, 255, 0.1),
+      -2px 0 0 #ff0000,
+      2px 0 0 #00ffff;
+  }
+  60% {
+    text-shadow: 
+      2px 2px 4px rgba(0, 0, 0, 0.3),
+      0 0 10px rgba(255, 255, 255, 0.1),
+      1px 0 0 #ff0000,
+      -1px 0 0 #00ffff;
+  }
+  80% {
+    text-shadow: 
+      2px 2px 4px rgba(0, 0, 0, 0.3),
+      0 0 10px rgba(255, 255, 255, 0.1),
+      -1px 0 0 #ff0000,
+      1px 0 0 #00ffff;
+  }
+  100% {
+    text-shadow: 
+      2px 2px 4px rgba(0, 0, 0, 0.3),
+      0 0 10px rgba(255, 255, 255, 0.1);
+  }
+}
+
+.distorted-text {
+  animation: textDistortion 4s ease-in-out infinite, textGlitch 2s ease-in-out infinite;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+}
+
+.shimmer-button {
+  background: linear-gradient(
+    90deg,
+    #c0c0c0 0%,
+    #e8e8e8 25%,
+    #f0f0f0 50%,
+    #e8e8e8 75%,
+    #c0c0c0 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s ease-in-out infinite;
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  animation: shimmer 2s ease-in-out infinite;
+}
+
 /* Mobile-first responsive design */
 @media (max-width: 768px) {
   body {

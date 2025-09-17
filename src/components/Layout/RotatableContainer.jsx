@@ -12,31 +12,15 @@ const RotatableContainer = ({ children }) => {
     backgroundColor: theme.colors.primary,
     position: 'relative',
     display: 'flex',
-    flexDirection: 'column'
+    flexDirection: 'column',
+    minWidth: '750px' // Prevent container from reducing size below 750px
   };
 
-  // Always apply rotation since we're forcing tilt mode
-  if (alwaysRotated) {
-    // Fixed size - no scaling based on screen size
-    
-    // When rotated, we need to swap width/height and adjust positioning
-    Object.assign(containerStyle, {
-      width: '100vh', // Use viewport height as width
-      height: '100vw', // Use viewport width as height
-      position: 'fixed', // Use fixed positioning for better control
-      top: '50%',
-      left: '50%',
-      transform: `translate(-50%, -50%) rotate(-90deg)`, // Remove scale
-      transformOrigin: 'center center',
-      zIndex: 1000, // Ensure it stays on top
-      maxWidth: '100vh', // Ensure it doesn't exceed viewport bounds
-      maxHeight: '100vw' // Ensure it doesn't exceed viewport bounds
-    });
-  }
+  // No rotation - keep vertical layout
 
   return (
     <div style={containerStyle}>
-      {/* Add a wrapper div to help with content scaling when rotated */}
+      {/* Wrapper div for content layout */}
       <div 
         style={{
           width: '100%',
@@ -44,10 +28,12 @@ const RotatableContainer = ({ children }) => {
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          justifyContent: 'space-between', // Change from center to space-between
-          padding: alwaysRotated ? '5px' : '0', // Reduced padding for more space
+          justifyContent: 'space-between',
+          padding: '25px', // Fixed 25px padding from all edges
           boxSizing: 'border-box',
-          minHeight: '100%' // Ensure it takes full height
+          minHeight: '100%',
+          minWidth: '750px', // Prevent container from reducing size below 750px
+          maxWidth: 'none' // Remove any max width restrictions
         }}
       >
         {children}
