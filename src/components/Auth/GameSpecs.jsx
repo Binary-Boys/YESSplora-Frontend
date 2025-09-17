@@ -112,11 +112,53 @@ const GameSpecs = ({ onLoginClick }) => {
         />
       </motion.div>
 
-      {/* Simple Description */}
+      {/* Call to Action FIRST */}
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.6, duration: 0.6 }}
+        style={{ textAlign: 'center' }}
+      >
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={onLoginClick}
+          className="shimmer-button"
+          style={{
+            padding: '18px 40px',
+            borderRadius: '15px',
+            border: 'none',
+            background: 'linear-gradient(90deg, #c0c0c0 0%, #e8e8e8 25%, #f0f0f0 50%, #e8e8e8 75%, #c0c0c0 100%)',
+            backgroundSize: '200% 100%',
+            animation: 'shimmer 2s ease-in-out infinite',
+            color: theme.colors.primary,
+            fontSize: '1.2rem',
+            fontWeight: theme.typography.fontWeight.bold,
+            cursor: 'pointer',
+            transition: theme.transitions.fast,
+            boxShadow: theme.shadows.neumorphism.raised,
+            letterSpacing: '1px'
+          }}
+        >
+          🚀 START YOUR ADVENTURE
+        </motion.button>
+        <p
+          style={{
+            fontSize: '0.9rem',
+            color: theme.colors.textSecondary,
+            marginTop: '15px',
+            opacity: 0.8
+          }}
+        >
+          Join thousands of students in the ultimate campus exploration experience
+        </p>
+      </motion.div>
+
+      {/* Simple Description and Badges AFTER */}
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.8, duration: 0.6 }}
         style={{
           textAlign: 'center',
           maxWidth: '600px',
@@ -162,51 +204,6 @@ const GameSpecs = ({ onLoginClick }) => {
             <div style={{ fontSize: '0.9rem', color: theme.colors.textSecondary }}>ELO Rating</div>
           </div>
         </div>
-      </motion.div>
-
-      {/* Call to Action */}
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.8, duration: 0.6 }}
-        style={{
-          textAlign: 'center',
-          marginTop: '40px'
-        }}
-      >
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={onLoginClick}
-          className="shimmer-button"
-          style={{
-            padding: '18px 40px',
-            borderRadius: '15px',
-            border: 'none',
-            background: 'linear-gradient(90deg, #c0c0c0 0%, #e8e8e8 25%, #f0f0f0 50%, #e8e8e8 75%, #c0c0c0 100%)',
-            backgroundSize: '200% 100%',
-            animation: 'shimmer 2s ease-in-out infinite',
-            color: theme.colors.primary,
-            fontSize: '1.2rem',
-            fontWeight: theme.typography.fontWeight.bold,
-            cursor: 'pointer',
-            transition: theme.transitions.fast,
-            boxShadow: theme.shadows.neumorphism.raised,
-            letterSpacing: '1px'
-          }}
-        >
-          🚀 START YOUR ADVENTURE
-        </motion.button>
-        <p
-          style={{
-            fontSize: '0.9rem',
-            color: theme.colors.textSecondary,
-            marginTop: '15px',
-            opacity: 0.8
-          }}
-        >
-          Join thousands of students in the ultimate campus exploration experience
-        </p>
       </motion.div>
     </motion.div>
   );
