@@ -26,18 +26,19 @@ function App() {
           style={{
             minHeight: '100%',
             height: '100%',
+            maxHeight: '100vh', // Ensure it doesn't exceed viewport height
             backgroundColor: '#580404',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'space-between',
             width: '100%',
-            minWidth: '710px', // Support parent container's 750px with 20px padding on each side
+            minWidth: window.innerWidth <= 768 ? '320px' : '710px', // Responsive min width for mobile
             position: 'relative',
             zIndex: 10, // Ensure content appears above floating dots
             overflow: 'visible', // Allow content to be visible
             padding: '0', // Remove padding since parent container handles it with fixed 20px
-            gap: dynamicSpacing, // Use dynamic spacing for vertical layout
+            gap: window.innerWidth <= 768 ? '8px' : dynamicSpacing, // Smaller gap for mobile
             boxSizing: 'border-box'
           }}
         >

@@ -14,6 +14,10 @@ const Header = ({ dynamicSpacing, isHighHeight, isRotated, isVisible = true }) =
     actions.toggleMinimap();
   };
 
+  const handleLeaderboardClick = () => {
+    actions.toggleLeaderboard();
+  };
+
   return (
     <motion.header
       initial={{ y: -100, opacity: 0 }}
@@ -25,8 +29,8 @@ const Header = ({ dynamicSpacing, isHighHeight, isRotated, isVisible = true }) =
       style={{
         width: '100%',
         height: isMobile 
-          ? (isRotated ? '63px' : '84px') // 30% reduction for mobile (90*0.7=63, 120*0.7=84)
-          : (isRotated ? '90px' : '120px'), // 150% of original size for desktop
+          ? (isRotated ? '45px' : '60px') // 50% reduction for mobile for better fit
+          : (isRotated ? '90px' : '120px'), // Desktop size unchanged
         backgroundColor: theme.colors.primary,
         display: 'flex',
         alignItems: 'center',
@@ -57,8 +61,63 @@ const Header = ({ dynamicSpacing, isHighHeight, isRotated, isVisible = true }) =
           YESSPLORA
         </div>
 
-        {/* Minimap Icon - Right Side */}
-        <motion.button
+        {/* Right Side Button Group - Leaderboard and Minimap */}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px' // Small gap between leaderboard and minimap buttons
+          }}
+        >
+          {/* Leaderboard Button */}
+          <motion.button
+            initial={{ x: 50, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ delay: 0.2, duration: 0.5 }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={handleLeaderboardClick}
+            className="shimmer-button"
+            style={{
+              width: isMobile 
+                ? (isRotated ? '35px' : '45px') // 50% reduction for mobile
+                : (isRotated ? '75px' : '90px'), // Desktop size unchanged
+              height: isMobile 
+                ? (isRotated ? '35px' : '45px') // 50% reduction for mobile
+                : (isRotated ? '75px' : '90px'), // Desktop size unchanged
+              borderRadius: '12px', // Squaricle - square with rounded corners
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              transition: theme.transitions.fast,
+              boxShadow: ui.showLeaderboard ? theme.shadows.neumorphism.pressed : theme.shadows.neumorphism.raised,
+              border: 'none',
+              position: 'relative'
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.boxShadow = theme.shadows.neumorphism.soft;
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.boxShadow = ui.showLeaderboard ? theme.shadows.neumorphism.pressed : theme.shadows.neumorphism.raised;
+            }}
+          >
+            {/* Trophy/Ranking Icon */}
+            <div
+              style={{
+                fontSize: isMobile 
+                  ? (isRotated ? '18px' : '22px') // 50% smaller for mobile
+                  : (isRotated ? '24px' : '30px'),
+                lineHeight: 1,
+                color: theme.colors.primary
+              }}
+            >
+              🏆
+            </div>
+          </motion.button>
+
+          {/* Minimap Button */}
+          <motion.button
           initial={{ x: 50, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ delay: 0.3, duration: 0.5 }}
@@ -68,11 +127,11 @@ const Header = ({ dynamicSpacing, isHighHeight, isRotated, isVisible = true }) =
           className="shimmer-button"
           style={{
             width: isMobile 
-              ? (isRotated ? '53px' : '63px') // 30% reduction for mobile
-              : (isRotated ? '75px' : '90px'), // 150% of original size for desktop
+              ? (isRotated ? '35px' : '45px') // 50% reduction for mobile
+              : (isRotated ? '75px' : '90px'), // Desktop size unchanged
             height: isMobile 
-              ? (isRotated ? '53px' : '63px') // 30% reduction for mobile
-              : (isRotated ? '75px' : '90px'), // 150% of original size for desktop
+              ? (isRotated ? '35px' : '45px') // 50% reduction for mobile
+              : (isRotated ? '75px' : '90px'), // Desktop size unchanged
             borderRadius: '12px', // Squaricle - square with rounded corners
             display: 'flex',
             alignItems: 'center',
@@ -96,11 +155,11 @@ const Header = ({ dynamicSpacing, isHighHeight, isRotated, isVisible = true }) =
           alt="Campus Map"
           style={{
               width: isMobile 
-                ? (isRotated ? '42px' : '53px') // 30% reduction for mobile
-                : (isRotated ? '60px' : '75px'), // 150% of original size for desktop
+                ? (isRotated ? '28px' : '35px') // 50% reduction for mobile
+                : (isRotated ? '60px' : '75px'), // Desktop size unchanged
               height: isMobile 
-                ? (isRotated ? '42px' : '53px') // 30% reduction for mobile
-                : (isRotated ? '60px' : '75px'), // 150% of original size for desktop
+                ? (isRotated ? '28px' : '35px') // 50% reduction for mobile
+                : (isRotated ? '60px' : '75px'), // Desktop size unchanged
             borderRadius: theme.borderRadius.full,
             objectFit: 'cover',
             border: 'none',
@@ -114,6 +173,7 @@ const Header = ({ dynamicSpacing, isHighHeight, isRotated, isVisible = true }) =
           }}
         />
       </motion.button>
+        </div> {/* End of Right Side Button Group */}
     </motion.header>
   );
 };

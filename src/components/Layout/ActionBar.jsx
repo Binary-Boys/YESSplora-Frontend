@@ -40,8 +40,8 @@ const ActionBar = ({ dynamicSpacing, isHighHeight, dimensions, isVisible = true 
       style={{
         width: '100%', // Always full width
         height: isMobile 
-          ? (isRotated ? '63px' : '84px') // 30% reduction for mobile (90*0.7=63, 120*0.7=84)
-          : (isRotated ? '90px' : '120px'), // 150% of original size for desktop
+          ? (isRotated ? '45px' : '60px') // 50% reduction for mobile for better fit
+          : (isRotated ? '90px' : '120px'), // Desktop size unchanged
         backgroundColor: theme.colors.primary,
         display: 'flex',
         alignItems: 'center',
@@ -60,8 +60,8 @@ const ActionBar = ({ dynamicSpacing, isHighHeight, dimensions, isVisible = true 
           onClick={handleCameraClick}
           className="shimmer-button"
           style={{
-            width: isMobile ? '63px' : '90px', // 30% reduction for mobile
-            height: isMobile ? '63px' : '90px', // 30% reduction for mobile
+            width: isMobile ? '45px' : '90px', // 50% reduction for mobile
+            height: isMobile ? '45px' : '90px', // 50% reduction for mobile
             borderRadius: '12px', // Squaricle - square with rounded corners
             display: 'flex',
             alignItems: 'center',
@@ -84,7 +84,7 @@ const ActionBar = ({ dynamicSpacing, isHighHeight, dimensions, isVisible = true 
           {/* Camera Emoji */}
           <div
             style={{
-              fontSize: isMobile ? '25px' : '36px', // 30% reduction for mobile
+              fontSize: isMobile ? '18px' : '36px', // 50% reduction for mobile
               lineHeight: 1
             }}
           >
@@ -94,7 +94,7 @@ const ActionBar = ({ dynamicSpacing, isHighHeight, dimensions, isVisible = true 
           {/* Camera Label */}
           <div
             style={{
-              fontSize: isMobile ? '8px' : '12px', // 30% reduction for mobile
+              fontSize: isMobile ? '6px' : '12px', // 50% reduction for mobile
               fontWeight: theme.typography.fontWeight.bold,
               color: theme.colors.accent,
               textAlign: 'center',
@@ -121,11 +121,11 @@ const ActionBar = ({ dynamicSpacing, isHighHeight, dimensions, isVisible = true 
           className="shimmer-button"
           style={{
             width: isMobile 
-              ? (isRotated ? '53px' : '63px') // 30% reduction for mobile
-              : (isRotated ? '75px' : '90px'), // 150% of original size for desktop
+              ? (isRotated ? '35px' : '45px') // 50% reduction for mobile
+              : (isRotated ? '75px' : '90px'), // Desktop size unchanged
             height: isMobile 
-              ? (isRotated ? '53px' : '63px') // 30% reduction for mobile
-              : (isRotated ? '75px' : '90px'), // 150% of original size for desktop
+              ? (isRotated ? '35px' : '45px') // 50% reduction for mobile
+              : (isRotated ? '75px' : '90px'), // Desktop size unchanged
             borderRadius: '12px', // Squaricle - square with rounded corners
             display: 'flex',
             alignItems: 'center',
@@ -149,8 +149,8 @@ const ActionBar = ({ dynamicSpacing, isHighHeight, dimensions, isVisible = true 
           <div
             style={{
               fontSize: isMobile 
-                ? (isRotated ? '21px' : '25px') // 30% reduction for mobile
-                : (isRotated ? '30px' : '36px'), // 150% of original size for desktop
+                ? (isRotated ? '15px' : '18px') // 50% reduction for mobile
+                : (isRotated ? '30px' : '36px'), // Desktop size unchanged
               lineHeight: 1
             }}
           >
@@ -161,8 +161,8 @@ const ActionBar = ({ dynamicSpacing, isHighHeight, dimensions, isVisible = true 
           <div
             style={{
               fontSize: isMobile 
-                ? (isRotated ? '6px' : '8px') // 30% reduction for mobile
-                : (isRotated ? '9px' : '12px'), // 150% of original size for desktop
+                ? (isRotated ? '4px' : '6px') // 50% reduction for mobile
+                : (isRotated ? '9px' : '12px'), // Desktop size unchanged
               fontWeight: theme.typography.fontWeight.bold,
               color: theme.colors.accent,
               textAlign: 'center',
@@ -179,11 +179,11 @@ const ActionBar = ({ dynamicSpacing, isHighHeight, dimensions, isVisible = true 
         className="shimmer-button"
         style={{
             width: isMobile 
-              ? (isRotated ? '53px' : '63px') // 30% reduction for mobile
-              : (isRotated ? '75px' : '90px'), // 150% of original size for desktop
+              ? (isRotated ? '35px' : '45px') // 50% reduction for mobile
+              : (isRotated ? '75px' : '90px'), // Desktop size unchanged
             height: isMobile 
-              ? (isRotated ? '53px' : '63px') // 30% reduction for mobile
-              : (isRotated ? '75px' : '90px'), // 150% of original size for desktop
+              ? (isRotated ? '35px' : '45px') // 50% reduction for mobile
+              : (isRotated ? '75px' : '90px'), // Desktop size unchanged
           borderRadius: '12px', // Squaricle - square with rounded corners
           display: 'flex',
           alignItems: 'center',
@@ -207,8 +207,8 @@ const ActionBar = ({ dynamicSpacing, isHighHeight, dimensions, isVisible = true 
         <div
           style={{
             fontSize: isMobile 
-              ? (isRotated ? '21px' : '25px') // 30% reduction for mobile
-              : (isRotated ? '30px' : '36px'), // 150% of original size for desktop
+              ? (isRotated ? '15px' : '18px') // 50% reduction for mobile
+              : (isRotated ? '30px' : '36px'), // Desktop size unchanged
             lineHeight: 1
           }}
         >
@@ -219,8 +219,8 @@ const ActionBar = ({ dynamicSpacing, isHighHeight, dimensions, isVisible = true 
         <div
           style={{
             fontSize: isMobile 
-              ? (isRotated ? '6px' : '8px') // 30% reduction for mobile
-              : (isRotated ? '9px' : '12px'), // 150% of original size for desktop
+              ? (isRotated ? '4px' : '6px') // 50% reduction for mobile
+              : (isRotated ? '9px' : '12px'), // Desktop size unchanged
             fontWeight: theme.typography.fontWeight.bold,
             color: theme.colors.accent,
             textAlign: 'center',

@@ -13,7 +13,7 @@ const RotatableContainer = ({ children }) => {
     position: 'relative',
     display: 'flex',
     flexDirection: 'column',
-    minWidth: '750px' // Prevent container from reducing size below 750px
+    minWidth: window.innerWidth <= 768 ? '350px' : '750px' // Responsive min width for mobile
   };
 
   // No rotation - keep vertical layout
@@ -29,10 +29,10 @@ const RotatableContainer = ({ children }) => {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'space-between',
-          padding: '25px', // Fixed 25px padding from all edges
+          padding: window.innerWidth <= 768 ? '15px' : '25px', // Reduced padding for mobile
           boxSizing: 'border-box',
           minHeight: '100%',
-          minWidth: '750px', // Prevent container from reducing size below 750px
+          minWidth: window.innerWidth <= 768 ? '350px' : '750px', // Responsive min width for mobile
           maxWidth: 'none' // Remove any max width restrictions
         }}
       >

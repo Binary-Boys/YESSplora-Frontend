@@ -40,43 +40,53 @@ const RobotSprite = ({ dynamicSpacing, isHighHeight, dimensions }) => {
     if (!dimensions) return { minHeight: '200px', maxWidth: '300px', maxHeight: '400px' };
     
     const { width } = dimensions;
+    const isMobile = width <= 768;
     
-    // Define responsive breakpoints and corresponding dimensions
+    // Mobile-first responsive design
+    if (isMobile) {
+      return {
+        minHeight: '120px', // Much smaller for mobile
+        maxWidth: '180px',
+        maxHeight: '200px'
+      };
+    }
+    
+    // Define responsive breakpoints and corresponding dimensions for desktop
     if (width > 1570) {
       return {
-        minHeight: '150px', // Reduced height for very wide screens
-        maxWidth: '200px',
-        maxHeight: '250px'
+        minHeight: '200px', // Increased height to prevent clipping
+        maxWidth: '250px',
+        maxHeight: '300px'
       };
     } else if (width > 1400) {
       return {
-        minHeight: '170px',
-        maxWidth: '220px',
-        maxHeight: '280px'
+        minHeight: '220px',
+        maxWidth: '280px',
+        maxHeight: '350px'
       };
     } else if (width > 1200) {
       return {
-        minHeight: '180px',
-        maxWidth: '240px',
-        maxHeight: '320px'
+        minHeight: '250px',
+        maxWidth: '320px',
+        maxHeight: '400px'
       };
     } else if (width > 1000) {
       return {
-        minHeight: '190px',
-        maxWidth: '260px',
-        maxHeight: '350px'
+        minHeight: '280px',
+        maxWidth: '350px',
+        maxHeight: '450px'
       };
     } else if (width > 800) {
       return {
-        minHeight: '200px',
-        maxWidth: '280px',
-        maxHeight: '380px'
+        minHeight: '300px',
+        maxWidth: '380px',
+        maxHeight: '500px'
       };
     } else {
       return {
-        minHeight: '210px',
-        maxWidth: '300px',
-        maxHeight: '400px'
+        minHeight: '320px',
+        maxWidth: '400px',
+        maxHeight: '550px'
       };
     }
   };
@@ -170,7 +180,7 @@ const RobotSprite = ({ dynamicSpacing, isHighHeight, dimensions }) => {
         width: '100%',
         padding: dynamicSpacing,
         minHeight: responsiveDimensions.minHeight, // Responsive minimum height
-        maxHeight: dimensions?.width > 1570 ? responsiveDimensions.minHeight : 'none', // Constrain height for wide screens
+        maxHeight: 'none', // Remove height constraint to prevent clipping
         overflow: 'hidden' // Prevent content from spilling out
       }}
     >
