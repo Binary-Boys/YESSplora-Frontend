@@ -31,15 +31,18 @@ const Header = ({ dynamicSpacing, isHighHeight, isRotated, isVisible = true }) =
         height: isMobile 
           ? (isRotated ? '45px' : '60px') // 50% reduction for mobile for better fit
           : (isRotated ? '90px' : '120px'), // Desktop size unchanged
-        backgroundColor: theme.colors.primary,
+        // Glassmorphic background
+        background: 'rgba(255, 255, 255, 0.1)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        border: '1px solid rgba(255, 255, 255, 0.2)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         padding: isRotated ? '0 10px' : '0 15px', // Minimal padding for closer to edges
-         borderRadius: '20px', // Increased corner radius for more rounded appearance
+        borderRadius: '20px', // Increased corner radius for more rounded appearance
         marginBottom: '2px', // Very minimal margin for all cases
-        boxShadow: theme.shadows.neumorphism.raised,
-        border: 'none',
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
         flexShrink: 0 // Prevent header from shrinking
       }}
     >

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { GameProvider } from './contexts/GameContext';
 import { useOrientation } from './hooks/useOrientation';
 import { useAutoHide } from './hooks/useAutoHide';
@@ -11,12 +11,37 @@ import MinimapPopup from './components/Popups/MinimapPopup';
 import ProfilePopup from './components/Popups/ProfilePopup';
 import QRScannerPopup from './components/QRScanner/QRScannerPopup';
 import VolunteerScoringPopup from './components/Popups/VolunteerScoringPopup';
+import LeaderboardPopup from './components/Popups/LeaderboardPopup';
 import SupportPopup from './components/Popups/SupportPopup';
+import AuthPage from './components/Auth/AuthPage';
 import './styles/global.css';
 
 function App() {
   const { dynamicSpacing, isHighHeight, dimensions, effectiveDimensions, shouldRotate, isPortraitMode, alwaysRotated } = useOrientation();
-  const { isVisible, showBars } = useAutoHide(20000); // 20 seconds delay
+  // Keep bars always visible; keep showBars to satisfy TouchZones props
+  const { showBars } = useAutoHide(20000);
+  const isVisible = true;
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [currentView, setCurrentView] = useState('auth'); // 'auth', 'game'
+
+  // Restore persisted auth on mount
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem('yess_auth');
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed && parsed.isAuthenticated) {
+          setCurrentView('game');
+          setIsAuthenticated(true);
+        }
+      }
+    } catch {}
+  }, []);
+
+  // Handle view routing
+  if (currentView === 'auth') {
+    return <AuthPage onLoginSuccess={() => setCurrentView('game')} />;
+  }
 
   return (
     <GameProvider>
@@ -73,6 +98,7 @@ function App() {
         <MinimapPopup />
         <ProfilePopup />
         <QRScannerPopup />
+        <LeaderboardPopup />
         <VolunteerScoringPopup />
         <SupportPopup />
       </RotatableContainer>

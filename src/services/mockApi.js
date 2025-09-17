@@ -56,6 +56,20 @@ class MockApiService {
     const body = config.body ? JSON.parse(config.body) : {};
 
     switch (endpoint) {
+      case '/leaderboard':
+        if (method === 'GET') {
+          return {
+            success: true,
+            data: [
+              { teamName: 'Avengers', teamId: 'T-001', teamScore: 920, levelsCleared: 7, eliminated: false },
+              { teamName: 'Guardians', teamId: 'T-002', teamScore: 880, levelsCleared: 6, eliminated: false },
+              { teamName: 'Wizards', teamId: 'T-003', teamScore: 750, levelsCleared: 5, eliminated: true },
+              { teamName: 'Rangers', teamId: 'T-004', teamScore: 640, levelsCleared: 4, eliminated: false },
+              { teamName: 'Titans', teamId: 'T-005', teamScore: 500, levelsCleared: 4, eliminated: true }
+            ]
+          };
+        }
+        break;
       case '/auth/login':
         if (method === 'POST') {
           const { ticketId, teamCode } = body;

@@ -33,8 +33,8 @@ const ActionBar = ({ dynamicSpacing, isHighHeight, dimensions, isVisible = true 
     <motion.div
       initial={{ y: 100, opacity: 0 }}
       animate={{ 
-        y: isVisible ? 0 : 100, 
-        opacity: isVisible ? 1 : 0 
+        y: isMobile ? 0 : (isVisible ? 0 : 100), // Always visible on mobile, auto-hide on desktop
+        opacity: isMobile ? 1 : (isVisible ? 1 : 0) // Always visible on mobile, auto-hide on desktop
       }}
       transition={{ duration: 0.5, ease: "easeInOut" }}
       style={{
@@ -42,7 +42,11 @@ const ActionBar = ({ dynamicSpacing, isHighHeight, dimensions, isVisible = true 
         height: isMobile 
           ? (isRotated ? '45px' : '60px') // 50% reduction for mobile for better fit
           : (isRotated ? '90px' : '120px'), // Desktop size unchanged
-        backgroundColor: theme.colors.primary,
+        // Glassmorphic background
+        background: 'rgba(255, 255, 255, 0.1)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        border: '1px solid rgba(255, 255, 255, 0.2)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between', // Camera on left, support+profile grouped on right
@@ -50,9 +54,12 @@ const ActionBar = ({ dynamicSpacing, isHighHeight, dimensions, isVisible = true 
         borderRadius: theme.borderRadius.lg,
         marginTop: '2px', // Very minimal margin for all cases
         marginLeft: '0', // No margin left adjustment needed
-        boxShadow: theme.shadows.neumorphism.raised,
-        border: 'none',
-        flexShrink: 0 // Prevent footer from shrinking
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+        flexShrink: 0, // Prevent footer from shrinking
+        // Mobile-specific positioning to ensure visibility
+        position: isMobile ? 'sticky' : 'relative',
+        bottom: isMobile ? '0' : 'auto',
+        zIndex: isMobile ? 1000 : 'auto' // Higher z-index on mobile to stay on top
       }}
     >
       {/* Camera Button - Left Side - Always show since we're managing layout differently now */}

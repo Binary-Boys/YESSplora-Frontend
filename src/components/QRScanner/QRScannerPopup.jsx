@@ -1,110 +1,124 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { BrowserMultiFormatReader } from '@zxing/browser';
+import BarcodeScanner from 'react-qr-barcode-scanner';
 import { useGame } from '../../contexts/GameContext';
 import { theme } from '../../styles/theme';
 
 const QRScannerPopup = () => {
   const { state, actions } = useGame();
   const { ui } = state;
-  const [isScanning, setIsScanning] = useState(false);
   const [scanResult, setScanResult] = useState(null);
   const [error, setError] = useState(null);
-  const [hasPermission, setHasPermission] = useState(false);
-  const videoRef = useRef(null);
-  const readerRef = useRef(null);
+  const [stopStream, setStopStream] = useState(false);
+  const [errorTimeout, setErrorTimeout] = useState(null);
+  const [isWaitingForError, setIsWaitingForError] = useState(false);
+  const [detectedLink, setDetectedLink] = useState(null);
+  const [linkCache, setLinkCache] = useState(null);
+  const [cacheTimeout, setCacheTimeout] = useState(null);
+  
+  // Mobile detection
+  const isMobile = window.innerWidth <= 768;
 
   useEffect(() => {
-    if (ui.showQRScanner) {
-      initializeScanner();
-    } else {
-      stopScanner();
-    }
-
-    return () => {
-      stopScanner();
-    };
-  }, [ui.showQRScanner]);
-
-  const initializeScanner = async () => {
-    try {
+    if (!ui.showQRScanner) {
+      // Reset states when scanner is closed
+      setScanResult(null);
       setError(null);
-      readerRef.current = new BrowserMultiFormatReader();
-      
-      // Request camera permission first
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ 
-          video: { 
-            facingMode: 'environment', // Prefer back camera on mobile
-            width: { ideal: 1280 },
-            height: { ideal: 720 }
-          } 
-        });
-        
-        // Stop the stream as we'll use it through ZXing
-        stream.getTracks().forEach(track => track.stop());
-        setHasPermission(true);
-      } catch (permissionError) {
-        throw new Error('Camera permission denied. Please allow camera access to scan QR codes.');
+      setStopStream(false);
+      setIsWaitingForError(false);
+      setDetectedLink(null);
+      // Clear any pending timeouts
+      if (errorTimeout) {
+        clearTimeout(errorTimeout);
+        setErrorTimeout(null);
       }
-      
-      // Get available devices - use the correct method
-      let devices = [];
-      try {
-        devices = await readerRef.current.listVideoInputDevices();
-      } catch (deviceError) {
-        // Fallback: try to get devices directly from mediaDevices
-        const mediaDevices = await navigator.mediaDevices.enumerateDevices();
-        devices = mediaDevices.filter(device => device.kind === 'videoinput');
+      if (cacheTimeout) {
+        clearTimeout(cacheTimeout);
+        setCacheTimeout(null);
       }
-      
-      if (devices.length === 0) {
-        throw new Error('No camera devices found');
+    }
+    
+    // Cleanup timeouts on unmount
+    return () => {
+      if (errorTimeout) {
+        clearTimeout(errorTimeout);
       }
+      if (cacheTimeout) {
+        clearTimeout(cacheTimeout);
+      }
+    };
+  }, [ui.showQRScanner, errorTimeout, cacheTimeout]);
 
-      // Use the first available camera (usually the back camera on mobile)
-      const selectedDevice = devices[0];
-      
-      await readerRef.current.decodeFromVideoDevice(
-        selectedDevice.deviceId || selectedDevice.deviceId,
-        videoRef.current,
-        (result, error) => {
-          if (result) {
-            handleScanResult(result.getText());
-          }
-          if (error && error.name !== 'NotFoundException') {
-            console.error('QR scan error:', error);
-          }
-        }
-      );
-
-      setIsScanning(true);
-    } catch (err) {
-      console.error('Scanner initialization error:', err);
-      setError(err.message);
-      setHasPermission(false);
+  // Function to check if a string is a valid URL
+  const isValidUrl = (string) => {
+    try {
+      const url = new URL(string);
+      return url.protocol === 'http:' || url.protocol === 'https:';
+    } catch (_) {
+      return false;
     }
   };
 
-  const stopScanner = () => {
-    if (readerRef.current) {
-      readerRef.current.reset();
-      readerRef.current = null;
+  // Function to cache link for 15 seconds
+  const cacheLink = (link) => {
+    setLinkCache(link);
+    setDetectedLink(link);
+    
+    // Clear existing cache timeout
+    if (cacheTimeout) {
+      clearTimeout(cacheTimeout);
     }
-    setIsScanning(false);
-    setScanResult(null);
-    setError(null);
+    
+    // Set new cache timeout for 15 seconds
+    const timeout = setTimeout(() => {
+      setLinkCache(null);
+      setDetectedLink(null);
+      setCacheTimeout(null);
+    }, 15000);
+    
+    setCacheTimeout(timeout);
   };
 
   const handleScanResult = (result) => {
     console.log('QR Code scanned:', result);
     setScanResult(result);
     
-    // Process the QR code result
-    processQRCode(result);
+    // Check if the result is a valid URL
+    if (isValidUrl(result)) {
+      cacheLink(result);
+    } else {
+      // Process the QR code result for non-URL content
+      processQRCode(result);
+    }
     
     // Stop scanning after successful scan
-    stopScanner();
+    setStopStream(true);
+  };
+
+  const handleScanError = (error) => {
+    console.error('QR scan error:', error);
+    
+    // Clear any existing timeout
+    if (errorTimeout) {
+      clearTimeout(errorTimeout);
+    }
+    
+    if (error.name === "NotAllowedError") {
+      setError('Camera permission denied. Please allow camera access to scan QR codes.');
+    } else if (error.name === "NotFoundError") {
+      setError('No camera found. Please check your camera connection.');
+    } else if (error.message && error.message.includes('No MultiFormat Readers were able to detect the code')) {
+      // Wait 5 seconds before showing the "no code detected" error
+      setIsWaitingForError(true);
+      const timeout = setTimeout(() => {
+        setError('No QR code detected. Please try again.');
+        setErrorTimeout(null);
+        setIsWaitingForError(false);
+      }, 5000);
+      setErrorTimeout(timeout);
+    } else {
+      setError('Camera error: ' + error.message);
+    }
   };
 
   const processQRCode = (qrData) => {
@@ -167,42 +181,49 @@ const QRScannerPopup = () => {
 
   const handleClose = () => {
     try {
-      // Stop the scanner first
-      stopScanner();
+      // Stop the scanner stream first (fixes browser freeze issue)
+      setStopStream(true);
       
-      // Close all popups
-      actions.closeAllPopups();
-      
-      // Clear any error states
-      setError(null);
-      setScanResult(null);
-      setHasPermission(false);
-      
-      // Navigate to home page using browser History API
-      console.log('QR Scanner closed - navigating back to home page');
-      
-      // Method 1: Navigate to home page (root)
-      window.location.href = '/';
-      
-      // Alternative Method 2: Use history API (commented out as backup)
-      // window.history.pushState({}, '', '/');
-      // window.dispatchEvent(new PopStateEvent('popstate'));
-      
-      // Alternative Method 3: Reload current page to reset state (commented out)
-      // window.location.reload();
+      // Close the popup after a short delay
+      setTimeout(() => {
+        actions.closeAllPopups();
+        setError(null);
+        setScanResult(null);
+        setStopStream(false);
+      }, 100);
       
     } catch (err) {
       console.error('Error closing QR Scanner:', err);
-      // Fallback: still try to close the popup and navigate
+      // Fallback: still try to close the popup
       actions.closeAllPopups();
-      window.location.href = '/';
+    }
+  };
+
+  const handleGoButton = () => {
+    if (detectedLink) {
+      // Open the link in a new tab
+      window.open(detectedLink, '_blank');
+      
+      // Close the scanner after opening the link
+      handleClose();
     }
   };
 
   const handleRetry = () => {
     setError(null);
     setScanResult(null);
-    initializeScanner();
+    setStopStream(false);
+    setIsWaitingForError(false);
+    setDetectedLink(null);
+    // Clear any pending timeouts
+    if (errorTimeout) {
+      clearTimeout(errorTimeout);
+      setErrorTimeout(null);
+    }
+    if (cacheTimeout) {
+      clearTimeout(cacheTimeout);
+      setCacheTimeout(null);
+    }
   };
 
   return (
@@ -226,9 +247,7 @@ const QRScannerPopup = () => {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              padding: theme.spacing.lg,
-              transform: 'rotate(90deg)', // Counter-rotate to show normal orientation
-              transformOrigin: 'center center'
+              padding: theme.spacing.lg
             }}
             onClick={(e) => {
               if (e.target === e.currentTarget) {
@@ -305,195 +324,119 @@ const QRScannerPopup = () => {
                 style={{
                   position: 'relative',
                   width: '100%',
-                  maxWidth: '500px',
+                  maxWidth: isMobile ? '600px' : '1000px', // 200% increase: 300px->600px, 500px->1000px
                   aspectRatio: '1',
                   backgroundColor: theme.colors.background,
                   borderRadius: theme.borderRadius.lg,
-                  border: `2px solid ${theme.colors.border}`,
+                  border: `4px solid ${theme.colors.border}`, // Always use regular border color
                   overflow: 'hidden',
-                  marginBottom: theme.spacing.md
+                  marginBottom: theme.spacing.md,
+                  boxShadow: 'none' // No glow effect
                 }}
               >
-              {/* Video Element */}
-              <video
-                ref={videoRef}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover'
-                }}
-                playsInline
-                muted
-              />
-
-              {/* Scanning Overlay */}
-              {isScanning && (
-                <div
-                  style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    pointerEvents: 'none'
-                  }}
-                >
-                  {/* Scanning Frame */}
+                {/* Barcode Scanner Component */}
+                {!stopStream && !scanResult && (
                   <div
                     style={{
-                      width: '800px', // 4x larger (200px * 4)
-                      height: '800px', // 4x larger (200px * 4)
-                      border: `12px solid ${theme.colors.accent}`, // 4x larger border (3px * 4)
-                      borderRadius: theme.borderRadius.lg,
-                      position: 'relative',
-                      boxShadow: `0 0 80px ${theme.colors.primary}` // 4x larger glow (20px * 4)
+                      width: '100%',
+                      height: '100%',
+                      transform: 'scaleX(-1)' // Flip camera view horizontally
                     }}
                   >
-                    {/* Corner Indicators */}
-                    <div
-                      style={{
-                        position: 'absolute',
-                        top: '-12px', // 4x larger (-3px * 4)
-                        left: '-12px', // 4x larger (-3px * 4)
-                        width: '80px', // 4x larger (20px * 4)
-                        height: '80px', // 4x larger (20px * 4)
-                        borderTop: `12px solid ${theme.colors.primary}`, // 4x larger (3px * 4)
-                        borderLeft: `12px solid ${theme.colors.primary}` // 4x larger (3px * 4)
+                    <BarcodeScanner
+                      width="100%"
+                      height="100%"
+                      facingMode={isMobile ? "environment" : "environment"} // Rear camera on mobile, environment on desktop
+                      onUpdate={(err, result) => {
+                        if (result) {
+                          handleScanResult(result.getText());
+                        } else if (err && err.name !== 'NotFoundException' && err.name !== 'NoMultiFormatReaderException') {
+                          handleScanError(err);
+                        } else if (err && err.name === 'NoMultiFormatReaderException') {
+                          // Handle the specific "No MultiFormat Readers" error with delay
+                          handleScanError(err);
+                        }
                       }}
-                    />
-                    <div
+                      onError={handleScanError}
+                      delay={300}
+                      stopStream={stopStream}
                       style={{
-                        position: 'absolute',
-                        top: '-12px', // 4x larger (-3px * 4)
-                        right: '-12px', // 4x larger (-3px * 4)
-                        width: '80px', // 4x larger (20px * 4)
-                        height: '80px', // 4x larger (20px * 4)
-                        borderTop: `12px solid ${theme.colors.primary}`, // 4x larger (3px * 4)
-                        borderRight: `12px solid ${theme.colors.primary}` // 4x larger (3px * 4)
-                      }}
-                    />
-                    <div
-                      style={{
-                        position: 'absolute',
-                        bottom: '-12px', // 4x larger (-3px * 4)
-                        left: '-12px', // 4x larger (-3px * 4)
-                        width: '80px', // 4x larger (20px * 4)
-                        height: '80px', // 4x larger (20px * 4)
-                        borderBottom: `12px solid ${theme.colors.primary}`, // 4x larger (3px * 4)
-                        borderLeft: `12px solid ${theme.colors.primary}` // 4x larger (3px * 4)
-                      }}
-                    />
-                    <div
-                      style={{
-                        position: 'absolute',
-                        bottom: '-12px', // 4x larger (-3px * 4)
-                        right: '-12px', // 4x larger (-3px * 4)
-                        width: '80px', // 4x larger (20px * 4)
-                        height: '80px', // 4x larger (20px * 4)
-                        borderBottom: `12px solid ${theme.colors.primary}`, // 4x larger (3px * 4)
-                        borderRight: `12px solid ${theme.colors.primary}` // 4x larger (3px * 4)
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover'
                       }}
                     />
                   </div>
-                </div>
-              )}
+                )}
 
-              {/* Error State */}
-              {error && (
-                <div
-                  style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    padding: theme.spacing.lg,
-                    textAlign: 'center'
-                  }}
-                >
-                  <div
-                    style={{
-                      fontSize: '48px',
-                      color: theme.colors.error,
-                      marginBottom: theme.spacing.md
-                    }}
-                  >
-                    📷
-                  </div>
-                  <p
-                    style={{
-                      color: theme.colors.accent,
-                      fontSize: theme.typography.fontSize.base,
-                      marginBottom: theme.spacing.md
-                    }}
-                  >
-                    {error}
-                  </p>
-                  <button
-                    onClick={handleRetry}
-                    style={{
-                      backgroundColor: theme.colors.primary,
-                      color: theme.colors.accent,
-                      border: 'none',
-                      borderRadius: theme.borderRadius.md,
-                      padding: `${theme.spacing.sm} ${theme.spacing.lg}`,
-                      fontSize: theme.typography.fontSize.base,
-                      fontWeight: theme.typography.fontWeight.semibold,
-                      cursor: 'pointer'
-                    }}
-                  >
-                    Try Again
-                  </button>
-                </div>
-              )}
 
-              {/* Success State */}
-              {scanResult && (
-                <div
-                  style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    backgroundColor: 'rgba(0, 255, 0, 0.8)',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    padding: theme.spacing.lg,
-                    textAlign: 'center'
-                  }}
-                >
-                  <div
-                    style={{
-                      fontSize: '48px',
-                      color: theme.colors.accent,
-                      marginBottom: theme.spacing.md
-                    }}
-                  >
-                    ✓
-                  </div>
-                  <p
-                    style={{
-                      color: theme.colors.accent,
-                      fontSize: theme.typography.fontSize.base,
-                      fontWeight: theme.typography.fontWeight.semibold
-                    }}
-                  >
-                    QR Code Scanned Successfully!
-                  </p>
-                </div>
-              )}
               </div>
+
+              {/* Simple Link Button - Only show when link is detected */}
+              {detectedLink && (
+                <button
+                  onClick={handleGoButton}
+                  style={{
+                    backgroundColor: theme.colors.primary,
+                    color: theme.colors.accent,
+                    border: `2px solid ${theme.colors.accent}`,
+                    borderRadius: theme.borderRadius.lg,
+                    padding: `${theme.spacing.md} ${theme.spacing.xl}`,
+                    fontSize: theme.typography.fontSize.lg,
+                    fontWeight: theme.typography.fontWeight.bold,
+                    cursor: 'pointer',
+                    transition: theme.transitions.fast,
+                    boxShadow: theme.shadows.neumorphism.raised,
+                    marginBottom: theme.spacing.md,
+                    width: '100%'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.backgroundColor = theme.colors.accent;
+                    e.target.style.color = theme.colors.primary;
+                    e.target.style.transform = 'scale(1.02)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.backgroundColor = theme.colors.primary;
+                    e.target.style.color = theme.colors.accent;
+                    e.target.style.transform = 'scale(1)';
+                  }}
+                >
+                  🚀 Go to Link
+                </button>
+              )}
+
+              {/* Error Retry Button - Only show when there's an error */}
+              {error && (
+                <button
+                  onClick={handleRetry}
+                  style={{
+                    backgroundColor: theme.colors.primary,
+                    color: theme.colors.accent,
+                    border: `2px solid ${theme.colors.accent}`,
+                    borderRadius: theme.borderRadius.lg,
+                    padding: `${theme.spacing.md} ${theme.spacing.xl}`,
+                    fontSize: theme.typography.fontSize.lg,
+                    fontWeight: theme.typography.fontWeight.bold,
+                    cursor: 'pointer',
+                    transition: theme.transitions.fast,
+                    boxShadow: theme.shadows.neumorphism.raised,
+                    marginBottom: theme.spacing.md,
+                    width: '100%'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.backgroundColor = theme.colors.accent;
+                    e.target.style.color = theme.colors.primary;
+                    e.target.style.transform = 'scale(1.02)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.backgroundColor = theme.colors.primary;
+                    e.target.style.color = theme.colors.accent;
+                    e.target.style.transform = 'scale(1)';
+                  }}
+                >
+                  🔄 Try Again
+                </button>
+              )}
 
               {/* Instructions */}
               <div

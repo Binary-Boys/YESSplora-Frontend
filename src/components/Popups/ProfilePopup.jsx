@@ -61,29 +61,30 @@ const ProfilePopup = () => {
               left: 0,
               right: 0,
               bottom: 0,
-              backgroundColor: 'rgba(0, 0, 0, 0.5)',
+              backgroundColor: 'rgba(0, 0, 0, 0.55)',
               zIndex: theme.zIndex.overlay,
               display: 'flex',
               alignItems: 'stretch',
-              justifyContent: 'flex-start'
+              justifyContent: 'flex-end'
             }}
             onClick={handleClose}
           >
-            {/* Sidebar Content */}
+            {/* Sidebar Content - slides in from right */}
             <motion.div
-              initial={{ x: '-100%', opacity: 0 }}
+              initial={{ x: '100%', opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
-              exit={{ x: '-100%', opacity: 0 }}
-              transition={{ duration: 0.3, type: "spring", stiffness: 300 }}
+              exit={{ x: '100%', opacity: 0 }}
+              transition={{ duration: 0.3, type: "spring", stiffness: 320 }}
               style={{
-                backgroundColor: theme.colors.surface,
+                background: 'linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.04))',
+                backdropFilter: 'blur(14px)',
                 border: `3px solid ${theme.colors.primary}`,
-                borderLeft: 'none',
-                borderTopRightRadius: theme.borderRadius.xl,
-                borderBottomRightRadius: theme.borderRadius.xl,
+                borderRight: 'none',
+                borderTopLeftRadius: theme.borderRadius.xl,
+                borderBottomLeftRadius: theme.borderRadius.xl,
                 padding: theme.spacing.xl,
-                width: '400px',
-                maxWidth: '90vw',
+                width: '420px',
+                maxWidth: '92vw',
                 height: '100vh',
                 overflow: 'auto',
                 position: 'relative',
@@ -91,15 +92,15 @@ const ProfilePopup = () => {
               }}
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Close Button */}
+              {/* Close Button (top-right of panel) */}
               <button
                 onClick={handleClose}
                 style={{
                   position: 'absolute',
                   top: theme.spacing.md,
-                  left: theme.spacing.md,
-                  width: '50px',
-                  height: '50px',
+                  right: theme.spacing.md,
+                  width: '44px',
+                  height: '44px',
                   backgroundColor: theme.colors.primary,
                   color: theme.colors.accent,
                   border: 'none',
@@ -112,6 +113,7 @@ const ProfilePopup = () => {
                   fontWeight: theme.typography.fontWeight.bold,
                   zIndex: 10
                 }}
+                aria-label="Close profile"
               >
                 ×
               </button>
@@ -125,7 +127,7 @@ const ProfilePopup = () => {
                   textAlign: 'center',
                   marginBottom: theme.spacing.lg,
                   marginTop: theme.spacing.sm,
-                  paddingLeft: '60px' // Make room for close button
+                  paddingRight: '60px' // room for close button
                 }}
               >
                 Team Profile
