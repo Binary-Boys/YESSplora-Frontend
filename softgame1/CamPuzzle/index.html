@@ -37,14 +37,6 @@
                 -20px -20px 60px #407a4f;
         }
 
-        .neumorphic-inset {
-            background: #2d5a3d;
-            border-radius: 15px;
-            box-shadow: 
-                inset 10px 10px 20px #1a3d2e,
-                inset -10px -10px 20px #407a4f;
-        }
-
         .neumorphic-button {
             background: #2d5a3d;
             border: none;
@@ -91,7 +83,7 @@
         .tile {
             position: relative;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -101,7 +93,7 @@
                 -6px -6px 12px #407a4f;
         }
 
-        .tile:hover {
+        .tile:hover:not(.empty) {
             transform: translateY(-2px);
             box-shadow: 
                 8px 8px 16px #1a3d2e,
@@ -114,16 +106,10 @@
             box-shadow: 
                 inset 4px 4px 8px #1a3d2e,
                 inset -4px -4px 8px #407a4f;
+            cursor: default;
         }
 
-        .tile.empty:hover {
-            transform: none;
-            box-shadow: 
-                inset 4px 4px 8px #1a3d2e,
-                inset -4px -4px 8px #407a4f;
-        }
-
-        .camera-preview {
+        .camera-preview, .captured-image-preview {
             width: 100%;
             max-width: 500px;
             aspect-ratio: 1/1;
@@ -132,6 +118,7 @@
             box-shadow: 
                 8px 8px 16px #1a3d2e,
                 -8px -8px 16px #407a4f;
+            background: #2d5a3d;
         }
 
         .modal {
@@ -201,19 +188,11 @@
             line-height: 1.6;
         }
 
-        .camera-container {
+        .camera-container, .captured-image-container {
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 1rem;
-        }
-
-        .captured-image-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1rem;
-            margin-top: 1rem;
         }
 
         .captured-image-title {
@@ -221,16 +200,6 @@
             font-weight: 600;
             color: #e2e8f0;
             margin: 0;
-        }
-
-        .captured-image-preview {
-            width: 600px;
-            height: 450px;
-            border-radius: 15px;
-            box-shadow: 
-                8px 8px 16px #1a3d2e,
-                -8px -8px 16px #407a4f;
-            background: #2d5a3d;
         }
 
         .game-stats {
@@ -268,18 +237,9 @@
         }
 
         @media (max-width: 640px) {
-            .title {
-                font-size: 2rem;
-            }
-            
-            .game-board {
-                max-width: 400px;
-                gap: 0.3rem;
-            }
-            
-            .controls {
-                flex-direction: column;
-            }
+            .title { font-size: 2rem; }
+            .game-board { max-width: 400px; gap: 0.3rem; }
+            .controls { flex-direction: column; }
         }
     </style>
 </head>
@@ -287,31 +247,28 @@
     <div class="container">
         <div>
             <h1 class="title">Webcam Puzzle</h1>
-            <p class="subtitle">Use your webcam to create a unique sliding puzzle. Click on a tile next to the empty space to slide it and solve the puzzle!</p>
+            <p class="subtitle">Use your webcam to create a unique sliding puzzle. Click a tile next to the empty space to solve the puzzle!</p>
         </div>
 
         <div class="game-board neumorphic">
             <div id="game-container" class="grid w-full h-full"></div>
-            
-            <!-- Welcome/Win Modal -->
             <div id="welcome-modal" class="modal visible">
                 <h2 id="modal-title" class="text-3xl font-bold mb-4">Welcome to Webcam Puzzle!</h2>
-                <p class="text-lg mb-6 text-gray-300">Allow camera access to start playing</p>
+                <p class="text-lg mb-6 text-gray-300">Allow camera access to start playing.</p>
                 <button id="startButton" class="start-button neumorphic-button">Start Game</button>
             </div>
         </div>
 
-        <div class="camera-container">
-            <video id="camera-preview" class="camera-preview" autoplay muted></video>
+        <div id="camera-container" class="camera-container" style="display: none;">
+            <video id="camera-preview" class="camera-preview" autoplay muted playsinline></video>
             <div class="controls">
-                <button id="snapshotButton" class="snapshot-button neumorphic-button" style="display: none;">Take Snapshot</button>
-                <button id="newGameButton" class="snapshot-button neumorphic-button" style="display: none;">New Game</button>
+                <button id="snapshotButton" class="snapshot-button neumorphic-button">Take New Snapshot</button>
+                <button id="newGameButton" class="snapshot-button neumorphic-button">New Game (Same Image)</button>
             </div>
         </div>
 
-        <!-- Captured Image Preview Component -->
         <div id="captured-image-container" class="captured-image-container" style="display: none;">
-            <h3 class="captured-image-title">Captured Image</h3>
+            <h3 class="captured-image-title">Puzzle Image</h3>
             <canvas id="captured-image-preview" class="captured-image-preview"></canvas>
         </div>
 
@@ -333,6 +290,7 @@
         const welcomeModal = document.getElementById('welcome-modal');
         const modalTitle = document.getElementById('modal-title');
         const video = document.getElementById('camera-preview');
+        const cameraContainer = document.getElementById('camera-container');
         const snapshotButton = document.getElementById('snapshotButton');
         const newGameButton = document.getElementById('newGameButton');
         const gameStats = document.getElementById('game-stats');
@@ -343,38 +301,35 @@
         
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
-        const previewCanvas = capturedImagePreview;
-        const previewCtx = previewCanvas.getContext('2d');
+        const previewCtx = capturedImagePreview.getContext('2d');
         const gridSize = 3;
+        
         let tiles = [];
         let emptyTileIndex;
         let isSolving = false;
         let gameStarted = false;
-        let snapshotTaken = false;
         let snapshotImageData = null;
         let gameStartTime = null;
         let moveCount = 0;
         let gameTimer = null;
 
         function startTimer() {
+            stopTimer();
             gameStartTime = Date.now();
             gameTimer = setInterval(updateTimer, 1000);
+            updateTimer();
         }
 
         function stopTimer() {
-            if (gameTimer) {
-                clearInterval(gameTimer);
-                gameTimer = null;
-            }
+            clearInterval(gameTimer);
+            gameTimer = null;
         }
 
         function updateTimer() {
             if (!gameStartTime) return;
-            
             const elapsed = Math.floor((Date.now() - gameStartTime) / 1000);
             const minutes = Math.floor(elapsed / 60);
             const seconds = elapsed % 60;
-            
             timeDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
         }
 
@@ -387,148 +342,99 @@
                 const stream = await navigator.mediaDevices.getUserMedia({ 
                     video: { 
                         width: { ideal: 640 },
-                        height: { ideal: 480 }
+                        height: { ideal: 640 },
+                        aspectRatio: 1.0,
+                        facingMode: 'user'
                     } 
                 });
                 video.srcObject = stream;
-                await video.play();
-                canvas.width = video.videoWidth;
-                canvas.height = video.videoHeight;
                 return true;
             } catch (err) {
                 console.error("Error accessing the camera:", err);
-                modalTitle.textContent = "Error: Camera access denied";
-                document.querySelector('.modal p').textContent = "Please allow camera access to play the game.";
+                modalTitle.textContent = "Camera Access Denied";
+                document.querySelector('.modal p').textContent = "Please allow camera access in your browser settings to play.";
                 startButton.style.display = 'none';
+                welcomeModal.classList.add('visible');
                 return false;
             }
         }
+        
+        function captureAndSetImage() {
+            if (video.readyState < 2) return;
 
-        function createTiles() {
+            const size = Math.min(video.videoWidth, video.videoHeight);
+            if (size === 0) return; 
+            
+            canvas.width = size;
+            canvas.height = size;
+            const offsetX = (video.videoWidth - size) / 2;
+            const offsetY = (video.videoHeight - size) / 2;
+            
+            ctx.drawImage(video, offsetX, offsetY, size, size, 0, 0, size, size);
+            snapshotImageData = ctx.getImageData(0, 0, size, size);
+            
+            video.style.display = 'none';
+            capturedImageContainer.style.display = 'flex';
+            previewCtx.canvas.width = 500;
+            previewCtx.canvas.height = 500;
+            previewCtx.drawImage(canvas, 0, 0, 500, 500);
+            
+            updateTileImages();
+        }
+        
+        function renderBoard() {
             gameContainer.innerHTML = '';
             gameContainer.style.gridTemplateColumns = `repeat(${gridSize}, 1fr)`;
-            gameContainer.style.gridTemplateRows = `repeat(${gridSize}, 1fr)`;
 
-            for (let i = 0; i < gridSize * gridSize; i++) {
+            tiles.forEach((tile, index) => {
                 const tileDiv = document.createElement('div');
                 tileDiv.classList.add('tile');
-                tileDiv.dataset.originalIndex = i;
-                gameContainer.appendChild(tileDiv);
-            }
-            
-            // Update visual feedback for movable tiles
-            updateMovableTiles();
-        }
-
-        function renderTilePositions() {
-            for (let currentPos = 0; currentPos < gridSize * gridSize; currentPos++) {
-                const originalIndex = tiles[currentPos].originalIndex;
-                const tileDiv = gameContainer.querySelector(`[data-original-index="${originalIndex}"]`);
                 
-                if (tileDiv) {
-                    const targetCol = (currentPos % gridSize) + 1;
-                    const targetRow = Math.floor(currentPos / gridSize) + 1;
-                    
-                    tileDiv.style.gridColumnStart = targetCol;
-                    tileDiv.style.gridRowStart = targetRow;
+                if (tile.originalIndex === -1) {
+                    tileDiv.classList.add('empty');
+                } else {
+                    tileDiv.addEventListener('click', () => handleTileClick(index));
                 }
-            }
-        }
+                
+                gameContainer.appendChild(tileDiv);
+            });
 
-        function updateTiles() {
-            if (isSolving || !gameStarted) return;
-            
-            // Always use static image - no live updates
             if (snapshotImageData) {
-                updateTilesFromSnapshot();
-            } else if (video.videoWidth > 0 && video.videoHeight > 0) {
-                // Capture once and make it static
-                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-                snapshotImageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                updateTilesFromSnapshot();
+                updateTileImages();
             }
-        }
-
-        function updateTilesFromCamera() {
-            if (video.videoWidth === 0 || video.videoHeight === 0) return;
-            
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-            updateTileImages();
-        }
-
-        function updateTilesFromSnapshot() {
-            if (!snapshotImageData) return;
-            
-            ctx.putImageData(snapshotImageData, 0, 0);
-            updateTileImages();
         }
 
         function updateTileImages() {
+            if (!snapshotImageData) return;
+
             const tileWidth = canvas.width / gridSize;
             const tileHeight = canvas.height / gridSize;
+            const tileDivs = Array.from(gameContainer.children);
 
-            tiles.forEach((tile, currentPosition) => {
-                const originalIndex = tile.originalIndex;
-                const tileDiv = gameContainer.querySelector(`[data-original-index="${originalIndex}"]`);
-                
-                if (tileDiv) {
-                    if (originalIndex === -1) {
-                        tileDiv.classList.add('empty');
-                        tileDiv.style.backgroundImage = 'none';
-                    } else {
-                        tileDiv.classList.remove('empty');
-                        const row = Math.floor(originalIndex / gridSize);
-                        const col = originalIndex % gridSize;
-                        
-                        const imgData = ctx.getImageData(col * tileWidth, row * tileHeight, tileWidth, tileHeight);
-                        const tempCanvas = document.createElement('canvas');
-                        const tempCtx = tempCanvas.getContext('2d');
-                        tempCanvas.width = tileWidth;
-                        tempCanvas.height = tileHeight;
-                        tempCtx.putImageData(imgData, 0, 0);
-
-                        tileDiv.style.backgroundImage = `url(${tempCanvas.toDataURL()})`;
-                    }
+            tiles.forEach((tile, index) => {
+                const tileDiv = tileDivs[index];
+                if (tile.originalIndex !== -1) {
+                    const row = Math.floor(tile.originalIndex / gridSize);
+                    const col = tile.originalIndex % gridSize;
+                    
+                    const tempCanvas = document.createElement('canvas');
+                    tempCanvas.width = tileWidth;
+                    tempCanvas.height = tileHeight;
+                    const imgData = ctx.getImageData(col * tileWidth, row * tileHeight, tileWidth, tileHeight);
+                    tempCanvas.getContext('2d').putImageData(imgData, 0, 0);
+                    tileDiv.style.backgroundImage = `url(${tempCanvas.toDataURL()})`;
                 }
             });
         }
-
-        function takeSnapshot() {
-            if (video.videoWidth === 0 || video.videoHeight === 0) return;
-            
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-            snapshotImageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            snapshotTaken = true;
-            snapshotButton.textContent = 'Snapshot Taken!';
-            snapshotButton.style.background = '#22c55e';
-            
-            // Show the captured image preview
-            capturedImageContainer.style.display = 'flex';
-            previewCanvas.width = 600;
-            previewCanvas.height = 450;
-            previewCtx.drawImage(video, 0, 0, previewCanvas.width, previewCanvas.height);
-            
-            // Hide the camera preview after taking snapshot
-            video.style.display = 'none';
-            
-            // Update tiles with the snapshot
-            updateTilesFromSnapshot();
-        }
-
+        
         function initializePuzzle() {
-            tiles = Array.from({ length: gridSize * gridSize }, (_, i) => ({
-                originalIndex: i,
-                currentPosition: i
-            }));
-
+            tiles = Array.from({ length: gridSize * gridSize }, (_, i) => ({ originalIndex: i }));
             emptyTileIndex = gridSize * gridSize - 1;
             tiles[emptyTileIndex].originalIndex = -1;
 
             do {
                 shuffleTiles();
-            } while (!isSolvable(tiles) || isSolved(tiles));
-
-            isSolving = false;
+            } while (!isSolvable() || isSolved());
         }
 
         function shuffleTiles() {
@@ -536,15 +442,12 @@
                 const j = Math.floor(Math.random() * (i + 1));
                 [tiles[i], tiles[j]] = [tiles[j], tiles[i]];
             }
-            tiles.forEach((tile, index) => tile.currentPosition = index);
             emptyTileIndex = tiles.findIndex(tile => tile.originalIndex === -1);
         }
 
-        function isSolvable(puzzle) {
+        function isSolvable() {
             let inversions = 0;
-            const flatPuzzle = puzzle.map(tile => tile.originalIndex).filter(index => index !== -1);
-            const n = gridSize;
-
+            const flatPuzzle = tiles.map(t => t.originalIndex).filter(i => i !== -1);
             for (let i = 0; i < flatPuzzle.length - 1; i++) {
                 for (let j = i + 1; j < flatPuzzle.length; j++) {
                     if (flatPuzzle[i] > flatPuzzle[j]) {
@@ -552,212 +455,117 @@
                     }
                 }
             }
-
-            // For 3x3 grid (odd), puzzle is solvable if inversions are even
             return inversions % 2 === 0;
         }
 
-        function isSolved(currentTiles) {
-            for (let i = 0; i < currentTiles.length - 1; i++) {
-                if (currentTiles[i].originalIndex !== i) {
-                    return false;
+        function isSolved() {
+            for (let i = 0; i < tiles.length - 1; i++) {
+                if (tiles[i].originalIndex !== i) return false;
+            }
+            return tiles[tiles.length - 1].originalIndex === -1;
+        }
+
+        function handleTileClick(clickedPosition) {
+            if (isSolving) return;
+
+            const isAdjacent = 
+                (Math.abs(clickedPosition - emptyTileIndex) === 1 && Math.floor(clickedPosition / gridSize) === Math.floor(emptyTileIndex / gridSize)) ||
+                (Math.abs(clickedPosition - emptyTileIndex) === gridSize);
+
+            if (isAdjacent) {
+                [tiles[clickedPosition], tiles[emptyTileIndex]] = [tiles[emptyTileIndex], tiles[clickedPosition]];
+                emptyTileIndex = clickedPosition;
+                moveCount++;
+                updateMoves();
+                renderBoard();
+
+                if (isSolved()) {
+                    isSolving = true;
+                    stopTimer();
+                    setTimeout(() => showWinModal(), 300);
                 }
             }
-            return currentTiles[currentTiles.length - 1].originalIndex === -1;
         }
-
-        function isAdjacentToEmpty(clickedIndex, emptyIndex) {
-            // Check if tiles are adjacent (horizontally or vertically)
-            const isAdjacent = 
-                (Math.abs(clickedIndex - emptyIndex) === 1 && Math.floor(clickedIndex / gridSize) === Math.floor(emptyIndex / gridSize)) || // Same row
-                (Math.abs(clickedIndex - emptyIndex) === gridSize); // Same column
-            
-            return isAdjacent;
-        }
-
-        function updateMovableTiles() {
-            // No visual hints - all tiles look the same
-            const allTiles = Array.from(gameContainer.children);
-            
-            allTiles.forEach((tile) => {
-                if (tile.classList.contains('empty')) return;
-                
-                // All non-empty tiles look the same
-                tile.style.cursor = 'pointer';
-                tile.style.opacity = '1';
-                tile.style.transform = 'scale(1)';
-            });
-        }
-
-        function handleTileClick(e) {
-            if (isSolving || !gameStarted) return;
-            
-            const clickedTileDiv = e.target.closest('.tile');
-            if (!clickedTileDiv || clickedTileDiv.classList.contains('empty')) return;
-
-            // Find the current position of the clicked tile in the tiles array
-            const clickedOriginalIndex = parseInt(clickedTileDiv.dataset.originalIndex, 10);
-            const clickedCurrentPosition = tiles.findIndex(tile => tile.originalIndex === clickedOriginalIndex);
-            const emptyCurrentPosition = emptyTileIndex;
-
-            // Check if tiles are adjacent (horizontally or vertically)
-            const isAdjacent = 
-                (Math.abs(clickedCurrentPosition - emptyCurrentPosition) === 1 && Math.floor(clickedCurrentPosition / gridSize) === Math.floor(emptyCurrentPosition / gridSize)) || // Same row
-                (Math.abs(clickedCurrentPosition - emptyCurrentPosition) === gridSize); // Same column
-
-            if (!isAdjacent) {
-                return; // Do nothing if not adjacent
-            }
-
-            // Swap tiles in the array
-            [tiles[clickedCurrentPosition], tiles[emptyCurrentPosition]] = [tiles[emptyCurrentPosition], tiles[clickedCurrentPosition]];
-            
-            // Update current positions
-            tiles[clickedCurrentPosition].currentPosition = clickedCurrentPosition;
-            tiles[emptyCurrentPosition].currentPosition = emptyCurrentPosition;
-            
-            // Update empty tile index
-            emptyTileIndex = clickedCurrentPosition;
-
-            // Increment move count and update display
-            moveCount++;
-            updateMoves();
-
-            // Re-render the board to show the new positions
-            renderTilePositions();
-
-            // Check if puzzle is solved
-            if (isSolved(tiles)) {
-                isSolving = true;
-                stopTimer();
-                showWinModal();
-            }
-        }
-
+        
         function showWinModal() {
+            tiles[emptyTileIndex].originalIndex = emptyTileIndex;
+            renderBoard();
+
             welcomeModal.classList.add('visible');
             modalTitle.textContent = "🎉 Congratulations! 🎉";
-            document.querySelector('.modal p').textContent = "You solved the puzzle!";
+            document.querySelector('.modal p').textContent = `You solved it in ${moveCount} moves!`;
             startButton.textContent = "Play Again";
-            startButton.style.display = 'block';
-            
-            // Calculate score based on time and moves (out of 10)
-            const timeScore = Math.max(0, 5 - Math.floor((Date.now() - gameStartTime) / 1000 / 30)); // 5 points max for time
-            const moveScore = Math.max(0, 5 - Math.floor(moveCount / 10)); // 5 points max for efficiency
-            const totalScore = Math.min(10, timeScore + moveScore);
-            
-            // Get URL parameters
-            const urlParams = new URLSearchParams(window.location.search);
-            const ticketId = urlParams.get('ticketId');
-            const gameId = urlParams.get('gameId') || '1';
-            const level = urlParams.get('level') || '1';
-            const returnUrl = urlParams.get('returnUrl');
-            
-            // Log completion to console
-            console.log('Mini-game completed:', {
-                yessticketId: ticketId,
-                gameId: gameId,
-                level: level,
-                score: totalScore,
-                time: Math.floor((Date.now() - gameStartTime) / 1000),
-                moves: moveCount,
-                timestamp: new Date().toISOString()
-            });
-            
-            // Send completion message to parent window if in iframe
-            if (window.parent !== window) {
-                window.parent.postMessage({
-                    type: 'MINI_GAME_COMPLETE',
-                    gameId: gameId,
-                    score: totalScore,
-                    level: level,
-                    ticketId: ticketId
-                }, '*');
-            }
-            
-            // If returnUrl is provided, redirect after 3 seconds
-            if (returnUrl) {
-                setTimeout(() => {
-                    window.location.href = returnUrl;
-                }, 3000);
-            }
         }
 
+        function initializeAndCapture() {
+            initializePuzzle();
+            renderBoard();
+            captureAndSetImage();
+            startTimer();
+        }
+        
         async function startGame() {
-            const cameraSuccess = await setupCamera();
-            if (!cameraSuccess) return;
-            
             welcomeModal.classList.remove('visible');
             gameStarted = true;
-            snapshotTaken = false;
-            snapshotImageData = null;
+            isSolving = false;
             moveCount = 0;
             
-            // Reset and show game stats
             gameStats.style.display = 'flex';
             updateMoves();
-            timeDisplay.textContent = '00:00';
             
-            initializePuzzle();
-            createTiles();
-            renderTilePositions();
-            
+            cameraContainer.style.display = 'flex';
+            video.style.display = 'block';
             snapshotButton.style.display = 'block';
             newGameButton.style.display = 'block';
-            snapshotButton.textContent = 'Take Snapshot';
-            snapshotButton.style.background = '#2d5a3d';
             
-            // Start the timer
-            startTimer();
-            
-            gameLoop();
-        }
-
-        function newGame() {
-            if (!gameStarted) return;
-            
-            snapshotTaken = false;
-            snapshotImageData = null;
-            snapshotButton.textContent = 'Take Snapshot';
-            snapshotButton.style.background = '#2d5a3d';
-            
-            // Hide the captured image preview
-            capturedImageContainer.style.display = 'none';
-            
-            // Reset stats
-            moveCount = 0;
-            updateMoves();
-            timeDisplay.textContent = '00:00';
-            
-            // Show the camera preview again for new game
-            video.style.display = 'block';
-            
-            initializePuzzle();
-            createTiles();
-            renderTilePositions();
-            isSolving = false;
-            
-            // Restart timer
-            startTimer();
-        }
-
-        function gameLoop() {
-            if (gameStarted && !isSolving) {
-                updateTiles();
-                requestAnimationFrame(gameLoop);
+            if (video.readyState >= 2) {
+                initializeAndCapture();
+            } else {
+                video.addEventListener('loadeddata', initializeAndCapture, { once: true });
             }
         }
 
-        // Event listeners
-        startButton.addEventListener('click', startGame);
-        snapshotButton.addEventListener('click', takeSnapshot);
-        newGameButton.addEventListener('click', newGame);
-        gameContainer.addEventListener('click', handleTileClick);
+        // Reshuffles the puzzle with the same image
+        function newGame() {
+            isSolving = false;
+            moveCount = 0;
+            updateMoves();
+            welcomeModal.classList.remove('visible');
+            
+            initializePuzzle();
+            renderBoard();
+            
+            startTimer();
+        }
+        
+        // Shows the camera to take a new picture, then starts a new game
+        function handleNewSnapshotClick() {
+            isSolving = false;
+            moveCount = 0;
+            updateMoves();
+            welcomeModal.classList.remove('visible');
 
-        // Initialize camera on page load
-        window.addEventListener('load', () => {
-            setupCamera();
+            video.style.display = 'block';
+            capturedImageContainer.style.display = 'none';
+
+            setTimeout(() => {
+                initializeAndCapture();
+            }, 200);
+        }
+
+        startButton.addEventListener('click', async () => {
+            if (gameStarted) { // "Play Again" was clicked
+                handleNewSnapshotClick();
+            } else { // First time starting
+                const cameraSuccess = await setupCamera();
+                if (cameraSuccess) startGame();
+            }
         });
+
+        snapshotButton.addEventListener('click', handleNewSnapshotClick);
+        newGameButton.addEventListener('click', newGame);
+
     </script>
 </body>
 </html>
+
