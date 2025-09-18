@@ -22,9 +22,6 @@ const ActionBar = ({ dynamicSpacing, isHighHeight, dimensions, isVisible = true 
     actions.toggleProfile();
   };
 
-  const handleRulesClick = () => {
-    actions.toggleRules();
-  };
 
   // Determine if we should use responsive layout for narrow screens or when rotated
   const isNarrowScreen = dimensions && dimensions.width < 1600;
@@ -53,7 +50,7 @@ const ActionBar = ({ dynamicSpacing, isHighHeight, dimensions, isVisible = true 
         border: '1px solid rgba(255, 255, 255, 0.2)',
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'space-between', // Camera on left, rules in center, support+profile grouped on right
+        justifyContent: 'space-between', // Camera on left, support+profile grouped on right
         padding: isNarrowScreen || isRotated ? '0 10px 0 10px' : '0 15px 0 15px', // Minimal padding for closer to edges
         borderRadius: theme.borderRadius.lg,
         marginTop: '2px', // Very minimal margin for all cases
@@ -116,54 +113,6 @@ const ActionBar = ({ dynamicSpacing, isHighHeight, dimensions, isVisible = true 
           </div>
         </button>
 
-      {/* Rules Button - Center */}
-      <button
-        onClick={handleRulesClick}
-        className="shimmer-button"
-        style={{
-          width: isMobile ? '45px' : '90px',
-          height: isMobile ? '45px' : '90px',
-          borderRadius: '12px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          cursor: 'pointer',
-          transition: theme.transitions.fast,
-          boxShadow: ui.showRules ? theme.shadows.neumorphism.pressed : theme.shadows.neumorphism.raised,
-          border: 'none',
-          flexDirection: 'column',
-          gap: '6px'
-        }}
-        onMouseEnter={(e) => {
-          e.target.style.boxShadow = theme.shadows.neumorphism.soft;
-        }}
-        onMouseLeave={(e) => {
-          e.target.style.boxShadow = ui.showRules ? theme.shadows.neumorphism.pressed : theme.shadows.neumorphism.raised;
-        }}
-      >
-        {/* Rules Icon */}
-        <div
-          style={{
-            fontSize: isMobile ? '18px' : '36px',
-            lineHeight: 1
-          }}
-        >
-          📋
-        </div>
-        
-        {/* Rules Label */}
-        <div
-          style={{
-            fontSize: isMobile ? '6px' : '12px',
-            fontWeight: theme.typography.fontWeight.bold,
-            color: theme.colors.accent,
-            textAlign: 'center',
-            textShadow: `1px 1px 2px ${theme.colors.primary}`
-          }}
-        >
-          RULES
-        </div>
-      </button>
 
       {/* Right Side Button Group - Support and Profile */}
       <div
