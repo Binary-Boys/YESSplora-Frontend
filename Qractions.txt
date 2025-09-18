@@ -1,7 +1,6 @@
-yesslvl-1: -redirect to game 1
-yesslvl-2: -redirect to game 2
-yesslvl-3: -redirect to game 3
-yesslvl-4: -redirect to game 4
+yesslvl-1: -rules1
+yesslvl-3: -rules3 
+yesslvl-4: -rules4
 yesslvl-5: -rules5
 yesslvl-6: -rules6
 yesslvl-7: -rules7

@@ -208,18 +208,53 @@ const QRScannerPopup = () => {
         // Open URL
         window.open(qrData, '_blank');
       } else {
-        // Treat as simple identifier - check for rules mapping
-        handleSimpleQR(qrData);
+        // Check for software game QR codes (yesslvl-1, yesslvl-2, yesslvl-3)
+        if (qrData.startsWith('yesslvl-')) {
+          const level = qrData.split('-')[1];
+          const gameId = level; // Map level to game ID
+          handleSoftwareGame({ gameId, level });
+        } else {
+          // Treat as simple identifier - check for rules mapping
+          handleSimpleQR(qrData);
+        }
       }
     }
   };
 
   const handleSoftwareGame = (data) => {
     console.log('Software game QR:', data);
-    // TODO: Implement software game redirection
     actions.closeAllPopups();
-    // For now, just show an alert
-    alert(`Software Game: ${data.gameId}\nLevel: ${data.level}`);
+    
+    // Get current team info for parameterization
+    const teamInfo = state.team;
+    const ticketId = state.auth.ticketId;
+    
+    // Map game IDs to hosted URLs
+    const gameUrls = {
+      '1': 'https://campuzzle.netlify.app/',
+      '2': 'https://spellb.netlify.app/',
+      '3': 'https://geonerds.netlify.app/'
+    };
+    
+    const gameUrl = gameUrls[data.gameId];
+    if (gameUrl) {
+      // Create parameterized URL with team info and level
+      const params = new URLSearchParams({
+        ticketId: ticketId || 'unknown',
+        teamCode: teamInfo.id || 'unknown',
+        level: data.level || '1',
+        gameId: data.gameId,
+        returnUrl: window.location.origin
+      });
+      
+      const fullUrl = `${gameUrl}?${params.toString()}`;
+      console.log('Redirecting to mini-game:', fullUrl);
+      
+      // Open in new tab
+      window.open(fullUrl, '_blank');
+    } else {
+      alert(`Unknown game ID: ${data.gameId}`);
+    }
   };
 
   const handleVolunteerScoring = (data) => {

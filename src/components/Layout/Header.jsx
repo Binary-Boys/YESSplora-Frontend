@@ -18,6 +18,10 @@ const Header = ({ dynamicSpacing, isHighHeight, isRotated, isVisible = true }) =
     actions.toggleLeaderboard();
   };
 
+  const handleRulesClick = () => {
+    actions.toggleRules();
+  };
+
   return (
     <motion.header
       initial={{ y: -100, opacity: 0 }}
@@ -46,32 +50,94 @@ const Header = ({ dynamicSpacing, isHighHeight, isRotated, isVisible = true }) =
         flexShrink: 0 // Prevent header from shrinking
       }}
     >
-        {/* App Name - Left Side */}
-        <div
-          className="distorted-text"
-          style={{
-            fontSize: isMobile 
-              ? (isRotated ? '17px' : '22px') // 30% reduction for mobile
-              : (isRotated ? '24px' : '32px'),
-            fontWeight: theme.typography.fontWeight.bold,
-            color: theme.colors.accent,
-            textShadow: `2px 2px 4px rgba(0, 0, 0, 0.3)`,
-            letterSpacing: '2px',
-            transformStyle: 'preserve-3d',
-            backfaceVisibility: 'hidden'
-          }}
-        >
-          YESSPLORA
+        {/* Left Side - App Name and Level Progress */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '2px' }}>
+          <div
+            className="distorted-text"
+            style={{
+              fontSize: isMobile 
+                ? (isRotated ? '17px' : '22px') // 30% reduction for mobile
+                : (isRotated ? '24px' : '32px'),
+              fontWeight: theme.typography.fontWeight.bold,
+              color: theme.colors.accent,
+              textShadow: `2px 2px 4px rgba(0, 0, 0, 0.3)`,
+              letterSpacing: '2px',
+              transformStyle: 'preserve-3d',
+              backfaceVisibility: 'hidden'
+            }}
+          >
+            YESSPLORA
+          </div>
+          
+          {/* Level Progress Indicator */}
+          <div style={{
+            fontSize: isMobile ? '10px' : '12px',
+            color: theme.colors.textSecondary,
+            fontWeight: theme.typography.fontWeight.medium,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '4px'
+          }}>
+            <span>Levels: {state.gameProgress.completedLevels.length}/9</span>
+            <span style={{ color: theme.colors.primary }}>•</span>
+            <span>Score: {state.gameProgress.totalScore}</span>
+          </div>
         </div>
 
-        {/* Right Side Button Group - Leaderboard and Minimap */}
+        {/* Right Side Button Group - Rules, Leaderboard and Minimap */}
         <div
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '10px' // Small gap between leaderboard and minimap buttons
+            gap: '8px' // Small gap between buttons
           }}
         >
+          {/* Rules Button */}
+          <motion.button
+            initial={{ x: 50, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ delay: 0.1, duration: 0.5 }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={handleRulesClick}
+            className="shimmer-button"
+            style={{
+              width: isMobile 
+                ? (isRotated ? '35px' : '45px') // 50% reduction for mobile
+                : (isRotated ? '75px' : '90px'), // Desktop size unchanged
+              height: isMobile 
+                ? (isRotated ? '35px' : '45px') // 50% reduction for mobile
+                : (isRotated ? '75px' : '90px'), // Desktop size unchanged
+              borderRadius: '12px', // Squaricle - square with rounded corners
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              transition: theme.transitions.fast,
+              boxShadow: ui.showRules ? theme.shadows.neumorphism.pressed : theme.shadows.neumorphism.raised,
+              border: 'none',
+              position: 'relative'
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.boxShadow = theme.shadows.neumorphism.soft;
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.boxShadow = ui.showRules ? theme.shadows.neumorphism.pressed : theme.shadows.neumorphism.raised;
+            }}
+          >
+            {/* Rules Icon */}
+            <div
+              style={{
+                fontSize: isMobile 
+                  ? (isRotated ? '18px' : '22px') // 50% smaller for mobile
+                  : (isRotated ? '24px' : '30px'),
+                lineHeight: 1,
+                color: theme.colors.primary
+              }}
+            >
+              📋
+            </div>
+          </motion.button>
           {/* Leaderboard Button */}
           <motion.button
             initial={{ x: 50, opacity: 0 }}

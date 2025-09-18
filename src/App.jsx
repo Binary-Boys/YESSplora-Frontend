@@ -41,6 +41,49 @@ const GameApp = ({ onLoginSuccess }) => {
     }
   }, []); // Remove dependencies to prevent infinite loops
 
+  // Listen for mini-game completion messages
+  useEffect(() => {
+    const handleMessage = (event) => {
+      // Only accept messages from trusted origins
+      const trustedOrigins = [
+        'https://campuzzle.netlify.app',
+        'https://spellb.netlify.app',
+        'https://geonerds.netlify.app'
+      ];
+      
+      if (!trustedOrigins.includes(event.origin)) {
+        return;
+      }
+      
+      if (event.data && event.data.type === 'MINI_GAME_COMPLETE') {
+        const { gameId, score, level } = event.data;
+        console.log('Received mini-game completion:', event.data);
+        
+        // Complete the mini-game in the main app
+        actions.completeMiniGame(gameId, score, level);
+        
+        // Show completion message with more details
+        const gameNames = {
+          '1': 'Campus Puzzle',
+          '2': 'Spell Bee',
+          '3': 'Geo Nerd'
+        };
+        const gameName = gameNames[gameId] || `Game ${gameId}`;
+        
+        alert(`🎉 ${gameName} completed!\nScore: ${score}/10\nLevel: ${level}\n\nReturning to YESSplora...`);
+        
+        // Close any open popups to return to main UI
+        actions.closeAllPopups();
+      }
+    };
+    
+    window.addEventListener('message', handleMessage);
+    
+    return () => {
+      window.removeEventListener('message', handleMessage);
+    };
+  }, [actions]);
+
   return (
     <RotatableContainer>
       {/* Main Content Area with all components */}

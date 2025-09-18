@@ -62,7 +62,7 @@ const initialState = {
   }
 };
 
-// Action types
+  // Action types
 const ActionTypes = {
   // Authentication
   SET_AUTH: 'SET_AUTH',
@@ -78,6 +78,7 @@ const ActionTypes = {
   COMPLETE_LOCATION: 'COMPLETE_LOCATION',
   UPDATE_SCORE: 'UPDATE_SCORE',
   SET_CURRENT_LEVEL: 'SET_CURRENT_LEVEL',
+  COMPLETE_MINI_GAME: 'COMPLETE_MINI_GAME',
   
   // UI state
   TOGGLE_MINIMAP: 'TOGGLE_MINIMAP',
@@ -199,6 +200,39 @@ const gameReducer = (state, action) => {
         gameProgress: {
           ...state.gameProgress,
           currentLevel: action.payload
+        }
+      };
+      
+    case ActionTypes.COMPLETE_MINI_GAME:
+      const { gameId, score, level } = action.payload;
+      const locationId = parseInt(gameId);
+      const normalizedScore = Math.min(Math.max(score, 0), 10); // Ensure score is between 0-10
+      
+      // Log completion to console
+      console.log('Mini-game completed:', {
+        yessticketId: state.auth.ticketId,
+        gameId: gameId,
+        level: level,
+        score: normalizedScore,
+        timestamp: new Date().toISOString()
+      });
+      
+      return {
+        ...state,
+        gameProgress: {
+          ...state.gameProgress,
+          locationStatus: {
+            ...state.gameProgress.locationStatus,
+            [locationId]: {
+              completed: true,
+              score: normalizedScore,
+              type: 'software'
+            }
+          },
+          completedLevels: state.gameProgress.completedLevels.includes(locationId) 
+            ? state.gameProgress.completedLevels 
+            : [...state.gameProgress.completedLevels, locationId],
+          totalScore: state.gameProgress.totalScore + normalizedScore
         }
       };
       
@@ -446,6 +480,10 @@ export const GameProvider = ({ children }) => {
       payload: { locationId: locationId, newScore } 
     }),
     setCurrentLevel: (level) => dispatch({ type: ActionTypes.SET_CURRENT_LEVEL, payload: level }),
+    completeMiniGame: (gameId, score, level) => dispatch({ 
+      type: ActionTypes.COMPLETE_MINI_GAME, 
+      payload: { gameId, score, level } 
+    }),
     
     // UI state
     toggleMinimap: () => dispatch({ type: ActionTypes.TOGGLE_MINIMAP }),
