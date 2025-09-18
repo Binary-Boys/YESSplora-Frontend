@@ -204,16 +204,16 @@ const gameReducer = (state, action) => {
       };
       
     case ActionTypes.COMPLETE_MINI_GAME:
-      const { gameId, score, level } = action.payload;
-      const locationId = parseInt(gameId);
-      const normalizedScore = Math.min(Math.max(score, 0), 10); // Ensure score is between 0-10
+      const { gameId: miniGameId, score: miniGameScore, level: miniGameLevel } = action.payload;
+      const miniGameLocationId = parseInt(miniGameId);
+      const normalizedMiniGameScore = Math.min(Math.max(miniGameScore, 0), 10); // Ensure score is between 0-10
       
       // Log completion to console
       console.log('Mini-game completed:', {
         yessticketId: state.auth.ticketId,
-        gameId: gameId,
-        level: level,
-        score: normalizedScore,
+        gameId: miniGameId,
+        level: miniGameLevel,
+        score: normalizedMiniGameScore,
         timestamp: new Date().toISOString()
       });
       
@@ -223,16 +223,16 @@ const gameReducer = (state, action) => {
           ...state.gameProgress,
           locationStatus: {
             ...state.gameProgress.locationStatus,
-            [locationId]: {
+            [miniGameLocationId]: {
               completed: true,
-              score: normalizedScore,
+              score: normalizedMiniGameScore,
               type: 'software'
             }
           },
-          completedLevels: state.gameProgress.completedLevels.includes(locationId) 
+          completedLevels: state.gameProgress.completedLevels.includes(miniGameLocationId) 
             ? state.gameProgress.completedLevels 
-            : [...state.gameProgress.completedLevels, locationId],
-          totalScore: state.gameProgress.totalScore + normalizedScore
+            : [...state.gameProgress.completedLevels, miniGameLocationId],
+          totalScore: state.gameProgress.totalScore + normalizedMiniGameScore
         }
       };
       
