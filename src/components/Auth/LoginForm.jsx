@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { theme } from '../../styles/theme';
+import { validateLoginCredentials, isAdminUser } from '../../utils/validation';
 
 const LoginForm = ({ onBackClick, onLoginSuccess, onSignupClick }) => {
   const [formData, setFormData] = useState({
@@ -9,6 +10,7 @@ const LoginForm = ({ onBackClick, onLoginSuccess, onSignupClick }) => {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [fieldErrors, setFieldErrors] = useState({});
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -16,31 +18,49 @@ const LoginForm = ({ onBackClick, onLoginSuccess, onSignupClick }) => {
       ...prev,
       [name]: value
     }));
-    // Clear error when user starts typing
+    // Clear errors when user starts typing
     if (error) setError('');
+    if (fieldErrors[name]) {
+      setFieldErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }));
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
+    setFieldErrors({});
 
     try {
+      // Validate credentials using the new validation system
+      const validation = validateLoginCredentials(formData.ticketId, formData.teamCode);
+      
+      if (!validation.isValid) {
+        setFieldErrors(validation.errors);
+        throw new Error('Please fix the validation errors');
+      }
+
+      // Check for admin user
+      const isAdmin = isAdminUser(formData.ticketId, formData.teamCode);
+      
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1500));
       
-      // Basic validation
-      if (!formData.ticketId.trim() || !formData.teamCode.trim()) {
-        throw new Error('Please fill in all fields');
-      }
-
-      // TODO: Implement actual authentication logic
-      console.log('Login attempt:', formData);
+      console.log('Login attempt:', { ...formData, isAdmin });
       
       // Persist login state and redirect to main game
       try {
-        localStorage.setItem('yess_auth', JSON.stringify({ isAuthenticated: true, ticketId: formData.ticketId }));
+        localStorage.setItem('yess_auth', JSON.stringify({ 
+          isAuthenticated: true, 
+          ticketId: formData.ticketId,
+          teamCode: formData.teamCode,
+          isAdmin: isAdmin
+        }));
       } catch {}
+      
       // Call the success callback to redirect to main game
       if (onLoginSuccess) {
         onLoginSuccess();
@@ -172,12 +192,12 @@ const LoginForm = ({ onBackClick, onLoginSuccess, onSignupClick }) => {
               name="ticketId"
               value={formData.ticketId}
               onChange={handleInputChange}
-              placeholder="Enter your ticket ID"
+              placeholder="Enter your ticket ID (e.g., YESS25XhyQCCRt)"
               style={{
                 width: '100%',
                 padding: '15px 20px',
                 borderRadius: '12px',
-                border: '2px solid rgba(255, 255, 255, 0.2)',
+                border: `2px solid ${fieldErrors.ticketId ? 'rgba(255, 0, 0, 0.5)' : 'rgba(255, 255, 255, 0.2)'}`,
                 background: 'rgba(255, 255, 255, 0.1)',
                 color: theme.colors.accent,
                 fontSize: '1rem',
@@ -186,14 +206,28 @@ const LoginForm = ({ onBackClick, onLoginSuccess, onSignupClick }) => {
                 boxSizing: 'border-box'
               }}
               onFocus={(e) => {
-                e.target.style.borderColor = theme.colors.accent;
+                e.target.style.borderColor = fieldErrors.ticketId ? 'rgba(255, 0, 0, 0.7)' : theme.colors.accent;
                 e.target.style.background = 'rgba(255, 255, 255, 0.15)';
               }}
               onBlur={(e) => {
-                e.target.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+                e.target.style.borderColor = fieldErrors.ticketId ? 'rgba(255, 0, 0, 0.5)' : 'rgba(255, 255, 255, 0.2)';
                 e.target.style.background = 'rgba(255, 255, 255, 0.1)';
               }}
             />
+            {fieldErrors.ticketId && (
+              <motion.div
+                initial={{ opacity: 0, y: -5 }}
+                animate={{ opacity: 1, y: 0 }}
+                style={{
+                  color: '#ff6b6b',
+                  fontSize: '0.85rem',
+                  marginTop: '5px',
+                  paddingLeft: '5px'
+                }}
+              >
+                {fieldErrors.ticketId}
+              </motion.div>
+            )}
           </div>
 
           {/* Team Code Input */}
@@ -214,12 +248,12 @@ const LoginForm = ({ onBackClick, onLoginSuccess, onSignupClick }) => {
               name="teamCode"
               value={formData.teamCode}
               onChange={handleInputChange}
-              placeholder="Enter your team code"
+              placeholder="Enter your team code (same as ticket ID)"
               style={{
                 width: '100%',
                 padding: '15px 20px',
                 borderRadius: '12px',
-                border: '2px solid rgba(255, 255, 255, 0.2)',
+                border: `2px solid ${fieldErrors.teamCode ? 'rgba(255, 0, 0, 0.5)' : 'rgba(255, 255, 255, 0.2)'}`,
                 background: 'rgba(255, 255, 255, 0.1)',
                 color: theme.colors.accent,
                 fontSize: '1rem',
@@ -228,14 +262,28 @@ const LoginForm = ({ onBackClick, onLoginSuccess, onSignupClick }) => {
                 boxSizing: 'border-box'
               }}
               onFocus={(e) => {
-                e.target.style.borderColor = theme.colors.accent;
+                e.target.style.borderColor = fieldErrors.teamCode ? 'rgba(255, 0, 0, 0.7)' : theme.colors.accent;
                 e.target.style.background = 'rgba(255, 255, 255, 0.15)';
               }}
               onBlur={(e) => {
-                e.target.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+                e.target.style.borderColor = fieldErrors.teamCode ? 'rgba(255, 0, 0, 0.5)' : 'rgba(255, 255, 255, 0.2)';
                 e.target.style.background = 'rgba(255, 255, 255, 0.1)';
               }}
             />
+            {fieldErrors.teamCode && (
+              <motion.div
+                initial={{ opacity: 0, y: -5 }}
+                animate={{ opacity: 1, y: 0 }}
+                style={{
+                  color: '#ff6b6b',
+                  fontSize: '0.85rem',
+                  marginTop: '5px',
+                  paddingLeft: '5px'
+                }}
+              >
+                {fieldErrors.teamCode}
+              </motion.div>
+            )}
           </div>
 
           {/* Submit Button */}

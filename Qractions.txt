@@ -1,0 +1,55 @@
+yesslvl-1: -redirect to game 1
+yesslvl-2: -redirect to game 2
+yesslvl-3: -redirect to game 3
+yesslvl-4: -redirect to game 4
+yesslvl-5: -rules5
+yesslvl-6: -rules6
+yesslvl-7: -rules7
+yesslvl-8: -rules8
+yesslvl-9: -rules9
+stallyess1: Add 1 point to the score.
+stallyess2: Add 1 point to the score.
+stallyess3: Add 1 point to the score.
+stallyess4: Add 1 point to the score.
+stallyess5: Add 1 point to the score.
+stallyess6: Add 1 point to the score.
+stallyess7: Add 1 point to the score.
+stallyess8: Add 1 point to the score.
+stallyess9: Add 1 point to the score.
+stallyess10: Add 1 point to the score.
+stallyess11: Add 1 point to the score.
+stallyess12: Add 1 point to the score.
+stallyess13: Add 1 point to the score.
+stallyess14: Add 1 point to the score.
+stallyess15: Add 1 point to the score.
+stallyess16: Add 1 point to the score.
+stallyess17: Add 1 point to the score.
+stallyess18: Add 1 point to the score.
+stallyess19: Add 1 point to the score.
+stallyess20: Add 1 point to the score.
+stallyess21: Add 1 point to the score.
+stallyess22: Add 1 point to the score.
+stallyess23: Add 1 point to the score.
+stallyess24: Add 1 point to the score.
+stallyess25: Add 1 point to the score.
+stallyess26: Add 1 point to the score.
+stallyess27: Add 1 point to the score.
+stallyess28: Add 1 point to the score.
+stallyess29: Add 1 point to the score.
+stallyess30: Add 1 point to the score.
+stallyess31: Add 1 point to the score.
+stallyess32: Add 1 point to the score.
+stallyess33: Add 1 point to the score.
+stallyess34: Add 1 point to the score.
+stallyess35: Add 1 point to the score.
+stallyess36: Add 1 point to the score.
+stallyess37: Add 1 point to the score.
+stallyess38: Add 1 point to the score.
+stallyess39: Add 1 point to the score.
+stallyess40: Add 1 point to the score.
+stallyess41: Add 1 point to the score.
+stallyess42: Add 1 point to the score.
+pixprompt : Add 3 point to the score.
+googlegsa: Add 3 point to the score.
+valaxiapy: Add 3 point to the score.
+treasure: guardians page 

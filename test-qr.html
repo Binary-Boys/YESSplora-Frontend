@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test QR Codes for YESSplora</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #580404;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .qr-container {
+            display: inline-block;
+            margin: 20px;
+            padding: 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            border: 2px solid #fff;
+        }
+        .qr-code {
+            width: 200px;
+            height: 200px;
+            background: white;
+            margin: 10px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 5px;
+            font-size: 12px;
+            color: black;
+            word-break: break-all;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        h1 {
+            color: #fff;
+            margin-bottom: 30px;
+        }
+        h3 {
+            color: #ccc;
+            margin-bottom: 10px;
+        }
+        .instructions {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 YESSplora QR Code Test Page</h1>
+    
+    <div class="instructions">
+        <h3>📱 How to Test:</h3>
+        <ol>
+            <li>Open the YESSplora app in another tab/window</li>
+            <li>Click the camera button (📷 CAM) to open the QR scanner</li>
+            <li>Point the camera at any of the test QR codes below</li>
+            <li>QR codes are processed immediately (no delay)</li>
+            <li>Check the console (F12) for debug information</li>
+            <li>Rules beyond the highest scanned QR are hidden</li>
+        </ol>
+    </div>
+
+    <div class="qr-container">
+        <h3>🎮 Rule 1 - Campus Puzzle</h3>
+        <div class="qr-code">yesslvl-1</div>
+        <p>Should redirect to Rule 1 (Campus Puzzle)</p>
+    </div>
+
+    <div class="qr-container">
+        <h3>🎮 Rule 3 - Geo Nerd</h3>
+        <div class="qr-code">yesslvl-3</div>
+        <p>Should redirect to Rule 3 (Geo Nerd)</p>
+    </div>
+
+    <div class="qr-container">
+        <h3>🎮 Rule 4 - Unity Game</h3>
+        <div class="qr-code">yesslvl-4</div>
+        <p>Should redirect to Rule 4 (Unity Game)</p>
+    </div>
+
+    <div class="qr-container">
+        <h3>🏪 Stall QR - 1 Point</h3>
+        <div class="qr-code">stallyess1</div>
+        <p>Should add 1 point to your score</p>
+    </div>
+
+    <div class="qr-container">
+        <h3>🏪 Stall QR - 1 Point</h3>
+        <div class="qr-code">stallyess18</div>
+        <p>Should add 1 point to your score</p>
+    </div>
+
+    <div class="qr-container">
+        <h3>⭐ Special QR - 3 Points</h3>
+        <div class="qr-code">pixprompt</div>
+        <p>Should add 3 points to your score</p>
+    </div>
+
+    <div class="qr-container">
+        <h3>⭐ Special QR - 3 Points</h3>
+        <div class="qr-code">googlegsa</div>
+        <p>Should add 3 points to your score</p>
+    </div>
+
+    <div class="qr-container">
+        <h3>💎 Treasure QR</h3>
+        <div class="qr-code">treasure</div>
+        <p>Should show treasure found message</p>
+    </div>
+
+    <div class="instructions">
+        <h3>🔧 Debug Information:</h3>
+        <p>If QR codes are not being recognized:</p>
+        <ul>
+            <li>Check browser console (F12) for debug info and error messages</li>
+            <li>Ensure camera permissions are granted</li>
+            <li>Try different lighting conditions</li>
+            <li>Hold the QR code steady within the green frame</li>
+            <li>Make sure the QR code is clear and not blurry</li>
+            <li>QR codes are cached for 10 seconds to prevent duplicate scans</li>
+        </ul>
+        
+        <h3>🎯 New Features:</h3>
+        <ul>
+            <li><strong>Immediate Processing:</strong> No more 10-second delay</li>
+            <li><strong>QR Caching:</strong> Prevents duplicate scans for 10 seconds</li>
+            <li><strong>Rule Locking:</strong> Only shows rules up to the highest scanned QR</li>
+            <li><strong>Console Debug:</strong> Debug info only shown in browser console</li>
+        </ul>
+    </div>
+</body>
+</html>

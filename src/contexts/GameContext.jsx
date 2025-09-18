@@ -14,7 +14,8 @@ const initialState = {
   auth: {
     isAuthenticated: false,
     ticketId: null,
-    teamCode: null
+    teamCode: null,
+    isAdmin: false
   },
   
   // Game progress
@@ -48,6 +49,9 @@ const initialState = {
     showVolunteerScoring: false,
     showLeaderboard: false,
     showSupport: false,
+    showRules: false,
+    currentRule: 1,
+    highestRuleScanned: 1,
     currentPopup: null
   },
   
@@ -82,6 +86,9 @@ const ActionTypes = {
   TOGGLE_VOLUNTEER_SCORING: 'TOGGLE_VOLUNTEER_SCORING',
   TOGGLE_LEADERBOARD: 'TOGGLE_LEADERBOARD',
   TOGGLE_SUPPORT: 'TOGGLE_SUPPORT',
+  TOGGLE_RULES: 'TOGGLE_RULES',
+  SET_CURRENT_RULE: 'SET_CURRENT_RULE',
+  SET_HIGHEST_RULE_SCANNED: 'SET_HIGHEST_RULE_SCANNED',
   SET_CURRENT_POPUP: 'SET_CURRENT_POPUP',
   CLOSE_ALL_POPUPS: 'CLOSE_ALL_POPUPS',
   
@@ -110,7 +117,8 @@ const gameReducer = (state, action) => {
         auth: {
           isAuthenticated: true,
           ticketId: action.payload.ticketId,
-          teamCode: action.payload.teamCode
+          teamCode: action.payload.teamCode,
+          isAdmin: action.payload.isAdmin || false
         }
       };
       
@@ -120,7 +128,8 @@ const gameReducer = (state, action) => {
         auth: {
           isAuthenticated: false,
           ticketId: null,
-          teamCode: null
+          teamCode: null,
+          isAdmin: false
         }
       };
       
@@ -272,7 +281,42 @@ const gameReducer = (state, action) => {
           showQRScanner: false,
           showVolunteerScoring: false,
           showLeaderboard: false,
+          showRules: false,
           currentPopup: state.ui.showSupport ? null : 'support'
+        }
+      };
+      
+    case ActionTypes.TOGGLE_RULES:
+      return {
+        ...state,
+        ui: {
+          ...state.ui,
+          showRules: !state.ui.showRules,
+          showMinimap: false,
+          showProfile: false,
+          showQRScanner: false,
+          showVolunteerScoring: false,
+          showLeaderboard: false,
+          showSupport: false,
+          currentPopup: state.ui.showRules ? null : 'rules'
+        }
+      };
+      
+    case ActionTypes.SET_CURRENT_RULE:
+      return {
+        ...state,
+        ui: {
+          ...state.ui,
+          currentRule: action.payload
+        }
+      };
+      
+    case ActionTypes.SET_HIGHEST_RULE_SCANNED:
+      return {
+        ...state,
+        ui: {
+          ...state.ui,
+          highestRuleScanned: Math.max(state.ui.highestRuleScanned, action.payload)
         }
       };
       
@@ -296,6 +340,9 @@ const gameReducer = (state, action) => {
           showProfile: false,
           showQRScanner: false,
           showVolunteerScoring: false,
+          showLeaderboard: false,
+          showSupport: false,
+          showRules: false,
           currentPopup: null
         }
       };
@@ -381,7 +428,7 @@ export const GameProvider = ({ children }) => {
   const actions = {
     // Authentication
     setAuth: (authData) => dispatch({ type: ActionTypes.SET_AUTH, payload: authData }),
-    login: (ticketId, teamCode) => dispatch({ type: ActionTypes.LOGIN, payload: { ticketId, teamCode } }),
+    login: (ticketId, teamCode, isAdmin = false) => dispatch({ type: ActionTypes.LOGIN, payload: { ticketId, teamCode, isAdmin } }),
     logout: () => dispatch({ type: ActionTypes.LOGOUT }),
     
     // Team management
@@ -407,8 +454,11 @@ export const GameProvider = ({ children }) => {
     toggleVolunteerScoring: () => dispatch({ type: ActionTypes.TOGGLE_VOLUNTEER_SCORING }),
     toggleLeaderboard: () => dispatch({ type: ActionTypes.TOGGLE_LEADERBOARD }),
     toggleSupport: () => dispatch({ type: ActionTypes.TOGGLE_SUPPORT }),
-    setCurrentPopup: (popup) => dispatch({ type: ActionTypes.SET_CURRENT_POPUP, payload: popup }),
-    closeAllPopups: () => dispatch({ type: ActionTypes.CLOSE_ALL_POPUPS }),
+    toggleRules: () => dispatch({ type: ActionTypes.TOGGLE_RULES }),
+  setCurrentRule: (rule) => dispatch({ type: ActionTypes.SET_CURRENT_RULE, payload: rule }),
+  setHighestRuleScanned: (rule) => dispatch({ type: ActionTypes.SET_HIGHEST_RULE_SCANNED, payload: rule }),
+  setCurrentPopup: (popup) => dispatch({ type: ActionTypes.SET_CURRENT_POPUP, payload: popup }),
+  closeAllPopups: () => dispatch({ type: ActionTypes.CLOSE_ALL_POPUPS }),
     
     // Network
     setOnlineStatus: (isOnline) => dispatch({ type: ActionTypes.SET_ONLINE_STATUS, payload: isOnline }),

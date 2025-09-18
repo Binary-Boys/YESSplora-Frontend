@@ -20,7 +20,7 @@ export const useAutoHide = (hideDelay = 20000) => {
     }, hideDelay);
 
     setHideTimer(newTimer);
-  }, [hideTimer, hideDelay]);
+  }, [hideDelay]); // Remove hideTimer from dependencies
 
   // Show bars manually (for touch/click events)
   const showBars = useCallback(() => {
@@ -35,7 +35,7 @@ export const useAutoHide = (hideDelay = 20000) => {
       clearTimeout(hideTimer);
       setHideTimer(null);
     }
-  }, [hideTimer]);
+  }, []); // Remove hideTimer from dependencies
 
   // Initialize timer on mount and reset on user activity
   useEffect(() => {
@@ -47,7 +47,7 @@ export const useAutoHide = (hideDelay = 20000) => {
         clearTimeout(hideTimer);
       }
     };
-  }, []);
+  }, [resetTimer]); // Add resetTimer as dependency
 
   // Reset timer on any user interaction
   useEffect(() => {

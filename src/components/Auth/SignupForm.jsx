@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { theme } from '../../styles/theme';
+import { validateSignupData } from '../../utils/validation';
 
 const SignupForm = ({ onBackClick, onSignupSuccess, onRedirectToLogin }) => {
   const [currentStep, setCurrentStep] = useState(1); // 1: Team Lead, 2: Team Members
@@ -15,6 +16,7 @@ const SignupForm = ({ onBackClick, onSignupSuccess, onRedirectToLogin }) => {
   const [selectedMemberCount, setSelectedMemberCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [fieldErrors, setFieldErrors] = useState({});
 
   const handleTeamDataChange = (e) => {
     const { name, value } = e.target;
@@ -23,6 +25,12 @@ const SignupForm = ({ onBackClick, onSignupSuccess, onRedirectToLogin }) => {
       [name]: value
     }));
     if (error) setError('');
+    if (fieldErrors[name]) {
+      setFieldErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }));
+    }
   };
 
   const handleMemberCountChange = (e) => {
@@ -49,20 +57,18 @@ const SignupForm = ({ onBackClick, onSignupSuccess, onRedirectToLogin }) => {
   };
 
   const handleNextStep = () => {
-    // Validate team lead data
-    if (!teamData.teamName.trim() || !teamData.mobileNo.trim() || 
-        !teamData.yessTicketId.trim() || !teamData.password.trim()) {
-      setError('Please fill in all required fields');
-      return;
-    }
-
-    if (teamData.password !== teamData.confirmPassword) {
-      setError('Passwords do not match');
+    // Validate team lead data using the new validation system
+    const validation = validateSignupData(teamData);
+    
+    if (!validation.isValid) {
+      setFieldErrors(validation.errors);
+      setError('Please fix the validation errors');
       return;
     }
 
     setCurrentStep(2);
     setError('');
+    setFieldErrors({});
   };
 
   const handleSubmit = async (e) => {
@@ -295,12 +301,12 @@ const SignupForm = ({ onBackClick, onSignupSuccess, onRedirectToLogin }) => {
                 name="yessTicketId"
                 value={teamData.yessTicketId}
                 onChange={handleTeamDataChange}
-                placeholder="Enter your YESS ticket ID"
+                placeholder="Enter your YESS ticket ID (e.g., YESS25XhyQCCRt)"
                 style={{
                   width: '100%',
                   padding: '15px 20px',
                   borderRadius: '12px',
-                  border: '2px solid rgba(255, 255, 255, 0.2)',
+                  border: `2px solid ${fieldErrors.yessTicketId ? 'rgba(255, 0, 0, 0.5)' : 'rgba(255, 255, 255, 0.2)'}`,
                   background: 'rgba(255, 255, 255, 0.1)',
                   color: theme.colors.accent,
                   fontSize: '1rem',
@@ -309,14 +315,28 @@ const SignupForm = ({ onBackClick, onSignupSuccess, onRedirectToLogin }) => {
                   boxSizing: 'border-box'
                 }}
                 onFocus={(e) => {
-                  e.target.style.borderColor = theme.colors.accent;
+                  e.target.style.borderColor = fieldErrors.yessTicketId ? 'rgba(255, 0, 0, 0.7)' : theme.colors.accent;
                   e.target.style.background = 'rgba(255, 255, 255, 0.15)';
                 }}
                 onBlur={(e) => {
-                  e.target.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+                  e.target.style.borderColor = fieldErrors.yessTicketId ? 'rgba(255, 0, 0, 0.5)' : 'rgba(255, 255, 255, 0.2)';
                   e.target.style.background = 'rgba(255, 255, 255, 0.1)';
                 }}
               />
+              {fieldErrors.yessTicketId && (
+                <motion.div
+                  initial={{ opacity: 0, y: -5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  style={{
+                    color: '#ff6b6b',
+                    fontSize: '0.85rem',
+                    marginTop: '5px',
+                    paddingLeft: '5px'
+                  }}
+                >
+                  {fieldErrors.yessTicketId}
+                </motion.div>
+              )}
             </div>
 
             {/* Password */}

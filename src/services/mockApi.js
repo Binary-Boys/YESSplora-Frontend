@@ -73,22 +73,85 @@ class MockApiService {
       case '/auth/login':
         if (method === 'POST') {
           const { ticketId, teamCode } = body;
+          
+          // Check for admin user
+          if (ticketId?.toLowerCase() === 'admin' && teamCode?.toLowerCase() === 'killadi') {
+            return {
+              success: true,
+              data: {
+                token: 'mock-admin-jwt-token',
+                team: {
+                  id: 'admin-team',
+                  name: 'Admin Team',
+                  members: ['Admin'],
+                  ticketId: 'admin',
+                  teamCode: 'killadi',
+                  isAdmin: true
+                }
+              }
+            };
+          }
+          
+          // Validate regular users
           if (ticketId && teamCode) {
+            // Check if ticket ID matches team code
+            if (ticketId !== teamCode) {
+              throw new Error('Team code must match ticket ID');
+            }
+            
+            // Check ticket ID format (YESS25 + 8 characters)
+            if (!ticketId.startsWith('YESS25') || ticketId.length !== 14) {
+              throw new Error('Invalid ticket ID format');
+            }
+            
             return {
               success: true,
               data: {
                 token: 'mock-jwt-token',
                 team: {
-                  id: 'team-001',
-                  name: 'Avengers',
-                  members: ['Achu', 'Kichu', 'Anju', 'Manju', 'Lechu'],
-                  ticketId: ticketId
+                  id: `team-${ticketId}`,
+                  name: `Team ${ticketId}`,
+                  members: ['Team Lead', 'Member 1', 'Member 2', 'Member 3', 'Member 4'],
+                  ticketId: ticketId,
+                  teamCode: teamCode,
+                  isAdmin: false
                 }
               }
             };
           } else {
             throw new Error('Invalid credentials');
           }
+        }
+        break;
+
+      case '/auth/signup':
+        if (method === 'POST') {
+          const { teamName, mobileNo, yessTicketId, password, teamMembers } = body;
+          
+          // Validate ticket ID format
+          if (!yessTicketId.startsWith('YESS25') || yessTicketId.length !== 14) {
+            throw new Error('Invalid ticket ID format. Must be YESS25 followed by 8 characters.');
+          }
+          
+          // Check if team already exists (mock check)
+          if (yessTicketId === 'YESS25EXISTING') {
+            throw new Error('Team with this ticket ID already exists');
+          }
+          
+          return {
+            success: true,
+            data: {
+              message: 'Team registered successfully',
+              team: {
+                id: `team-${yessTicketId}`,
+                name: teamName,
+                ticketId: yessTicketId,
+                teamCode: yessTicketId, // Team code same as ticket ID
+                mobileNo: mobileNo,
+                members: teamMembers || []
+              }
+            }
+          };
         }
         break;
 

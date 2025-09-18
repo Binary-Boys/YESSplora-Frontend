@@ -14,7 +14,12 @@ const QRScannerPopup = () => {
   const [isWaitingForError, setIsWaitingForError] = useState(false);
   const [detectedLink, setDetectedLink] = useState(null);
   const [linkCache, setLinkCache] = useState(null);
-  const [cacheTimeout, setCacheTimeout] = useState(null);
+  const [linkCacheTimeout, setLinkCacheTimeout] = useState(null);
+  const [processingDelay, setProcessingDelay] = useState(null);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [countdown, setCountdown] = useState(0);
+  const [qrCache, setQrCache] = useState(null);
+  const [qrCacheTimeout, setQrCacheTimeout] = useState(null);
   
   // Mobile detection
   const isMobile = window.innerWidth <= 768;
@@ -27,14 +32,25 @@ const QRScannerPopup = () => {
       setStopStream(false);
       setIsWaitingForError(false);
       setDetectedLink(null);
+      setIsProcessing(false);
+      setCountdown(0);
+      setQrCache(null);
       // Clear any pending timeouts
       if (errorTimeout) {
         clearTimeout(errorTimeout);
         setErrorTimeout(null);
       }
-      if (cacheTimeout) {
-        clearTimeout(cacheTimeout);
-        setCacheTimeout(null);
+      if (linkCacheTimeout) {
+        clearTimeout(linkCacheTimeout);
+        setLinkCacheTimeout(null);
+      }
+      if (processingDelay) {
+        clearTimeout(processingDelay);
+        setProcessingDelay(null);
+      }
+      if (qrCacheTimeout) {
+        clearTimeout(qrCacheTimeout);
+        setQrCacheTimeout(null);
       }
     }
     
@@ -43,11 +59,17 @@ const QRScannerPopup = () => {
       if (errorTimeout) {
         clearTimeout(errorTimeout);
       }
-      if (cacheTimeout) {
-        clearTimeout(cacheTimeout);
+      if (linkCacheTimeout) {
+        clearTimeout(linkCacheTimeout);
+      }
+      if (processingDelay) {
+        clearTimeout(processingDelay);
+      }
+      if (qrCacheTimeout) {
+        clearTimeout(qrCacheTimeout);
       }
     };
-  }, [ui.showQRScanner, errorTimeout, cacheTimeout]);
+  }, [ui.showQRScanner, errorTimeout, linkCacheTimeout, processingDelay, qrCacheTimeout]);
 
   // Function to check if a string is a valid URL
   const isValidUrl = (string) => {
@@ -65,25 +87,52 @@ const QRScannerPopup = () => {
     setDetectedLink(link);
     
     // Clear existing cache timeout
-    if (cacheTimeout) {
-      clearTimeout(cacheTimeout);
+    if (linkCacheTimeout) {
+      clearTimeout(linkCacheTimeout);
     }
     
     // Set new cache timeout for 15 seconds
     const timeout = setTimeout(() => {
       setLinkCache(null);
       setDetectedLink(null);
-      setCacheTimeout(null);
+      setLinkCacheTimeout(null);
     }, 15000);
     
-    setCacheTimeout(timeout);
+    setLinkCacheTimeout(timeout);
   };
 
   const handleScanResult = (result) => {
     console.log('QR Code scanned:', result);
+    console.log('Debug Info:');
+    console.log('• Scanner Active:', !stopStream ? 'Yes' : 'No');
+    console.log('• Processing:', isProcessing ? 'Yes' : 'No');
+    console.log('• Countdown:', countdown);
+    console.log('• Last Result:', scanResult || 'None');
+    
+    // Check if this QR code is already cached (prevent duplicate processing)
+    if (qrCache === result) {
+      console.log('QR code already cached, ignoring duplicate scan');
+      return;
+    }
+    
+    // Cache the QR code for 10 seconds to prevent duplicate scans
+    setQrCache(result);
     setScanResult(result);
     
-    // Check if the result is a valid URL
+    // Clear existing QR cache timeout
+    if (qrCacheTimeout) {
+      clearTimeout(qrCacheTimeout);
+    }
+    
+    // Set new cache timeout for 10 seconds
+    const timeout = setTimeout(() => {
+      setQrCache(null);
+      setQrCacheTimeout(null);
+    }, 10000);
+    
+    setQrCacheTimeout(timeout);
+    
+    // Process immediately
     if (isValidUrl(result)) {
       cacheLink(result);
     } else {
@@ -91,12 +140,15 @@ const QRScannerPopup = () => {
       processQRCode(result);
     }
     
-    // Stop scanning after successful scan
+    // Stop scanning after processing
     setStopStream(true);
   };
 
   const handleScanError = (error) => {
-    console.error('QR scan error:', error);
+    // Only log critical errors
+    if (error.name === "NotAllowedError" || error.name === "NotFoundError" || error.name === "NotReadableError") {
+      console.error('QR scan error:', error);
+    }
     
     // Clear any existing timeout
     if (errorTimeout) {
@@ -107,17 +159,29 @@ const QRScannerPopup = () => {
       setError('Camera permission denied. Please allow camera access to scan QR codes.');
     } else if (error.name === "NotFoundError") {
       setError('No camera found. Please check your camera connection.');
+    } else if (error.name === "NotReadableError") {
+      setError('Camera is being used by another application. Please close other apps and try again.');
+    } else if (error.name === "OverconstrainedError") {
+      setError('Camera constraints could not be satisfied. Trying alternative settings...');
+      // Don't show this error immediately, let the scanner try to recover
+      return;
     } else if (error.message && error.message.includes('No MultiFormat Readers were able to detect the code')) {
-      // Wait 5 seconds before showing the "no code detected" error
+      // Wait 10 seconds before showing the "no code detected" error (increased from 5)
       setIsWaitingForError(true);
       const timeout = setTimeout(() => {
         setError('No QR code detected. Please try again.');
         setErrorTimeout(null);
         setIsWaitingForError(false);
-      }, 5000);
+      }, 10000);
       setErrorTimeout(timeout);
     } else {
-      setError('Camera error: ' + error.message);
+      // Only show critical errors, ignore common scanning errors
+      if (error.name !== 'NotFoundException' && 
+          error.name !== 'NoMultiFormatReaderException' &&
+          error.name !== 'NotReadableError' &&
+          error.name !== 'OverconstrainedError') {
+        setError('Camera error: ' + error.message);
+      }
     }
   };
 
@@ -144,7 +208,7 @@ const QRScannerPopup = () => {
         // Open URL
         window.open(qrData, '_blank');
       } else {
-        // Treat as simple identifier
+        // Treat as simple identifier - check for rules mapping
         handleSimpleQR(qrData);
       }
     }
@@ -174,9 +238,106 @@ const QRScannerPopup = () => {
 
   const handleSimpleQR = (data) => {
     console.log('Simple QR:', data);
-    // TODO: Handle simple QR codes
-    actions.closeAllPopups();
-    alert(`QR Code: ${data}`);
+    
+    // QR Code mappings based on Qractions.txt
+    const qrMappings = {
+      'yesslvl-1': 1,
+      'yesslvl-3': 3,
+      'yesslvl-4': 4,
+      'yesslvl-5': 5,
+      'yesslvl-6': 6,
+      'yesslvl-7': 7,
+      'yesslvl-8': 8,
+      'yesslvl-9': 9,
+      'stallyess1': 'stallyess1',
+      'stallyess2': 'stallyess2',
+      'stallyess3': 'stallyess3',
+      'stallyess4': 'stallyess4',
+      'stallyess5': 'stallyess5',
+      'stallyess6': 'stallyess6',
+      'stallyess7': 'stallyess7',
+      'stallyess8': 'stallyess8',
+      'stallyess9': 'stallyess9',
+      'stallyess10': 'stallyess10',
+      'stallyess11': 'stallyess11',
+      'stallyess12': 'stallyess12',
+      'stallyess13': 'stallyess13',
+      'stallyess14': 'stallyess14',
+      'stallyess15': 'stallyess15',
+      'stallyess16': 'stallyess16',
+      'stallyess17': 'stallyess17',
+      'stallyess18': 'stallyess18',
+      'stallyess19': 'stallyess19',
+      'stallyess20': 'stallyess20',
+      'stallyess21': 'stallyess21',
+      'stallyess22': 'stallyess22',
+      'stallyess23': 'stallyess23',
+      'stallyess24': 'stallyess24',
+      'stallyess25': 'stallyess25',
+      'stallyess26': 'stallyess26',
+      'stallyess27': 'stallyess27',
+      'stallyess28': 'stallyess28',
+      'stallyess29': 'stallyess29',
+      'stallyess30': 'stallyess30',
+      'stallyess31': 'stallyess31',
+      'stallyess32': 'stallyess32',
+      'stallyess33': 'stallyess33',
+      'stallyess34': 'stallyess34',
+      'stallyess35': 'stallyess35',
+      'stallyess36': 'stallyess36',
+      'stallyess37': 'stallyess37',
+      'stallyess38': 'stallyess38',
+      'stallyess39': 'stallyess39',
+      'stallyess40': 'stallyess40',
+      'stallyess41': 'stallyess41',
+      'stallyess42': 'stallyess42',
+      'pixprompt': 'pixprompt',
+      'googlegsa': 'googlegsa',
+      'valaxiapy': 'valaxiapy',
+      'treasure': 'treasure'
+    };
+
+    // Check if QR code maps to a rules page
+    if (qrMappings[data] && typeof qrMappings[data] === 'number') {
+      // Set the current rule to the mapped number
+      const ruleNumber = qrMappings[data];
+      actions.setCurrentRule(ruleNumber);
+      actions.setHighestRuleScanned(ruleNumber); // Track highest rule scanned
+      // Redirect to rules page
+      actions.closeAllPopups();
+      actions.toggleRules();
+      console.log(`Redirecting to Rule ${ruleNumber}`);
+    } else if (qrMappings[data]) {
+      // Handle other QR codes (stallyess, pixprompt, etc.)
+      handleSpecialQR(data, qrMappings[data]);
+    } else {
+      // Unknown QR code
+      actions.closeAllPopups();
+      alert(`Unknown QR Code: ${data}`);
+    }
+  };
+
+  const handleSpecialQR = (qrCode, type) => {
+    console.log(`Special QR Code: ${qrCode}, Type: ${type}`);
+    
+    if (type.startsWith('stallyess')) {
+      // Add 1 point to score
+      actions.updateScore(0, 1); // Using location 0 for general points
+      actions.closeAllPopups();
+      alert(`Stall QR Code detected! +1 point added to your score.`);
+    } else if (type === 'pixprompt' || type === 'googlegsa' || type === 'valaxiapy') {
+      // Add 3 points to score
+      actions.updateScore(0, 3); // Using location 0 for general points
+      actions.closeAllPopups();
+      alert(`Special QR Code detected! +3 points added to your score.`);
+    } else if (type === 'treasure') {
+      // Redirect to guardians page (or handle as needed)
+      actions.closeAllPopups();
+      alert(`Treasure QR Code detected! You found the treasure!`);
+    } else {
+      actions.closeAllPopups();
+      alert(`QR Code: ${qrCode}`);
+    }
   };
 
   const handleClose = () => {
@@ -215,14 +376,25 @@ const QRScannerPopup = () => {
     setStopStream(false);
     setIsWaitingForError(false);
     setDetectedLink(null);
+    setIsProcessing(false);
+    setCountdown(0);
+    setQrCache(null);
     // Clear any pending timeouts
     if (errorTimeout) {
       clearTimeout(errorTimeout);
       setErrorTimeout(null);
     }
-    if (cacheTimeout) {
-      clearTimeout(cacheTimeout);
-      setCacheTimeout(null);
+    if (linkCacheTimeout) {
+      clearTimeout(linkCacheTimeout);
+      setLinkCacheTimeout(null);
+    }
+    if (processingDelay) {
+      clearTimeout(processingDelay);
+      setProcessingDelay(null);
+    }
+    if (qrCacheTimeout) {
+      clearTimeout(qrCacheTimeout);
+      setQrCacheTimeout(null);
     }
   };
 
@@ -324,14 +496,14 @@ const QRScannerPopup = () => {
                 style={{
                   position: 'relative',
                   width: '100%',
-                  maxWidth: isMobile ? '600px' : '1000px', // 200% increase: 300px->600px, 500px->1000px
+                  maxWidth: isMobile ? '400px' : '600px', // Reduced size for better focus
                   aspectRatio: '1',
                   backgroundColor: theme.colors.background,
                   borderRadius: theme.borderRadius.lg,
-                  border: `4px solid ${theme.colors.border}`, // Always use regular border color
+                  border: `3px solid ${theme.colors.primary}`, // Use primary color for better visibility
                   overflow: 'hidden',
                   marginBottom: theme.spacing.md,
-                  boxShadow: 'none' // No glow effect
+                  boxShadow: `0 0 20px ${theme.colors.primary}40` // Add subtle glow
                 }}
               >
                 {/* Barcode Scanner Component */}
@@ -346,19 +518,32 @@ const QRScannerPopup = () => {
                     <BarcodeScanner
                       width="100%"
                       height="100%"
-                      facingMode={isMobile ? "environment" : "environment"} // Rear camera on mobile, environment on desktop
+                      facingMode="environment" // Always use rear camera for better QR recognition
                       onUpdate={(err, result) => {
                         if (result) {
+                          console.log('QR Code detected:', result.getText());
                           handleScanResult(result.getText());
-                        } else if (err && err.name !== 'NotFoundException' && err.name !== 'NoMultiFormatReaderException') {
-                          handleScanError(err);
-                        } else if (err && err.name === 'NoMultiFormatReaderException') {
-                          // Handle the specific "No MultiFormat Readers" error with delay
-                          handleScanError(err);
+                        } else if (err) {
+                          // Only log errors that are not common scanning errors
+                          if (err.name !== 'NotFoundException' && 
+                              err.name !== 'NoMultiFormatReaderException' &&
+                              err.name !== 'NotReadableError' &&
+                              err.name !== 'OverconstrainedError') {
+                            console.log('QR Scanner error:', err);
+                            handleScanError(err);
+                          }
+                          // Don't log common "no code found" errors to reduce noise
                         }
                       }}
-                      onError={handleScanError}
-                      delay={300}
+                      onError={(err) => {
+                        // Only log and handle critical errors
+                        if (err.name === "NotAllowedError" || err.name === "NotFoundError") {
+                          console.log('QR Scanner critical error:', err);
+                          handleScanError(err);
+                        }
+                        // Don't log common scanning errors to reduce noise
+                      }}
+                      delay={100} // Reduced delay for faster recognition
                       stopStream={stopStream}
                       style={{
                         width: '100%',
@@ -369,8 +554,85 @@ const QRScannerPopup = () => {
                   </div>
                 )}
 
+                {/* Scanning Overlay */}
+                {!stopStream && !scanResult && (
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      pointerEvents: 'none',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}
+                  >
+                    {/* Corner brackets for scanning area */}
+                    <div
+                      style={{
+                        width: '80%',
+                        height: '80%',
+                        position: 'relative',
+                        border: '2px solid rgba(255, 255, 255, 0.8)',
+                        borderRadius: theme.borderRadius.md
+                      }}
+                    >
+                      {/* Top-left corner */}
+                      <div
+                        style={{
+                          position: 'absolute',
+                          top: '-2px',
+                          left: '-2px',
+                          width: '20px',
+                          height: '20px',
+                          borderTop: '4px solid #00ff00',
+                          borderLeft: '4px solid #00ff00'
+                        }}
+                      />
+                      {/* Top-right corner */}
+                      <div
+                        style={{
+                          position: 'absolute',
+                          top: '-2px',
+                          right: '-2px',
+                          width: '20px',
+                          height: '20px',
+                          borderTop: '4px solid #00ff00',
+                          borderRight: '4px solid #00ff00'
+                        }}
+                      />
+                      {/* Bottom-left corner */}
+                      <div
+                        style={{
+                          position: 'absolute',
+                          bottom: '-2px',
+                          left: '-2px',
+                          width: '20px',
+                          height: '20px',
+                          borderBottom: '4px solid #00ff00',
+                          borderLeft: '4px solid #00ff00'
+                        }}
+                      />
+                      {/* Bottom-right corner */}
+                      <div
+                        style={{
+                          position: 'absolute',
+                          bottom: '-2px',
+                          right: '-2px',
+                          width: '20px',
+                          height: '20px',
+                          borderBottom: '4px solid #00ff00',
+                          borderRight: '4px solid #00ff00'
+                        }}
+                      />
+                    </div>
+                  </div>
+                )}
 
               </div>
+
 
               {/* Simple Link Button - Only show when link is detected */}
               {detectedLink && (
@@ -438,6 +700,7 @@ const QRScannerPopup = () => {
                 </button>
               )}
 
+
               {/* Instructions */}
               <div
                 style={{
@@ -457,10 +720,20 @@ const QRScannerPopup = () => {
                 <p
                   style={{
                     color: theme.colors.textSecondary,
-                    fontSize: theme.typography.fontSize.xs
+                    fontSize: theme.typography.fontSize.xs,
+                    marginBottom: theme.spacing.xs
                   }}
                 >
-                  Make sure the QR code is within the frame
+                  Make sure the QR code is within the green frame
+                </p>
+                <p
+                  style={{
+                    color: theme.colors.textSecondary,
+                    fontSize: theme.typography.fontSize.xs,
+                    marginTop: theme.spacing.sm
+                  }}
+                >
+                  💡 Tip: Ensure good lighting and hold the QR code steady
                 </p>
               </div>
             </motion.div>

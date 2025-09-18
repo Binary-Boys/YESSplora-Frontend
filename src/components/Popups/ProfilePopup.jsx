@@ -5,7 +5,7 @@ import { theme } from '../../styles/theme';
 
 const ProfilePopup = () => {
   const { state, actions } = useGame();
-  const { ui, team, gameProgress } = state;
+  const { ui, team, gameProgress, auth } = state;
   const [isEditing, setIsEditing] = useState(false);
   const [editedMembers, setEditedMembers] = useState(team.members);
 
@@ -174,7 +174,7 @@ const ProfilePopup = () => {
                     fontSize: theme.typography.fontSize.sm
                   }}
                 >
-                  Team ID: {team.id || 'Not assigned'}
+                  Team ID: {auth.isAdmin ? 'admin' : (auth.ticketId || team.ticketId || 'Not assigned')}
                 </p>
               </div>
 

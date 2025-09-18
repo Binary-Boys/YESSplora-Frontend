@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { GameProvider } from './contexts/GameContext';
+import { GameProvider, useGame } from './contexts/GameContext';
 import { useOrientation } from './hooks/useOrientation';
 import { useAutoHide } from './hooks/useAutoHide';
 import RotatableContainer from './components/Layout/RotatableContainer';
@@ -13,15 +13,97 @@ import QRScannerPopup from './components/QRScanner/QRScannerPopup';
 import VolunteerScoringPopup from './components/Popups/VolunteerScoringPopup';
 import LeaderboardPopup from './components/Popups/LeaderboardPopup';
 import SupportPopup from './components/Popups/SupportPopup';
+import RulesPopup from './components/Popups/RulesPopup';
 import AuthPage from './components/Auth/AuthPage';
 import './styles/global.css';
 
-function App() {
+// Game component that uses the game context
+const GameApp = ({ onLoginSuccess }) => {
+  const { actions } = useGame();
   const { dynamicSpacing, isHighHeight, dimensions, effectiveDimensions, shouldRotate, isPortraitMode, alwaysRotated } = useOrientation();
-  // Keep bars always visible; keep showBars to satisfy TouchZones props
   const { showBars } = useAutoHide(20000);
   const isVisible = true;
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  // Initialize authentication from localStorage
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem('yess_auth');
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed && parsed.isAuthenticated) {
+          // Initialize game context with auth data
+          actions.login(parsed.ticketId, parsed.teamCode, parsed.isAdmin || false);
+          onLoginSuccess();
+        }
+      }
+    } catch (error) {
+      console.error('Error initializing auth:', error);
+    }
+  }, []); // Remove dependencies to prevent infinite loops
+
+  return (
+    <RotatableContainer>
+      {/* Main Content Area with all components */}
+      <main
+        style={{
+          minHeight: '100%',
+          height: '100%',
+          maxHeight: '100vh', // Ensure it doesn't exceed viewport height
+          backgroundColor: '#580404',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          width: '100%',
+          minWidth: window.innerWidth <= 768 ? '320px' : '710px', // Responsive min width for mobile
+          position: 'relative',
+          zIndex: 10, // Ensure content appears above floating dots
+          overflow: 'visible', // Allow content to be visible
+          padding: '0', // Remove padding since parent container handles it with fixed 20px
+          gap: window.innerWidth <= 768 ? '8px' : dynamicSpacing, // Smaller gap for mobile
+          boxSizing: 'border-box'
+        }}
+      >
+        {/* Header Bar - with auto-hide functionality */}
+        <Header 
+          dynamicSpacing={dynamicSpacing} 
+          isHighHeight={isHighHeight} 
+          isRotated={false}
+          isVisible={isVisible}
+        />
+        
+        {/* Robot Character - Center */}
+        <RobotSprite dynamicSpacing={dynamicSpacing} isHighHeight={isHighHeight} dimensions={effectiveDimensions} />
+        
+        {/* Action Bar - with auto-hide functionality */}
+        <ActionBar 
+          dynamicSpacing={dynamicSpacing} 
+          isHighHeight={isHighHeight} 
+          dimensions={effectiveDimensions}
+          isVisible={isVisible}
+        />
+      </main>
+      
+      {/* Touch zones for showing hidden bars */}
+      <TouchZones 
+        isVisible={isVisible}
+        onTopZoneTouch={showBars}
+        onBottomZoneTouch={showBars}
+      />
+      
+      {/* Popup Components */}
+      <MinimapPopup />
+      <ProfilePopup />
+      <QRScannerPopup />
+      <LeaderboardPopup />
+      <VolunteerScoringPopup />
+      <SupportPopup />
+      <RulesPopup />
+    </RotatableContainer>
+  );
+};
+
+function App() {
   const [currentView, setCurrentView] = useState('auth'); // 'auth', 'game'
 
   // Restore persisted auth on mount
@@ -32,76 +114,23 @@ function App() {
         const parsed = JSON.parse(raw);
         if (parsed && parsed.isAuthenticated) {
           setCurrentView('game');
-          setIsAuthenticated(true);
         }
       }
     } catch {}
   }, []);
 
+  const handleLoginSuccess = () => {
+    setCurrentView('game');
+  };
+
   // Handle view routing
   if (currentView === 'auth') {
-    return <AuthPage onLoginSuccess={() => setCurrentView('game')} />;
+    return <AuthPage onLoginSuccess={handleLoginSuccess} />;
   }
 
   return (
     <GameProvider>
-      <RotatableContainer>
-        {/* Main Content Area with all components */}
-        <main
-          style={{
-            minHeight: '100%',
-            height: '100%',
-            maxHeight: '100vh', // Ensure it doesn't exceed viewport height
-            backgroundColor: '#580404',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            width: '100%',
-            minWidth: window.innerWidth <= 768 ? '320px' : '710px', // Responsive min width for mobile
-            position: 'relative',
-            zIndex: 10, // Ensure content appears above floating dots
-            overflow: 'visible', // Allow content to be visible
-            padding: '0', // Remove padding since parent container handles it with fixed 20px
-            gap: window.innerWidth <= 768 ? '8px' : dynamicSpacing, // Smaller gap for mobile
-            boxSizing: 'border-box'
-          }}
-        >
-          {/* Header Bar - with auto-hide functionality */}
-          <Header 
-            dynamicSpacing={dynamicSpacing} 
-            isHighHeight={isHighHeight} 
-            isRotated={false}
-            isVisible={isVisible}
-          />
-          
-          {/* Robot Character - Center */}
-          <RobotSprite dynamicSpacing={dynamicSpacing} isHighHeight={isHighHeight} dimensions={effectiveDimensions} />
-          
-          {/* Action Bar - with auto-hide functionality */}
-          <ActionBar 
-            dynamicSpacing={dynamicSpacing} 
-            isHighHeight={isHighHeight} 
-            dimensions={effectiveDimensions}
-            isVisible={isVisible}
-          />
-        </main>
-        
-        {/* Touch zones for showing hidden bars */}
-        <TouchZones 
-          isVisible={isVisible}
-          onTopZoneTouch={showBars}
-          onBottomZoneTouch={showBars}
-        />
-        
-        {/* Popup Components */}
-        <MinimapPopup />
-        <ProfilePopup />
-        <QRScannerPopup />
-        <LeaderboardPopup />
-        <VolunteerScoringPopup />
-        <SupportPopup />
-      </RotatableContainer>
+      <GameApp onLoginSuccess={handleLoginSuccess} />
     </GameProvider>
   );
 }
