@@ -1,0 +1,85 @@
+/* Geo-Nerd Mobile - App Specific Styles */
+
+.app {
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--ash-50) 0%, var(--ash-100) 100%);
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Loading Screen */
+.loading-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  text-align: center;
+  padding: var(--space-xl);
+}
+
+.loading-screen h2 {
+  margin-top: var(--space-lg);
+  color: var(--text-primary);
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+}
+
+.loading-screen p {
+  margin-top: var(--space-sm);
+  color: var(--text-secondary);
+  font-size: var(--font-size-base);
+}
+
+/* Mobile-First Responsive Design */
+@media (max-width: 640px) {
+  .app {
+    padding: 0;
+    /* Remove any additional padding since body already has 20px side padding */
+  }
+  
+  .loading-screen {
+    padding: var(--space-md);
+  }
+  
+  .loading-screen h2 {
+    font-size: var(--font-size-lg);
+  }
+}
+
+/* Tablet and Desktop */
+@media (min-width: 768px) {
+  .app {
+    padding: var(--space-md);
+  }
+}
+
+/* Large Desktop */
+@media (min-width: 1024px) {
+  .app {
+    padding: var(--space-lg);
+  }
+}
+
+/* Animation for page transitions */
+.app > * {
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* Custom scrollbar for the app */
+.app::-webkit-scrollbar {
+  width: 6px;
+}
+
+.app::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.app::-webkit-scrollbar-thumb {
+  background: var(--ash-300);
+  border-radius: var(--radius-sm);
+}
+
+.app::-webkit-scrollbar-thumb:hover {
+  background: var(--ash-400);
+}
