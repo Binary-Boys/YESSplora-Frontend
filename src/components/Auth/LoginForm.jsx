@@ -174,7 +174,7 @@ const LoginForm = ({ onBackClick, onLoginSuccess, onSignupClick }) => {
 
         {/* Form */}
         <form onSubmit={handleSubmit}>
-          {/* Ticket ID Input */}
+          {/* Team Code Input */}
           <div style={{ marginBottom: '25px' }}>
             <label
               style={{
@@ -185,70 +185,14 @@ const LoginForm = ({ onBackClick, onLoginSuccess, onSignupClick }) => {
                 marginBottom: '8px'
               }}
             >
-              Ticket ID
-            </label>
-            <input
-              type="text"
-              name="ticketId"
-              value={formData.ticketId}
-              onChange={handleInputChange}
-              placeholder="Enter your ticket ID (e.g., YESS25XhyQCCRt)"
-              style={{
-                width: '100%',
-                padding: '15px 20px',
-                borderRadius: '12px',
-                border: `2px solid ${fieldErrors.ticketId ? 'rgba(255, 0, 0, 0.5)' : 'rgba(255, 255, 255, 0.2)'}`,
-                background: 'rgba(255, 255, 255, 0.1)',
-                color: theme.colors.accent,
-                fontSize: '1rem',
-                outline: 'none',
-                transition: theme.transitions.fast,
-                boxSizing: 'border-box'
-              }}
-              onFocus={(e) => {
-                e.target.style.borderColor = fieldErrors.ticketId ? 'rgba(255, 0, 0, 0.7)' : theme.colors.accent;
-                e.target.style.background = 'rgba(255, 255, 255, 0.15)';
-              }}
-              onBlur={(e) => {
-                e.target.style.borderColor = fieldErrors.ticketId ? 'rgba(255, 0, 0, 0.5)' : 'rgba(255, 255, 255, 0.2)';
-                e.target.style.background = 'rgba(255, 255, 255, 0.1)';
-              }}
-            />
-            {fieldErrors.ticketId && (
-              <motion.div
-                initial={{ opacity: 0, y: -5 }}
-                animate={{ opacity: 1, y: 0 }}
-                style={{
-                  color: '#ff6b6b',
-                  fontSize: '0.85rem',
-                  marginTop: '5px',
-                  paddingLeft: '5px'
-                }}
-              >
-                {fieldErrors.ticketId}
-              </motion.div>
-            )}
-          </div>
-
-          {/* Team Code Input */}
-          <div style={{ marginBottom: '35px' }}>
-            <label
-              style={{
-                display: 'block',
-                fontSize: '1rem',
-                fontWeight: theme.typography.fontWeight.semibold,
-                color: theme.colors.accent,
-                marginBottom: '8px'
-              }}
-            >
-              Team Code
+              Team Name
             </label>
             <input
               type="text"
               name="teamCode"
               value={formData.teamCode}
               onChange={handleInputChange}
-              placeholder="Enter your team code (same as ticket ID)"
+              placeholder="Enter your team name/code"
               style={{
                 width: '100%',
                 padding: '15px 20px',
@@ -282,6 +226,62 @@ const LoginForm = ({ onBackClick, onLoginSuccess, onSignupClick }) => {
                 }}
               >
                 {fieldErrors.teamCode}
+              </motion.div>
+            )}
+          </div>
+
+          {/* Admin Ticket ID Input */}
+          <div style={{ marginBottom: '35px' }}>
+            <label
+              style={{
+                display: 'block',
+                fontSize: '1rem',
+                fontWeight: theme.typography.fontWeight.semibold,
+                color: theme.colors.accent,
+                marginBottom: '8px'
+              }}
+            >
+              Admin Ticket ID
+            </label>
+            <input
+              type="text"
+              name="ticketId"
+              value={formData.ticketId}
+              onChange={handleInputChange}
+              placeholder="Enter your admin ticket ID (e.g., YESS25XhyQCCRt)"
+              style={{
+                width: '100%',
+                padding: '15px 20px',
+                borderRadius: '12px',
+                border: `2px solid ${fieldErrors.ticketId ? 'rgba(255, 0, 0, 0.5)' : 'rgba(255, 255, 255, 0.2)'}`,
+                background: 'rgba(255, 255, 255, 0.1)',
+                color: theme.colors.accent,
+                fontSize: '1rem',
+                outline: 'none',
+                transition: theme.transitions.fast,
+                boxSizing: 'border-box'
+              }}
+              onFocus={(e) => {
+                e.target.style.borderColor = fieldErrors.ticketId ? 'rgba(255, 0, 0, 0.7)' : theme.colors.accent;
+                e.target.style.background = 'rgba(255, 255, 255, 0.15)';
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = fieldErrors.ticketId ? 'rgba(255, 0, 0, 0.5)' : 'rgba(255, 255, 255, 0.2)';
+                e.target.style.background = 'rgba(255, 255, 255, 0.1)';
+              }}
+            />
+            {fieldErrors.ticketId && (
+              <motion.div
+                initial={{ opacity: 0, y: -5 }}
+                animate={{ opacity: 1, y: 0 }}
+                style={{
+                  color: '#ff6b6b',
+                  fontSize: '0.85rem',
+                  marginTop: '5px',
+                  paddingLeft: '5px'
+                }}
+              >
+                {fieldErrors.ticketId}
               </motion.div>
             )}
           </div>
@@ -389,7 +389,7 @@ const LoginForm = ({ onBackClick, onLoginSuccess, onSignupClick }) => {
               e.target.style.background = 'transparent';
             }}
           >
-            🆕 Don't have an account? Register your team
+            🆕 Don't have an account? Sign up
           </motion.button>
         </div>
       </motion.div>
