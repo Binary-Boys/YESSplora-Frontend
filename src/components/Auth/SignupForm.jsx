@@ -500,8 +500,8 @@ const SignupForm = ({ onBackClick, onSignupSuccess, onRedirectToLogin }) => {
               <p
                 style={{
                   fontSize: '0.85rem',
-                  color: theme.colors.textSecondary,
-                  opacity: 0.7,
+                  color: theme.colors.accent,
+                  opacity: 0.9,
                   marginTop: '8px',
                   textAlign: 'center'
                 }}
