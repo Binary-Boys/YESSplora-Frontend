@@ -147,9 +147,9 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ isVisible, onClose, currentPl
             {onPlayAgain && (
               <button 
                 className="btn btn-primary play-again-btn"
-                onClick={onPlayAgain}
+                onClick={() => window.location.href = "https://yessplora.netlify.app/"}
               >
-                🎮 Play Again
+                🏠 Return to YESSplora
               </button>
             )}
             <button 

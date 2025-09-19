@@ -144,10 +144,10 @@ const FinalResults: React.FC<FinalResultsProps> = ({
         <div className="final-actions animate-fade-in">
           <button 
             className="play-again-button btn btn-primary"
-            onClick={onPlayAgain}
+            onClick={() => window.location.href = "https://yessplora.netlify.app/"}
           >
-            <span>Play Again</span>
-            <div className="button-icon">🔄</div>
+            <span>Return to YESSplora</span>
+            <div className="button-icon">🏠</div>
           </button>
         </div>
 
