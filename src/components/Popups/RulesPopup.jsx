@@ -24,6 +24,41 @@ const RulesPopup = () => {
     actions.closeAllPopups();
   };
 
+  const handlePlayNow = () => {
+    // Get current team info for parameterization
+    const teamInfo = state.team;
+    const ticketId = state.auth.ticketId;
+    
+    // Map game IDs to hosted URLs
+    const gameUrls = {
+      '1': 'https://campuzzle.netlify.app/',
+      '2': 'https://spellb.netlify.app/',
+      '3': 'https://geonerds.netlify.app/',
+      '4': 'https://unity-game.netlify.app/' // Add Unity game URL
+    };
+    
+    const gameUrl = gameUrls[currentRule.toString()];
+    if (gameUrl) {
+      // Create parameterized URL with team info and level
+      const params = new URLSearchParams({
+        ticketId: ticketId || 'unknown',
+        teamCode: teamInfo.id || 'unknown',
+        level: currentRule.toString(),
+        gameId: currentRule.toString(),
+        returnUrl: window.location.origin
+      });
+      
+      const fullUrl = `${gameUrl}?${params.toString()}`;
+      console.log('Redirecting to mini-game:', fullUrl);
+      
+      // Close rules popup and open game in new tab
+      actions.closeAllPopups();
+      window.open(fullUrl, '_blank');
+    } else {
+      alert(`Game not available for level ${currentRule}`);
+    }
+  };
+
   const rules = [
     { id: 1, title: 'Campus Puzzle', component: Rule1 },
     { id: 2, title: 'Spell Bee', component: Rule2 },
@@ -187,6 +222,48 @@ const RulesPopup = () => {
               >
                 {CurrentRuleComponent && <CurrentRuleComponent />}
               </div>
+
+              {/* Play Now Button - Only show for levels 1-4 */}
+              {currentRule >= 1 && currentRule <= 4 && (
+                <div
+                  style={{
+                    marginTop: theme.spacing.lg,
+                    display: 'flex',
+                    justifyContent: 'center'
+                  }}
+                >
+                  <button
+                    onClick={handlePlayNow}
+                    style={{
+                      backgroundColor: theme.colors.primary,
+                      color: theme.colors.accent,
+                      border: `2px solid ${theme.colors.accent}`,
+                      borderRadius: theme.borderRadius.lg,
+                      padding: `${theme.spacing.lg} ${theme.spacing.xl}`,
+                      fontSize: theme.typography.fontSize.lg,
+                      fontWeight: theme.typography.fontWeight.bold,
+                      cursor: 'pointer',
+                      transition: theme.transitions.fast,
+                      boxShadow: theme.shadows.neumorphism.raised,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: theme.spacing.sm
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.backgroundColor = theme.colors.accent;
+                      e.target.style.color = theme.colors.primary;
+                      e.target.style.transform = 'scale(1.05)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.backgroundColor = theme.colors.primary;
+                      e.target.style.color = theme.colors.accent;
+                      e.target.style.transform = 'scale(1)';
+                    }}
+                  >
+                    🎮 Play Now
+                  </button>
+                </div>
+              )}
             </motion.div>
           </motion.div>
         </>

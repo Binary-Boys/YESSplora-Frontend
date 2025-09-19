@@ -112,12 +112,24 @@ export const validateSignupData = (signupData) => {
   const errors = {};
 
   // Validate required fields
-  if (!signupData.teamName?.trim()) {
-    errors.teamName = 'Team name is required';
+  if (!signupData.team_name?.trim()) {
+    errors.team_name = 'Team name is required';
   }
 
-  if (!signupData.mobileNo?.trim()) {
-    errors.mobileNo = 'Mobile number is required';
+  if (!signupData.team_id?.trim()) {
+    errors.team_id = 'Team ID is required';
+  }
+
+  if (!signupData.team_leader?.name?.trim()) {
+    errors['team_leader.name'] = 'Team leader name is required';
+  }
+
+  if (!signupData.team_leader?.email?.trim()) {
+    errors['team_leader.email'] = 'Team leader email is required';
+  }
+
+  if (!signupData.team_leader?.mobile_number?.trim()) {
+    errors['team_leader.mobile_number'] = 'Team leader mobile number is required';
   }
 
   if (!signupData.password?.trim()) {
@@ -128,10 +140,9 @@ export const validateSignupData = (signupData) => {
     errors.confirmPassword = 'Please confirm your password';
   }
 
-  // Validate ticket ID
-  const ticketValidation = validateTicketId(signupData.yessTicketId);
-  if (!ticketValidation.isValid) {
-    errors.yessTicketId = ticketValidation.error;
+  // Basic team ID validation (no YESS25 format restriction)
+  if (signupData.team_id && signupData.team_id.trim().length < 3) {
+    errors.team_id = 'Team ID must be at least 3 characters long';
   }
 
   // Validate password match

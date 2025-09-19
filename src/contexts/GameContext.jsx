@@ -467,7 +467,49 @@ export const GameProvider = ({ children }) => {
     
     // Team management
     setTeam: (teamData) => dispatch({ type: ActionTypes.SET_TEAM, payload: teamData }),
-    updateTeamMembers: (members) => dispatch({ type: ActionTypes.UPDATE_TEAM_MEMBERS, payload: members }),
+    loadTeamProfile: async (team_id) => {
+      try {
+        const api = new (await import('../services/mockApi')).default();
+        const response = await api.getTeamProfile(team_id);
+        
+        if (response.team) {
+          dispatch({ type: ActionTypes.SET_TEAM, payload: response.team });
+        }
+        
+        return response;
+      } catch (error) {
+        console.error('Failed to load team profile:', error);
+        throw error;
+      }
+    },
+    updateTeamMembers: async (members) => {
+      try {
+        const api = new (await import('../services/mockApi')).default();
+        const team_id = state.auth.team_id || state.auth.teamID;
+        
+        if (!team_id) {
+          throw new Error('Team ID not found');
+        }
+        
+        // Convert members to the format expected by the backend
+        const membersToAdd = members.map(member => ({
+          name: typeof member === 'string' ? member : member.name,
+          email: typeof member === 'string' ? '' : (member.email || ''),
+          mobile_number: typeof member === 'string' ? '' : (member.mobile_number || '')
+        }));
+        
+        const response = await api.addTeamMembers(team_id, membersToAdd);
+        
+        if (response.team) {
+          dispatch({ type: ActionTypes.SET_TEAM, payload: response.team });
+        }
+        
+        return response;
+      } catch (error) {
+        console.error('Failed to update team members:', error);
+        throw error;
+      }
+    },
     
     // Game progress
     updateGameProgress: (progress) => dispatch({ type: ActionTypes.UPDATE_GAME_PROGRESS, payload: progress }),

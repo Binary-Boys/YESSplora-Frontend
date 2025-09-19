@@ -5,12 +5,13 @@ import { validateLoginCredentials, isAdminUser } from '../../utils/validation';
 
 const LoginForm = ({ onBackClick, onLoginSuccess, onSignupClick }) => {
   const [formData, setFormData] = useState({
-    ticketId: '',
-    teamCode: ''
+    team_name: '',
+    password: ''
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [fieldErrors, setFieldErrors] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -28,6 +29,11 @@ const LoginForm = ({ onBackClick, onLoginSuccess, onSignupClick }) => {
     }
   };
 
+  const togglePasswordVisibility = () => {
+    setShowPassword(true);
+    setTimeout(() => setShowPassword(false), 5000);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -35,29 +41,47 @@ const LoginForm = ({ onBackClick, onLoginSuccess, onSignupClick }) => {
     setFieldErrors({});
 
     try {
-      // Validate credentials using the new validation system
-      const validation = validateLoginCredentials(formData.ticketId, formData.teamCode);
-      
-      if (!validation.isValid) {
-        setFieldErrors(validation.errors);
-        throw new Error('Please fix the validation errors');
+      // Validate form data
+      if (!formData.team_name.trim()) {
+        throw new Error('Team name is required');
+      }
+      if (!formData.password.trim()) {
+        throw new Error('Password is required');
       }
 
-      // Check for admin user
-      const isAdmin = isAdminUser(formData.ticketId, formData.teamCode);
+      console.log('Attempting login with:', { team_name: formData.team_name, password: '***' });
+
+      // Call backend API for login
+      const response = await fetch('http://localhost:8000/team/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          team_name: formData.team_name,
+          password: formData.password
+        })
+      });
+
+      const data = await response.json();
       
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      console.log('Backend response:', { status: response.status, data });
       
-      console.log('Login attempt:', { ...formData, isAdmin });
+      if (!response.ok) {
+        console.error('Login failed:', data);
+        throw new Error(data.message || 'Login failed');
+      }
+      
+      console.log('Login successful:', data);
       
       // Persist login state and redirect to main game
       try {
         localStorage.setItem('yess_auth', JSON.stringify({ 
           isAuthenticated: true, 
-          ticketId: formData.ticketId,
-          teamCode: formData.teamCode,
-          isAdmin: isAdmin
+          team_name: formData.team_name,
+          team_id: data.teamID,
+          teamID: data.teamID,
+          isAdmin: false // Backend doesn't have admin concept yet
         }));
       } catch {}
       
@@ -174,7 +198,7 @@ const LoginForm = ({ onBackClick, onLoginSuccess, onSignupClick }) => {
 
         {/* Form */}
         <form onSubmit={handleSubmit}>
-          {/* Team Code Input */}
+          {/* Team Name Input */}
           <div style={{ marginBottom: '25px' }}>
             <label
               style={{
@@ -189,15 +213,15 @@ const LoginForm = ({ onBackClick, onLoginSuccess, onSignupClick }) => {
             </label>
             <input
               type="text"
-              name="teamCode"
-              value={formData.teamCode}
+              name="team_name"
+              value={formData.team_name}
               onChange={handleInputChange}
-              placeholder="Enter your team name/code"
+              placeholder="Enter your team name"
               style={{
                 width: '100%',
                 padding: '15px 20px',
                 borderRadius: '12px',
-                border: `2px solid ${fieldErrors.teamCode ? 'rgba(255, 0, 0, 0.5)' : 'rgba(255, 255, 255, 0.2)'}`,
+                border: `2px solid ${fieldErrors.team_name ? 'rgba(255, 0, 0, 0.5)' : 'rgba(255, 255, 255, 0.2)'}`,
                 background: 'rgba(255, 255, 255, 0.1)',
                 color: theme.colors.accent,
                 fontSize: '1rem',
@@ -206,15 +230,15 @@ const LoginForm = ({ onBackClick, onLoginSuccess, onSignupClick }) => {
                 boxSizing: 'border-box'
               }}
               onFocus={(e) => {
-                e.target.style.borderColor = fieldErrors.teamCode ? 'rgba(255, 0, 0, 0.7)' : theme.colors.accent;
+                e.target.style.borderColor = fieldErrors.team_id ? 'rgba(255, 0, 0, 0.7)' : theme.colors.accent;
                 e.target.style.background = 'rgba(255, 255, 255, 0.15)';
               }}
               onBlur={(e) => {
-                e.target.style.borderColor = fieldErrors.teamCode ? 'rgba(255, 0, 0, 0.5)' : 'rgba(255, 255, 255, 0.2)';
+                e.target.style.borderColor = fieldErrors.team_id ? 'rgba(255, 0, 0, 0.5)' : 'rgba(255, 255, 255, 0.2)';
                 e.target.style.background = 'rgba(255, 255, 255, 0.1)';
               }}
             />
-            {fieldErrors.teamCode && (
+            {fieldErrors.team_id && (
               <motion.div
                 initial={{ opacity: 0, y: -5 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -225,12 +249,12 @@ const LoginForm = ({ onBackClick, onLoginSuccess, onSignupClick }) => {
                   paddingLeft: '5px'
                 }}
               >
-                {fieldErrors.teamCode}
+                {fieldErrors.team_id}
               </motion.div>
             )}
           </div>
 
-          {/* Admin Ticket ID Input */}
+          {/* Password Input */}
           <div style={{ marginBottom: '35px' }}>
             <label
               style={{
@@ -241,36 +265,64 @@ const LoginForm = ({ onBackClick, onLoginSuccess, onSignupClick }) => {
                 marginBottom: '8px'
               }}
             >
-              Admin Ticket ID
+              Password
             </label>
-            <input
-              type="text"
-              name="ticketId"
-              value={formData.ticketId}
-              onChange={handleInputChange}
-              placeholder="Enter your admin ticket ID (e.g., YESS25XhyQCCRt)"
-              style={{
-                width: '100%',
-                padding: '15px 20px',
-                borderRadius: '12px',
-                border: `2px solid ${fieldErrors.ticketId ? 'rgba(255, 0, 0, 0.5)' : 'rgba(255, 255, 255, 0.2)'}`,
-                background: 'rgba(255, 255, 255, 0.1)',
-                color: theme.colors.accent,
-                fontSize: '1rem',
-                outline: 'none',
-                transition: theme.transitions.fast,
-                boxSizing: 'border-box'
-              }}
-              onFocus={(e) => {
-                e.target.style.borderColor = fieldErrors.ticketId ? 'rgba(255, 0, 0, 0.7)' : theme.colors.accent;
-                e.target.style.background = 'rgba(255, 255, 255, 0.15)';
-              }}
-              onBlur={(e) => {
-                e.target.style.borderColor = fieldErrors.ticketId ? 'rgba(255, 0, 0, 0.5)' : 'rgba(255, 255, 255, 0.2)';
-                e.target.style.background = 'rgba(255, 255, 255, 0.1)';
-              }}
-            />
-            {fieldErrors.ticketId && (
+            <div style={{ position: 'relative' }}>
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                value={formData.password}
+                onChange={handleInputChange}
+                placeholder="Enter your password"
+                style={{
+                  width: '100%',
+                  padding: '15px 50px 15px 20px',
+                  borderRadius: '12px',
+                  border: `2px solid ${fieldErrors.password ? 'rgba(255, 0, 0, 0.5)' : 'rgba(255, 255, 255, 0.2)'}`,
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  color: theme.colors.accent,
+                  fontSize: '1rem',
+                  outline: 'none',
+                  transition: theme.transitions.fast,
+                  boxSizing: 'border-box'
+                }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = fieldErrors.password ? 'rgba(255, 0, 0, 0.7)' : theme.colors.accent;
+                  e.target.style.background = 'rgba(255, 255, 255, 0.15)';
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = fieldErrors.password ? 'rgba(255, 0, 0, 0.5)' : 'rgba(255, 255, 255, 0.2)';
+                  e.target.style.background = 'rgba(255, 255, 255, 0.1)';
+                }}
+              />
+              <button
+                type="button"
+                onClick={togglePasswordVisibility}
+                style={{
+                  position: 'absolute',
+                  right: '15px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: 'none',
+                  border: 'none',
+                  color: theme.colors.accent,
+                  cursor: 'pointer',
+                  fontSize: '1.2rem',
+                  padding: '5px',
+                  borderRadius: '4px',
+                  transition: theme.transitions.fast
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.background = 'rgba(255, 255, 255, 0.1)';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.background = 'none';
+                }}
+              >
+                {showPassword ? '🙈' : '👁️'}
+              </button>
+            </div>
+            {fieldErrors.password && (
               <motion.div
                 initial={{ opacity: 0, y: -5 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -281,7 +333,7 @@ const LoginForm = ({ onBackClick, onLoginSuccess, onSignupClick }) => {
                   paddingLeft: '5px'
                 }}
               >
-                {fieldErrors.ticketId}
+                {fieldErrors.password}
               </motion.div>
             )}
           </div>
@@ -300,6 +352,9 @@ const LoginForm = ({ onBackClick, onLoginSuccess, onSignupClick }) => {
               border: 'none',
               background: isLoading 
                 ? 'rgba(255, 255, 255, 0.2)' 
+                : undefined,
+              backgroundImage: isLoading 
+                ? undefined 
                 : 'linear-gradient(90deg, #c0c0c0 0%, #e8e8e8 25%, #f0f0f0 50%, #e8e8e8 75%, #c0c0c0 100%)',
               backgroundSize: '200% 100%',
               animation: isLoading ? 'none' : 'shimmer 2s ease-in-out infinite',

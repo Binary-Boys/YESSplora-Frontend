@@ -23,7 +23,12 @@ const SupportPopup = () => {
   const supportContacts = [
     { name: 'Vidhu Krishnan', phone: '9778550351' },
     { name: 'Adarsh', phone: '8714469001' },
-    { name: 'Manas Manoj', phone: '8086336539' }
+    { name: 'Manas Manoj', phone: '8086336539' },
+    { name: 'Haritha', phone: '8590843342' },
+    { name: 'Shayan', phone: '8075545914' },
+    { name: 'Ajay', phone: '8590955755' },
+    { name: 'Krishnendu K V', phone: '8289922048' },
+    { name: 'Sahadiya M', phone: '9567626380' }
   ];
 
   return (

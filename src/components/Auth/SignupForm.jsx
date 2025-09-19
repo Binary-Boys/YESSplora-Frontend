@@ -6,24 +6,41 @@ import { validateSignupData } from '../../utils/validation';
 const SignupForm = ({ onBackClick, onSignupSuccess, onRedirectToLogin }) => {
   const [currentStep, setCurrentStep] = useState(1); // 1: Team Lead, 2: Team Members
   const [teamData, setTeamData] = useState({
-    teamName: '',
-    mobileNo: '',
-    yessTicketId: '',
+    team_name: '',
+    team_id: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    team_leader: {
+      name: '',
+      email: '',
+      mobile_number: ''
+    }
   });
   const [teamMembers, setTeamMembers] = useState([]);
   const [selectedMemberCount, setSelectedMemberCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [fieldErrors, setFieldErrors] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleTeamDataChange = (e) => {
     const { name, value } = e.target;
-    setTeamData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    if (name.startsWith('team_leader.')) {
+      const field = name.split('.')[1];
+      setTeamData(prev => ({
+        ...prev,
+        team_leader: {
+          ...prev.team_leader,
+          [field]: value
+        }
+      }));
+    } else {
+      setTeamData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
     if (error) setError('');
     if (fieldErrors[name]) {
       setFieldErrors(prev => ({
@@ -56,7 +73,17 @@ const SignupForm = ({ onBackClick, onSignupSuccess, onRedirectToLogin }) => {
     ));
   };
 
-  const handleNextStep = () => {
+  const togglePasswordVisibility = (field) => {
+    if (field === 'password') {
+      setShowPassword(true);
+      setTimeout(() => setShowPassword(false), 5000);
+    } else if (field === 'confirmPassword') {
+      setShowConfirmPassword(true);
+      setTimeout(() => setShowConfirmPassword(false), 5000);
+    }
+  };
+
+  const handleNextStep = async () => {
     // Validate team lead data using the new validation system
     const validation = validateSignupData(teamData);
     
@@ -66,21 +93,78 @@ const SignupForm = ({ onBackClick, onSignupSuccess, onRedirectToLogin }) => {
       return;
     }
 
-    setCurrentStep(2);
-    setError('');
-    setFieldErrors({});
+    // Skip team members step and go directly to registration
+    await handleSubmit();
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     setIsLoading(true);
     setError('');
 
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Validate form data
+      if (!teamData.team_name.trim()) {
+        throw new Error('Team name is required');
+      }
+      if (!teamData.team_id.trim()) {
+        throw new Error('Team ID is required');
+      }
+      if (!teamData.password.trim()) {
+        throw new Error('Password is required');
+      }
+      if (!teamData.team_leader.name.trim()) {
+        throw new Error('Team leader name is required');
+      }
+      if (!teamData.team_leader.email.trim()) {
+        throw new Error('Team leader email is required');
+      }
+      if (!teamData.team_leader.mobile_number.trim()) {
+        throw new Error('Team leader mobile number is required');
+      }
+      if (teamData.password !== teamData.confirmPassword) {
+        throw new Error('Passwords do not match');
+      }
+
+      console.log('Attempting signup with:', { 
+        team_name: teamData.team_name, 
+        team_id: teamData.team_id, 
+        password: '***',
+        team_leader: teamData.team_leader 
+      });
+
+      // Call backend API for signup
+      const response = await fetch('http://localhost:8000/team/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          team_name: teamData.team_name,
+          team_id: teamData.team_id,
+          password: teamData.password,
+          team_leader: teamData.team_leader
+        })
+      });
+
+      const data = await response.json();
       
-      console.log('Signup data:', { teamData, teamMembers });
+      console.log('Backend response:', { status: response.status, data });
+      
+      if (!response.ok) {
+        console.error('Signup failed:', data);
+        // Handle specific error cases
+        if (response.status === 400 && data.message) {
+          throw new Error(data.message);
+        }
+        throw new Error(data.message || 'Registration failed');
+      }
+      
+      console.log('Signup successful:', data);
+      
+      // Show success message briefly before redirecting
+      setError(''); // Clear any previous errors
+      alert('Team registered successfully! Redirecting to login...');
       
       // Redirect to login page instead of directly to game
       if (onRedirectToLogin) {
@@ -88,7 +172,7 @@ const SignupForm = ({ onBackClick, onSignupSuccess, onRedirectToLogin }) => {
       }
       
     } catch (err) {
-      setError('Registration failed. Please try again.');
+      setError(err.message || 'Registration failed. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -160,7 +244,7 @@ const SignupForm = ({ onBackClick, onSignupSuccess, onRedirectToLogin }) => {
               textShadow: '2px 2px 4px rgba(0, 0, 0, 0.3)'
             }}
           >
-            {currentStep === 1 ? 'Create Team' : 'Add Team Members'}
+            Create Team
           </h2>
           <p
             style={{
@@ -169,10 +253,7 @@ const SignupForm = ({ onBackClick, onSignupSuccess, onRedirectToLogin }) => {
               opacity: 0.9
             }}
           >
-            {currentStep === 1 
-              ? 'Register as team lead to start your adventure' 
-              : 'Add team members to your squad'
-            }
+            Register as team lead to start your adventure
           </p>
         </div>
 
@@ -196,9 +277,8 @@ const SignupForm = ({ onBackClick, onSignupSuccess, onRedirectToLogin }) => {
           </motion.div>
         )}
 
-        {currentStep === 1 ? (
-          /* Team Lead Information */
-          <form onSubmit={(e) => { e.preventDefault(); handleNextStep(); }}>
+        {/* Team Lead Information */}
+        <form onSubmit={(e) => { e.preventDefault(); handleNextStep(); }}>
             {/* Team Name */}
             <div style={{ marginBottom: '25px' }}>
               <label
@@ -214,8 +294,8 @@ const SignupForm = ({ onBackClick, onSignupSuccess, onRedirectToLogin }) => {
               </label>
               <input
                 type="text"
-                name="teamName"
-                value={teamData.teamName}
+                name="team_name"
+                value={teamData.team_name}
                 onChange={handleTeamDataChange}
                 placeholder="Enter your team name"
                 style={{
@@ -241,7 +321,7 @@ const SignupForm = ({ onBackClick, onSignupSuccess, onRedirectToLogin }) => {
               />
             </div>
 
-            {/* Mobile Number */}
+            {/* Team ID */}
             <div style={{ marginBottom: '25px' }}>
               <label
                 style={{
@@ -252,14 +332,14 @@ const SignupForm = ({ onBackClick, onSignupSuccess, onRedirectToLogin }) => {
                   marginBottom: '8px'
                 }}
               >
-                Mobile Number *
+                Team ID *
               </label>
               <input
-                type="tel"
-                name="mobileNo"
-                value={teamData.mobileNo}
+                type="text"
+                name="team_id"
+                value={teamData.team_id}
                 onChange={handleTeamDataChange}
-                placeholder="Enter your mobile number"
+                placeholder="Enter your team ID"
                 style={{
                   width: '100%',
                   padding: '15px 20px',
@@ -283,7 +363,7 @@ const SignupForm = ({ onBackClick, onSignupSuccess, onRedirectToLogin }) => {
               />
             </div>
 
-            {/* YESS Ticket ID */}
+            {/* Team Leader Name */}
             <div style={{ marginBottom: '25px' }}>
               <label
                 style={{
@@ -294,19 +374,19 @@ const SignupForm = ({ onBackClick, onSignupSuccess, onRedirectToLogin }) => {
                   marginBottom: '8px'
                 }}
               >
-                YESS Ticket ID *
+                Team Leader Name *
               </label>
               <input
                 type="text"
-                name="yessTicketId"
-                value={teamData.yessTicketId}
+                name="team_leader.name"
+                value={teamData.team_leader.name}
                 onChange={handleTeamDataChange}
-                placeholder="Enter your YESS ticket ID (e.g., YESS25XhyQCCRt)"
+                placeholder="Enter team leader name"
                 style={{
                   width: '100%',
                   padding: '15px 20px',
                   borderRadius: '12px',
-                  border: `2px solid ${fieldErrors.yessTicketId ? 'rgba(255, 0, 0, 0.5)' : 'rgba(255, 255, 255, 0.2)'}`,
+                  border: '2px solid rgba(255, 255, 255, 0.2)',
                   background: 'rgba(255, 255, 255, 0.1)',
                   color: theme.colors.accent,
                   fontSize: '1rem',
@@ -315,29 +395,100 @@ const SignupForm = ({ onBackClick, onSignupSuccess, onRedirectToLogin }) => {
                   boxSizing: 'border-box'
                 }}
                 onFocus={(e) => {
-                  e.target.style.borderColor = fieldErrors.yessTicketId ? 'rgba(255, 0, 0, 0.7)' : theme.colors.accent;
+                  e.target.style.borderColor = theme.colors.accent;
                   e.target.style.background = 'rgba(255, 255, 255, 0.15)';
                 }}
                 onBlur={(e) => {
-                  e.target.style.borderColor = fieldErrors.yessTicketId ? 'rgba(255, 0, 0, 0.5)' : 'rgba(255, 255, 255, 0.2)';
+                  e.target.style.borderColor = 'rgba(255, 255, 255, 0.2)';
                   e.target.style.background = 'rgba(255, 255, 255, 0.1)';
                 }}
               />
-              {fieldErrors.yessTicketId && (
-                <motion.div
-                  initial={{ opacity: 0, y: -5 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  style={{
-                    color: '#ff6b6b',
-                    fontSize: '0.85rem',
-                    marginTop: '5px',
-                    paddingLeft: '5px'
-                  }}
-                >
-                  {fieldErrors.yessTicketId}
-                </motion.div>
-              )}
             </div>
+
+            {/* Team Leader Email */}
+            <div style={{ marginBottom: '25px' }}>
+              <label
+                style={{
+                  display: 'block',
+                  fontSize: '1rem',
+                  fontWeight: theme.typography.fontWeight.semibold,
+                  color: theme.colors.accent,
+                  marginBottom: '8px'
+                }}
+              >
+                Team Leader Email *
+              </label>
+              <input
+                type="email"
+                name="team_leader.email"
+                value={teamData.team_leader.email}
+                onChange={handleTeamDataChange}
+                placeholder="Enter team leader email"
+                style={{
+                  width: '100%',
+                  padding: '15px 20px',
+                  borderRadius: '12px',
+                  border: '2px solid rgba(255, 255, 255, 0.2)',
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  color: theme.colors.accent,
+                  fontSize: '1rem',
+                  outline: 'none',
+                  transition: theme.transitions.fast,
+                  boxSizing: 'border-box'
+                }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = theme.colors.accent;
+                  e.target.style.background = 'rgba(255, 255, 255, 0.15)';
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+                  e.target.style.background = 'rgba(255, 255, 255, 0.1)';
+                }}
+              />
+            </div>
+
+            {/* Team Leader Mobile */}
+            <div style={{ marginBottom: '25px' }}>
+              <label
+                style={{
+                  display: 'block',
+                  fontSize: '1rem',
+                  fontWeight: theme.typography.fontWeight.semibold,
+                  color: theme.colors.accent,
+                  marginBottom: '8px'
+                }}
+              >
+                Team Leader Mobile *
+              </label>
+              <input
+                type="tel"
+                name="team_leader.mobile_number"
+                value={teamData.team_leader.mobile_number}
+                onChange={handleTeamDataChange}
+                placeholder="Enter team leader mobile number"
+                style={{
+                  width: '100%',
+                  padding: '15px 20px',
+                  borderRadius: '12px',
+                  border: '2px solid rgba(255, 255, 255, 0.2)',
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  color: theme.colors.accent,
+                  fontSize: '1rem',
+                  outline: 'none',
+                  transition: theme.transitions.fast,
+                  boxSizing: 'border-box'
+                }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = theme.colors.accent;
+                  e.target.style.background = 'rgba(255, 255, 255, 0.15)';
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+                  e.target.style.background = 'rgba(255, 255, 255, 0.1)';
+                }}
+              />
+            </div>
+
 
             {/* Password */}
             <div style={{ marginBottom: '25px' }}>
@@ -352,33 +503,61 @@ const SignupForm = ({ onBackClick, onSignupSuccess, onRedirectToLogin }) => {
               >
                 Password *
               </label>
-              <input
-                type="password"
-                name="password"
-                value={teamData.password}
-                onChange={handleTeamDataChange}
-                placeholder="Create a password"
-                style={{
-                  width: '100%',
-                  padding: '15px 20px',
-                  borderRadius: '12px',
-                  border: '2px solid rgba(255, 255, 255, 0.2)',
-                  background: 'rgba(255, 255, 255, 0.1)',
-                  color: theme.colors.accent,
-                  fontSize: '1rem',
-                  outline: 'none',
-                  transition: theme.transitions.fast,
-                  boxSizing: 'border-box'
-                }}
-                onFocus={(e) => {
-                  e.target.style.borderColor = theme.colors.accent;
-                  e.target.style.background = 'rgba(255, 255, 255, 0.15)';
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-                  e.target.style.background = 'rgba(255, 255, 255, 0.1)';
-                }}
-              />
+              <div style={{ position: 'relative' }}>
+                <input
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  value={teamData.password}
+                  onChange={handleTeamDataChange}
+                  placeholder="Create a password"
+                  style={{
+                    width: '100%',
+                    padding: '15px 50px 15px 20px',
+                    borderRadius: '12px',
+                    border: '2px solid rgba(255, 255, 255, 0.2)',
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    color: theme.colors.accent,
+                    fontSize: '1rem',
+                    outline: 'none',
+                    transition: theme.transitions.fast,
+                    boxSizing: 'border-box'
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = theme.colors.accent;
+                    e.target.style.background = 'rgba(255, 255, 255, 0.15)';
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+                    e.target.style.background = 'rgba(255, 255, 255, 0.1)';
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={() => togglePasswordVisibility('password')}
+                  style={{
+                    position: 'absolute',
+                    right: '15px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    background: 'none',
+                    border: 'none',
+                    color: theme.colors.accent,
+                    cursor: 'pointer',
+                    fontSize: '1.2rem',
+                    padding: '5px',
+                    borderRadius: '4px',
+                    transition: theme.transitions.fast
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.background = 'rgba(255, 255, 255, 0.1)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.background = 'none';
+                  }}
+                >
+                  {showPassword ? '🙈' : '👁️'}
+                </button>
+              </div>
             </div>
 
             {/* Confirm Password */}
@@ -394,36 +573,64 @@ const SignupForm = ({ onBackClick, onSignupSuccess, onRedirectToLogin }) => {
               >
                 Confirm Password *
               </label>
-              <input
-                type="password"
-                name="confirmPassword"
-                value={teamData.confirmPassword}
-                onChange={handleTeamDataChange}
-                placeholder="Confirm your password"
-                style={{
-                  width: '100%',
-                  padding: '15px 20px',
-                  borderRadius: '12px',
-                  border: '2px solid rgba(255, 255, 255, 0.2)',
-                  background: 'rgba(255, 255, 255, 0.1)',
-                  color: theme.colors.accent,
-                  fontSize: '1rem',
-                  outline: 'none',
-                  transition: theme.transitions.fast,
-                  boxSizing: 'border-box'
-                }}
-                onFocus={(e) => {
-                  e.target.style.borderColor = theme.colors.accent;
-                  e.target.style.background = 'rgba(255, 255, 255, 0.15)';
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-                  e.target.style.background = 'rgba(255, 255, 255, 0.1)';
-                }}
-              />
+              <div style={{ position: 'relative' }}>
+                <input
+                  type={showConfirmPassword ? "text" : "password"}
+                  name="confirmPassword"
+                  value={teamData.confirmPassword}
+                  onChange={handleTeamDataChange}
+                  placeholder="Confirm your password"
+                  style={{
+                    width: '100%',
+                    padding: '15px 50px 15px 20px',
+                    borderRadius: '12px',
+                    border: '2px solid rgba(255, 255, 255, 0.2)',
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    color: theme.colors.accent,
+                    fontSize: '1rem',
+                    outline: 'none',
+                    transition: theme.transitions.fast,
+                    boxSizing: 'border-box'
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = theme.colors.accent;
+                    e.target.style.background = 'rgba(255, 255, 255, 0.15)';
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+                    e.target.style.background = 'rgba(255, 255, 255, 0.1)';
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={() => togglePasswordVisibility('confirmPassword')}
+                  style={{
+                    position: 'absolute',
+                    right: '15px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    background: 'none',
+                    border: 'none',
+                    color: theme.colors.accent,
+                    cursor: 'pointer',
+                    fontSize: '1.2rem',
+                    padding: '5px',
+                    borderRadius: '4px',
+                    transition: theme.transitions.fast
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.background = 'rgba(255, 255, 255, 0.1)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.background = 'none';
+                  }}
+                >
+                  {showConfirmPassword ? '🙈' : '👁️'}
+                </button>
+              </div>
             </div>
 
-            {/* Next Button */}
+            {/* Register Button */}
             <motion.button
               type="submit"
               whileHover={{ scale: 1.02 }}
@@ -434,7 +641,7 @@ const SignupForm = ({ onBackClick, onSignupSuccess, onRedirectToLogin }) => {
                 padding: '18px',
                 borderRadius: '15px',
                 border: 'none',
-                background: 'linear-gradient(90deg, #c0c0c0 0%, #e8e8e8 25%, #f0f0f0 50%, #e8e8e8 75%, #c0c0c0 100%)',
+                backgroundImage: 'linear-gradient(90deg, #c0c0c0 0%, #e8e8e8 25%, #f0f0f0 50%, #e8e8e8 75%, #c0c0c0 100%)',
                 backgroundSize: '200% 100%',
                 animation: 'shimmer 2s ease-in-out infinite',
                 color: theme.colors.primary,
@@ -444,168 +651,6 @@ const SignupForm = ({ onBackClick, onSignupSuccess, onRedirectToLogin }) => {
                 transition: theme.transitions.fast,
                 boxShadow: theme.shadows.neumorphism.raised,
                 letterSpacing: '1px'
-              }}
-            >
-              ➡️ Add Team Members
-            </motion.button>
-          </form>
-        ) : (
-          /* Team Members */
-          <div>
-            {/* Member Count Dropdown */}
-            <div style={{ marginBottom: '30px' }}>
-              <label
-                style={{
-                  display: 'block',
-                  fontSize: '1rem',
-                  fontWeight: theme.typography.fontWeight.semibold,
-                  color: theme.colors.accent,
-                  marginBottom: '12px'
-                }}
-              >
-                Number of Team Members
-              </label>
-              <select
-                value={selectedMemberCount}
-                onChange={handleMemberCountChange}
-                style={{
-                  width: '100%',
-                  padding: '15px 20px',
-                  borderRadius: '12px',
-                  border: `2px solid ${theme.colors.accent}55`,
-                  background: 'linear-gradient(180deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.08) 100%)',
-                  color: theme.colors.accent,
-                  fontSize: '1rem',
-                  outline: 'none',
-                  transition: theme.transitions.fast,
-                  boxSizing: 'border-box',
-                  cursor: 'pointer',
-                  boxShadow: '0 6px 20px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.2)'
-                }}
-                onFocus={(e) => {
-                  e.target.style.borderColor = theme.colors.accent;
-                  e.target.style.background = 'linear-gradient(180deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.12) 100%)';
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = `${theme.colors.accent}55`;
-                  e.target.style.background = 'linear-gradient(180deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.08) 100%)';
-                }}
-              >
-                <option value={0}>No additional members (Team Lead only)</option>
-                <option value={1}>1 team member</option>
-                <option value={2}>2 team members</option>
-                <option value={3}>3 team members</option>
-                <option value={4}>4 team members</option>
-              </select>
-              <p
-                style={{
-                  fontSize: '0.85rem',
-                  color: theme.colors.accent,
-                  opacity: 0.9,
-                  marginTop: '8px',
-                  textAlign: 'center'
-                }}
-              >
-                You can add up to 4 team members (excluding yourself as team lead)
-              </p>
-            </div>
-
-            {/* Team Members List */}
-            {teamMembers.map((member, index) => (
-              <motion.div
-                key={member.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                style={{
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                  borderRadius: '15px',
-                  padding: '20px',
-                  marginBottom: '20px'
-                }}
-              >
-                <div style={{ marginBottom: '15px' }}>
-                  <h4 style={{ color: theme.colors.accent, fontSize: '1.1rem', margin: 0 }}>
-                    Team Member {index + 1}
-                  </h4>
-                </div>
-
-                <div style={{ display: 'grid', gap: '15px' }}>
-                  <input
-                    type="text"
-                    placeholder="Name"
-                    value={member.name}
-                    onChange={(e) => handleMemberChange(member.id, 'name', e.target.value)}
-                    style={{
-                      padding: '12px 15px',
-                      borderRadius: '10px',
-                      border: '1px solid rgba(255, 255, 255, 0.2)',
-                      background: 'rgba(255, 255, 255, 0.1)',
-                      color: theme.colors.accent,
-                      fontSize: '0.95rem',
-                      outline: 'none'
-                    }}
-                  />
-                  <input
-                    type="email"
-                    placeholder="Email"
-                    value={member.email}
-                    onChange={(e) => handleMemberChange(member.id, 'email', e.target.value)}
-                    style={{
-                      padding: '12px 15px',
-                      borderRadius: '10px',
-                      border: '1px solid rgba(255, 255, 255, 0.2)',
-                      background: 'rgba(255, 255, 255, 0.1)',
-                      color: theme.colors.accent,
-                      fontSize: '0.95rem',
-                      outline: 'none'
-                    }}
-                  />
-                  <input
-                    type="tel"
-                    placeholder="Mobile"
-                    value={member.mobile}
-                    onChange={(e) => handleMemberChange(member.id, 'mobile', e.target.value)}
-                    style={{
-                      padding: '12px 15px',
-                      borderRadius: '10px',
-                      border: '1px solid rgba(255, 255, 255, 0.2)',
-                      background: 'rgba(255, 255, 255, 0.1)',
-                      color: theme.colors.accent,
-                      fontSize: '0.95rem',
-                      outline: 'none'
-                    }}
-                  />
-                </div>
-              </motion.div>
-            ))}
-
-            {/* Submit Button */}
-            <motion.button
-              onClick={handleSubmit}
-              disabled={isLoading}
-              whileHover={{ scale: isLoading ? 1 : 1.02 }}
-              whileTap={{ scale: isLoading ? 1 : 0.98 }}
-              className="shimmer-button"
-              style={{
-                width: '100%',
-                padding: '18px',
-                borderRadius: '15px',
-                border: 'none',
-                background: isLoading 
-                  ? 'rgba(255, 255, 255, 0.2)' 
-                  : 'linear-gradient(90deg, #c0c0c0 0%, #e8e8e8 25%, #f0f0f0 50%, #e8e8e8 75%, #c0c0c0 100%)',
-                backgroundSize: '200% 100%',
-                animation: isLoading ? 'none' : 'shimmer 2s ease-in-out infinite',
-                color: theme.colors.primary,
-                fontSize: '1.1rem',
-                fontWeight: theme.typography.fontWeight.bold,
-                cursor: isLoading ? 'not-allowed' : 'pointer',
-                transition: theme.transitions.fast,
-                boxShadow: theme.shadows.neumorphism.raised,
-                letterSpacing: '1px',
-                opacity: isLoading ? 0.7 : 1,
-                marginTop: '20px'
               }}
             >
               {isLoading ? (
@@ -623,11 +668,10 @@ const SignupForm = ({ onBackClick, onSignupSuccess, onRedirectToLogin }) => {
                   Creating Team...
                 </div>
               ) : (
-                '🚀 CREATE TEAM'
+                '🚀 REGISTER'
               )}
             </motion.button>
-          </div>
-        )}
+          </form>
 
         {/* Help Text */}
         <div style={{ textAlign: 'center', marginTop: '25px' }}>

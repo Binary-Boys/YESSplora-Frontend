@@ -32,10 +32,16 @@ const ProfilePopup = () => {
     window.location.href = '/';
   };
 
-  const handleEditToggle = () => {
+  const handleEditToggle = async () => {
     if (isEditing) {
       // Save changes
-      actions.updateTeamMembers(editedMembers);
+      try {
+        await actions.updateTeamMembers(editedMembers);
+        console.log('Team members updated successfully');
+      } catch (error) {
+        console.error('Failed to update team members:', error);
+        // You could show an error message to the user here
+      }
     }
     setIsEditing(!isEditing);
   };

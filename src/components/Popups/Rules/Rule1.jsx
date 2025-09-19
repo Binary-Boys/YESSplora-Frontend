@@ -47,6 +47,37 @@ const Rule1 = () => {
         Campus Puzzle Challenge
       </h3>
 
+      {/* Important Notice */}
+      <div
+        style={{
+          backgroundColor: theme.colors.primary,
+          color: theme.colors.accent,
+          padding: theme.spacing.lg,
+          borderRadius: theme.borderRadius.lg,
+          border: `2px solid ${theme.colors.accent}`,
+          marginBottom: theme.spacing.lg,
+          textAlign: 'center'
+        }}
+      >
+        <div
+          style={{
+            fontSize: theme.typography.fontSize.lg,
+            fontWeight: theme.typography.fontWeight.bold,
+            marginBottom: theme.spacing.sm
+          }}
+        >
+          🗺️ IMPORTANT: Go to Checkpoint 1 on the Map First!
+        </div>
+        <div
+          style={{
+            fontSize: theme.typography.fontSize.base,
+            opacity: 0.9
+          }}
+        >
+          Before scanning the yesslvl-1 QR code, make sure you are physically at Checkpoint 1 on the campus map. The game will only be accessible from the correct location.
+        </div>
+      </div>
+
       <div
         style={{
           marginBottom: theme.spacing.lg
@@ -70,6 +101,38 @@ const Rule1 = () => {
             margin: 0
           }}
         >
+          <li
+            style={{
+              display: 'flex',
+              alignItems: 'flex-start',
+              marginBottom: theme.spacing.md,
+              padding: theme.spacing.md,
+              backgroundColor: 'rgba(255,255,255,0.05)',
+              borderRadius: theme.borderRadius.md,
+              border: `1px solid ${theme.colors.border}`
+            }}
+          >
+            <span
+              style={{
+                color: theme.colors.primary,
+                fontWeight: theme.typography.fontWeight.bold,
+                marginRight: theme.spacing.sm,
+                fontSize: theme.typography.fontSize.lg
+              }}
+            >
+              •
+            </span>
+            <span
+              style={{
+                color: theme.colors.text,
+                fontSize: theme.typography.fontSize.base,
+                lineHeight: theme.typography.lineHeight.relaxed
+              }}
+            >
+              First, go to Checkpoint 1 on the campus map before scanning the yesslvl-1 QR code
+            </span>
+          </li>
+          
           <li
             style={{
               display: 'flex',

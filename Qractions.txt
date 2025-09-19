@@ -52,4 +52,4 @@ pixprompt : Add 3 point to the score.
 googlegsa: Add 3 point to the score.
 valaxiapy: Add 3 point to the score.
 treasure: guardians page 
-scorer:score update popup
+scorer:score score popup

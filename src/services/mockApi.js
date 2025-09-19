@@ -1,7 +1,7 @@
 // Mock API service for development and testing
 class MockApiService {
   constructor() {
-    this.baseUrl = 'http://localhost:3001/api'; // Mock backend URL
+    this.baseUrl = 'http://localhost:8000/api'; // Backend URL
     this.isOnline = navigator.onLine;
     this.pendingRequests = [];
     
@@ -314,10 +314,10 @@ class MockApiService {
   }
 
   // Authentication methods
-  async login(ticketId, teamCode) {
-    return this.request('/auth/login', {
+  async login(team_id, password) {
+    return this.request('/team/login', {
       method: 'POST',
-      body: JSON.stringify({ ticketId, teamCode })
+      body: JSON.stringify({ team_id, password })
     });
   }
 
@@ -326,8 +326,11 @@ class MockApiService {
   }
 
   // Team methods
-  async getTeamProfile() {
-    return this.request('/team/profile');
+  async getTeamProfile(team_id) {
+    return this.request('/team/add-members', {
+      method: 'POST',
+      body: JSON.stringify({ team_id })
+    });
   }
 
   async updateTeamProfile(teamData) {
@@ -337,9 +340,19 @@ class MockApiService {
     });
   }
 
+  async addTeamMembers(team_id, members) {
+    return this.request('/team/add-members', {
+      method: 'POST',
+      body: JSON.stringify({ team_id, members })
+    });
+  }
+
   // Game methods
-  async getGameProgress() {
-    return this.request('/game/progress');
+  async getGameProgress(team_id) {
+    return this.request('/team/get-score', {
+      method: 'GET',
+      body: JSON.stringify({ team_id })
+    });
   }
 
   async updateGameProgress(progress) {
@@ -349,17 +362,23 @@ class MockApiService {
     });
   }
 
-  async completeLocation(locationId, score, type) {
-    return this.request('/game/complete-location', {
+  async completeLocation(team_id, level, score) {
+    return this.request('/team/update-score', {
       method: 'POST',
-      body: JSON.stringify({ locationId, score, type })
+      body: JSON.stringify({ 
+        team_id, 
+        scoreObj: { level, score } 
+      })
     });
   }
 
-  async updateScore(locationId, score) {
-    return this.request('/game/update-score', {
+  async updateScore(team_id, level, score) {
+    return this.request('/team/update-score', {
       method: 'POST',
-      body: JSON.stringify({ locationId, score })
+      body: JSON.stringify({ 
+        team_id, 
+        scoreObj: { level, score } 
+      })
     });
   }
 
@@ -368,6 +387,13 @@ class MockApiService {
     return this.request('/qr/validate', {
       method: 'POST',
       body: JSON.stringify({ qrData, location })
+    });
+  }
+
+  // Leaderboard methods
+  async getLeaderboard() {
+    return this.request('/team/get-leader-board', {
+      method: 'GET'
     });
   }
 

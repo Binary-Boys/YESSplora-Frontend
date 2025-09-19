@@ -19,14 +19,8 @@ class WebSocketService {
     }
 
     try {
-      // In development, use mock WebSocket
-      if (import.meta.env.DEV) {
-        this.connectMock(teamId, token);
-        return;
-      }
-
-      // Production WebSocket connection
-      const wsUrl = `wss://api.yessplora.com/ws?teamId=${teamId}&token=${token}`;
+      // Connect to local backend WebSocket server
+      const wsUrl = `ws://localhost:8000?teamId=${teamId}&token=${token}`;
       this.socket = new WebSocket(wsUrl);
       
       this.setupEventListeners();
@@ -178,14 +172,8 @@ class WebSocketService {
     console.log(`Attempting to reconnect (${this.reconnectAttempts}/${this.maxReconnectAttempts})...`);
     
     setTimeout(() => {
-      // In development, just simulate reconnection
-      if (import.meta.env.DEV) {
-        this.connectMock('team-001', 'mock-token');
-        return;
-      }
-      
-      // In production, would reconnect with stored credentials
-      // this.connect(this.teamId, this.token);
+      // Reconnect to local backend
+      this.connect('team-001', 'mock-token');
     }, this.reconnectInterval);
   }
 
