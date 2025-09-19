@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGame } from '../../contexts/GameContext';
 import { theme } from '../../styles/theme';
@@ -7,7 +7,36 @@ const ProfilePopup = () => {
   const { state, actions } = useGame();
   const { ui, team, gameProgress, auth } = state;
   const [isEditing, setIsEditing] = useState(false);
-  const [editedMembers, setEditedMembers] = useState(team.members);
+  const [editedMembers, setEditedMembers] = useState(team.team_members || []);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  // Load team profile data when component mounts
+  useEffect(() => {
+    const loadTeamProfile = async () => {
+      if (auth.team_id || auth.teamID) {
+        try {
+          setIsLoading(true);
+          const team_id = auth.team_id || auth.teamID;
+          await actions.loadTeamProfile(team_id);
+        } catch (error) {
+          console.error('Failed to load team profile:', error);
+          setError('Failed to load team profile');
+        } finally {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    loadTeamProfile();
+  }, [auth.team_id, auth.teamID, actions]);
+
+  // Update editedMembers when team data changes
+  useEffect(() => {
+    if (team.team_members) {
+      setEditedMembers(team.team_members);
+    }
+  }, [team.team_members]);
 
   const handleLogout = () => {
     try {
@@ -26,7 +55,8 @@ const ProfilePopup = () => {
   const handleClose = () => {
     actions.closeAllPopups();
     setIsEditing(false);
-    setEditedMembers(team.members);
+    setEditedMembers(team.team_members || []);
+    setError('');
     // Navigate back to home page for consistency
     console.log('Profile popup closed - navigating back to home page');
     window.location.href = '/';
@@ -36,25 +66,37 @@ const ProfilePopup = () => {
     if (isEditing) {
       // Save changes
       try {
+        setIsLoading(true);
+        setError('');
         await actions.updateTeamMembers(editedMembers);
         console.log('Team members updated successfully');
       } catch (error) {
         console.error('Failed to update team members:', error);
-        // You could show an error message to the user here
+        setError('Failed to update team members. Please try again.');
+      } finally {
+        setIsLoading(false);
       }
     }
     setIsEditing(!isEditing);
   };
 
-  const handleMemberChange = (index, newName) => {
+  const handleMemberChange = (index, field, value) => {
     const updatedMembers = [...editedMembers];
-    updatedMembers[index] = newName;
+    updatedMembers[index] = {
+      ...updatedMembers[index],
+      [field]: value
+    };
     setEditedMembers(updatedMembers);
   };
 
   const handleAddMember = () => {
     if (editedMembers.length < 10) { // Max 10 members
-      setEditedMembers([...editedMembers, '']);
+      setEditedMembers([...editedMembers, {
+        name: '',
+        email: '',
+        mobile_number: '',
+        role: 'member'
+      }]);
     }
   };
 
@@ -153,6 +195,36 @@ const ProfilePopup = () => {
                 Team Profile
               </h2>
 
+              {/* Loading State */}
+              {isLoading && (
+                <div
+                  style={{
+                    textAlign: 'center',
+                    padding: theme.spacing.lg,
+                    color: theme.colors.textSecondary
+                  }}
+                >
+                  Loading team profile...
+                </div>
+              )}
+
+              {/* Error State */}
+              {error && (
+                <div
+                  style={{
+                    backgroundColor: 'rgba(255, 107, 107, 0.1)',
+                    border: '1px solid rgba(255, 107, 107, 0.3)',
+                    borderRadius: theme.borderRadius.md,
+                    padding: theme.spacing.md,
+                    marginBottom: theme.spacing.lg,
+                    color: '#ff6b6b',
+                    textAlign: 'center'
+                  }}
+                >
+                  {error}
+                </div>
+              )}
+
               {/* Team Name */}
               <div
                 style={{
@@ -172,7 +244,7 @@ const ProfilePopup = () => {
                     marginBottom: theme.spacing.sm
                   }}
                 >
-                  {team.name}
+                  {team.team_name || 'Loading...'}
                 </h3>
                 <p
                   style={{
@@ -180,7 +252,15 @@ const ProfilePopup = () => {
                     fontSize: theme.typography.fontSize.sm
                   }}
                 >
-                  Team ID: {auth.isAdmin ? 'admin' : (auth.ticketId || team.ticketId || 'Not assigned')}
+                  Team ID: {team.team_id || 'Not assigned'}
+                </p>
+                <p
+                  style={{
+                    color: theme.colors.textSecondary,
+                    fontSize: theme.typography.fontSize.sm
+                  }}
+                >
+                  Total Score: {team.total_score || 0} points
                 </p>
               </div>
 
@@ -262,38 +342,101 @@ const ProfilePopup = () => {
                           flexShrink: 0
                         }}
                       >
-                        {member.charAt(0).toUpperCase()}
+                        {(typeof member === 'string' ? member : member.name || '').charAt(0).toUpperCase()}
                       </div>
 
-                      {/* Member Name */}
+                      {/* Member Info */}
                       {isEditing ? (
-                        <input
-                          type="text"
-                          value={member}
-                          onChange={(e) => handleMemberChange(index, e.target.value)}
-                          style={{
-                            flex: 1,
-                            backgroundColor: theme.colors.surface,
-                            color: theme.colors.text,
-                            border: `2px solid ${theme.colors.border}`,
-                            borderRadius: theme.borderRadius.sm,
-                            padding: theme.spacing.sm,
-                            fontSize: theme.typography.fontSize.base,
-                            outline: 'none'
-                          }}
-                          placeholder="Enter member name"
-                        />
+                        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: theme.spacing.xs }}>
+                          <input
+                            type="text"
+                            value={typeof member === 'string' ? member : member.name || ''}
+                            onChange={(e) => handleMemberChange(index, 'name', e.target.value)}
+                            style={{
+                              backgroundColor: theme.colors.surface,
+                              color: theme.colors.text,
+                              border: `2px solid ${theme.colors.border}`,
+                              borderRadius: theme.borderRadius.sm,
+                              padding: theme.spacing.sm,
+                              fontSize: theme.typography.fontSize.base,
+                              outline: 'none'
+                            }}
+                            placeholder="Enter member name"
+                          />
+                          <input
+                            type="email"
+                            value={typeof member === 'string' ? '' : member.email || ''}
+                            onChange={(e) => handleMemberChange(index, 'email', e.target.value)}
+                            style={{
+                              backgroundColor: theme.colors.surface,
+                              color: theme.colors.text,
+                              border: `2px solid ${theme.colors.border}`,
+                              borderRadius: theme.borderRadius.sm,
+                              padding: theme.spacing.sm,
+                              fontSize: theme.typography.fontSize.sm,
+                              outline: 'none'
+                            }}
+                            placeholder="Enter email (optional)"
+                          />
+                          <input
+                            type="tel"
+                            value={typeof member === 'string' ? '' : member.mobile_number || ''}
+                            onChange={(e) => handleMemberChange(index, 'mobile_number', e.target.value)}
+                            style={{
+                              backgroundColor: theme.colors.surface,
+                              color: theme.colors.text,
+                              border: `2px solid ${theme.colors.border}`,
+                              borderRadius: theme.borderRadius.sm,
+                              padding: theme.spacing.sm,
+                              fontSize: theme.typography.fontSize.sm,
+                              outline: 'none'
+                            }}
+                            placeholder="Enter mobile number (optional)"
+                          />
+                        </div>
                       ) : (
-                        <span
-                          style={{
-                            flex: 1,
-                            fontSize: theme.typography.fontSize.base,
-                            color: theme.colors.text,
-                            fontWeight: theme.typography.fontWeight.medium
-                          }}
-                        >
-                          {member}
-                        </span>
+                        <div style={{ flex: 1 }}>
+                          <div
+                            style={{
+                              fontSize: theme.typography.fontSize.base,
+                              color: theme.colors.text,
+                              fontWeight: theme.typography.fontWeight.medium
+                            }}
+                          >
+                            {typeof member === 'string' ? member : member.name || 'Unknown'}
+                          </div>
+                          {typeof member === 'object' && member.email && (
+                            <div
+                              style={{
+                                fontSize: theme.typography.fontSize.sm,
+                                color: theme.colors.textSecondary
+                              }}
+                            >
+                              {member.email}
+                            </div>
+                          )}
+                          {typeof member === 'object' && member.mobile_number && (
+                            <div
+                              style={{
+                                fontSize: theme.typography.fontSize.sm,
+                                color: theme.colors.textSecondary
+                              }}
+                            >
+                              {member.mobile_number}
+                            </div>
+                          )}
+                          {typeof member === 'object' && member.role && (
+                            <div
+                              style={{
+                                fontSize: theme.typography.fontSize.xs,
+                                color: member.role === 'leader' ? theme.colors.success : theme.colors.textSecondary,
+                                fontWeight: theme.typography.fontWeight.medium
+                              }}
+                            >
+                              {member.role === 'leader' ? '👑 Leader' : '👤 Member'}
+                            </div>
+                          )}
+                        </div>
                       )}
 
                       {/* Remove Button (only when editing) */}

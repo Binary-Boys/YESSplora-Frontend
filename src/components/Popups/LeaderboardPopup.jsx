@@ -19,11 +19,15 @@ const LeaderboardPopup = () => {
       try {
         setLoading(true);
         setError('');
-        const res = await api.request('/leaderboard');
-        if (mounted && res?.success) {
-          setRows(Array.isArray(res.data) ? res.data : []);
+        const res = await api.getLeaderboard();
+        console.log('Leaderboard response:', res);
+        if (mounted && res?.leaderboard) {
+          setRows(Array.isArray(res.leaderboard) ? res.leaderboard : []);
+        } else if (mounted && res?.data?.leaderboard) {
+          setRows(Array.isArray(res.data.leaderboard) ? res.data.leaderboard : []);
         }
       } catch (e) {
+        console.error('Failed to load leaderboard:', e);
         setError('Failed to load leaderboard');
       } finally {
         setLoading(false);
@@ -33,12 +37,31 @@ const LeaderboardPopup = () => {
   }, [ui.showLeaderboard]);
 
   const sorted = useMemo(() => {
-    const nonEliminated = rows.filter(r => !r.eliminated).sort((a, b) => b.teamScore - a.teamScore);
-    const eliminated = rows.filter(r => r.eliminated).sort((a, b) => b.teamScore - a.teamScore);
+    const nonEliminated = rows.filter(r => !r.is_eliminated).sort((a, b) => (b.total_score || 0) - (a.total_score || 0));
+    const eliminated = rows.filter(r => r.is_eliminated).sort((a, b) => (b.total_score || 0) - (a.total_score || 0));
     return [...nonEliminated, ...eliminated];
   }, [rows]);
 
   const handleClose = () => actions.closeAllPopups();
+
+  const handleRefresh = async () => {
+    try {
+      setLoading(true);
+      setError('');
+      const res = await api.getLeaderboard();
+      console.log('Leaderboard refresh response:', res);
+      if (res?.leaderboard) {
+        setRows(Array.isArray(res.leaderboard) ? res.leaderboard : []);
+      } else if (res?.data?.leaderboard) {
+        setRows(Array.isArray(res.data.leaderboard) ? res.data.leaderboard : []);
+      }
+    } catch (e) {
+      console.error('Failed to refresh leaderboard:', e);
+      setError('Failed to refresh leaderboard');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <AnimatePresence>
@@ -92,14 +115,25 @@ const LeaderboardPopup = () => {
                   Leaderboard
                 </h3>
               </div>
-              <button onClick={handleClose} style={{
-                background: theme.colors.primary,
-                color: theme.colors.accent,
-                border: 'none',
-                borderRadius: '12px',
-                padding: '8px 12px',
-                cursor: 'pointer'
-              }}>Close</button>
+              <div style={{ display: 'flex', gap: '10px' }}>
+                <button onClick={handleRefresh} style={{
+                  background: theme.colors.accent,
+                  color: theme.colors.primary,
+                  border: 'none',
+                  borderRadius: '12px',
+                  padding: '8px 12px',
+                  cursor: 'pointer',
+                  fontWeight: 600
+                }}>Refresh</button>
+                <button onClick={handleClose} style={{
+                  background: theme.colors.primary,
+                  color: theme.colors.accent,
+                  border: 'none',
+                  borderRadius: '12px',
+                  padding: '8px 12px',
+                  cursor: 'pointer'
+                }}>Close</button>
+              </div>
             </div>
 
             {loading && <div style={{ color: theme.colors.accent, textAlign: 'center', padding: 24 }}>Loading…</div>}
@@ -127,20 +161,20 @@ const LeaderboardPopup = () => {
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               {sorted.map((row, idx) => (
                 <motion.div
-                  key={row.teamId}
+                  key={row.team_id}
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.18, delay: idx * 0.02 }}
                   style={{
                     padding: '12px 14px',
                     borderRadius: 14,
-                    background: row.eliminated ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.10)',
-                    border: row.eliminated ? '1px solid rgba(255,255,255,0.08)' : '1px solid rgba(255,255,255,0.18)',
-                    opacity: row.eliminated ? 0.55 : 1,
+                    background: row.is_eliminated ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.10)',
+                    border: row.is_eliminated ? '1px solid rgba(255,255,255,0.08)' : '1px solid rgba(255,255,255,0.18)',
+                    opacity: row.is_eliminated ? 0.55 : 1,
                     transition: '150ms ease',
-                    boxShadow: row.eliminated ? 'none' : '0 6px 18px rgba(0,0,0,0.25)'
+                    boxShadow: row.is_eliminated ? 'none' : '0 6px 18px rgba(0,0,0,0.25)'
                   }}
-                  onMouseEnter={(e) => { if (!row.eliminated) e.currentTarget.style.transform = 'translateY(-2px)'; }}
+                  onMouseEnter={(e) => { if (!row.is_eliminated) e.currentTarget.style.transform = 'translateY(-2px)'; }}
                   onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; }}
                 >
                   {/* Row layout */}
@@ -164,8 +198,8 @@ const LeaderboardPopup = () => {
 
                     {/* Team name */}
                     <div style={{ minWidth: 0 }}>
-                      <div style={{ color: theme.colors.accent, fontWeight: 700, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{row.teamName}</div>
-                      <div style={{ fontSize: 12, color: theme.colors.textSecondary }}>ID: {row.teamId}</div>
+                      <div style={{ color: theme.colors.accent, fontWeight: 700, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{row.team_name}</div>
+                      <div style={{ fontSize: 12, color: theme.colors.textSecondary }}>ID: {row.team_id}</div>
                     </div>
 
                     {/* Score pill */}
@@ -179,14 +213,14 @@ const LeaderboardPopup = () => {
                         color: theme.colors.accent,
                         fontWeight: 700
                       }}>
-                        {row.teamScore}
+                        {row.total_score || 0}
                       </span>
                     </div>
 
                     {/* Levels (desktop) */}
                     {!isMobile && (
                       <div style={{ textAlign: 'right', color: theme.colors.accent }}>
-                        {row.levelsCleared}
+                        {row.levels_cleared || 0}
                       </div>
                     )}
 
@@ -197,12 +231,12 @@ const LeaderboardPopup = () => {
                           display: 'inline-block',
                           padding: '6px 10px',
                           borderRadius: 999,
-                          background: row.eliminated ? 'linear-gradient(90deg,#ff6b6b33,#ff6b6b11)' : 'linear-gradient(90deg,#7CFC0033,#7CFC0011)',
-                          border: row.eliminated ? '1px solid #ff6b6b55' : '1px solid #7CFC0055',
-                          color: row.eliminated ? '#ff9a9a' : '#b8ff66',
+                          background: row.is_eliminated ? 'linear-gradient(90deg,#ff6b6b33,#ff6b6b11)' : 'linear-gradient(90deg,#7CFC0033,#7CFC0011)',
+                          border: row.is_eliminated ? '1px solid #ff6b6b55' : '1px solid #7CFC0055',
+                          color: row.is_eliminated ? '#ff9a9a' : '#b8ff66',
                           fontWeight: 700
                         }}>
-                          {row.eliminated ? 'Eliminated' : 'Active'}
+                          {row.is_eliminated ? 'Eliminated' : 'Active'}
                         </span>
                       </div>
                     )}
@@ -211,14 +245,14 @@ const LeaderboardPopup = () => {
                   {/* Secondary line for mobile */}
                   {isMobile && (
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8 }}>
-                      <div style={{ color: theme.colors.accent }}>Levels: {row.levelsCleared}</div>
+                      <div style={{ color: theme.colors.accent }}>Levels: {row.levels_cleared || 0}</div>
                       <span style={{
                         display: 'inline-block', padding: '4px 10px', borderRadius: 999,
-                        background: row.eliminated ? 'linear-gradient(90deg,#ff6b6b33,#ff6b6b11)' : 'linear-gradient(90deg,#7CFC0033,#7CFC0011)',
-                        border: row.eliminated ? '1px solid #ff6b6b55' : '1px solid #7CFC0055',
-                        color: row.eliminated ? '#ff9a9a' : '#b8ff66', fontWeight: 700
+                        background: row.is_eliminated ? 'linear-gradient(90deg,#ff6b6b33,#ff6b6b11)' : 'linear-gradient(90deg,#7CFC0033,#7CFC0011)',
+                        border: row.is_eliminated ? '1px solid #ff6b6b55' : '1px solid #7CFC0055',
+                        color: row.is_eliminated ? '#ff9a9a' : '#b8ff66', fontWeight: 700
                       }}>
-                        {row.eliminated ? 'Eliminated' : 'Active'}
+                        {row.is_eliminated ? 'Eliminated' : 'Active'}
                       </span>
                     </div>
                   )}

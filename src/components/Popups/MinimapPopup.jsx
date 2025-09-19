@@ -74,11 +74,11 @@ const MinimapPopup = () => {
                 backgroundColor: theme.colors.surface,
                 border: `3px solid ${theme.colors.primary}`,
                 borderRadius: theme.borderRadius.xl,
-                padding: theme.spacing.lg, // Reduced padding for more compact appearance
+                padding: theme.spacing.lg,
                 width: 'auto', // Auto width to fit content
-                maxWidth: '95vw', // Still respect viewport width
+                maxWidth: '98vw', // Increased to use more viewport width
                 height: 'auto', // Auto height to fit content
-                maxHeight: '90vh', // Allow scrolling if needed
+                maxHeight: '95vh', // Increased height allowance
                 overflow: 'auto',
                 position: 'relative',
                 boxShadow: theme.shadows['2xl']
@@ -92,8 +92,8 @@ const MinimapPopup = () => {
                   position: 'absolute',
                   top: theme.spacing.md,
                   right: theme.spacing.md,
-                  width: '80px', // Increased size
-                  height: '80px', // Increased size
+                  width: '90px', // Further increased size
+                  height: '90px', // Further increased size
                   backgroundColor: theme.colors.primary,
                   color: theme.colors.accent,
                   border: `4px solid ${theme.colors.accent}`, // Added border
@@ -118,31 +118,32 @@ const MinimapPopup = () => {
                   fontWeight: theme.typography.fontWeight.bold,
                   color: theme.colors.accent,
                   textAlign: 'center',
-                  marginBottom: theme.spacing.sm, // Reduced bottom margin
+                  marginBottom: theme.spacing.sm,
                   marginTop: theme.spacing.sm
                 }}
               >
-                CAMPUS MAP
+                YESSPLORA CAMPUS MAP
               </h2>
 
-              {/* Campus Map Image */}
+              {/* YESSplora Isometric Map */}
               <div
                 style={{
                   position: 'relative',
                   width: '100%',
-                  maxWidth: '1000px', // Increased max width for more rectangular shape
-                  aspectRatio: '16/9', // Changed from 4/3 to 16/9 for more rectangular appearance
+                  maxWidth: '1400px', // Further increased for larger view
+                  aspectRatio: '4/3', // Better for isometric maps
                   backgroundColor: theme.colors.background,
                   borderRadius: theme.borderRadius.lg,
                   border: `4px solid ${theme.colors.border}`,
                   overflow: 'hidden',
-                  marginBottom: theme.spacing.sm, // Reduced bottom margin for more compact appearance
-                  margin: '0 auto'
+                  marginBottom: theme.spacing.sm,
+                  margin: '0 auto',
+                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)' // Enhanced shadow for 3D effect
                 }}
               >
                 <img
-                  src="/Campus-Map-Sample-Apartment-Complex-Full-Illustration.jpg"
-                  alt="Campus Map"
+                  src="/yessplora-isometric-map.png"
+                  alt="YESSplora Campus Map"
                   style={{
                     width: '100%',
                     height: '100%',
@@ -166,216 +167,254 @@ const MinimapPopup = () => {
                     pointerEvents: 'none'
                   }}
                 >
-                  {/* Software Game Locations (1-4) */}
+                  {/* Blue Cluster - Main Campus Hub (Location 1) */}
                   <div
                     style={{
                       position: 'absolute',
-                      top: '15%',
-                      left: '20%',
-                      width: '40px',
-                      height: '40px',
+                      top: '25%',
+                      left: '45%',
+                      width: '60px',
+                      height: '60px',
                       backgroundColor: getLocationStatus(1).color,
                       borderRadius: '50%',
                       border: '4px solid #FFFFFF',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      fontSize: '20px',
+                      fontSize: '28px',
                       fontWeight: 'bold',
                       color: '#FFFFFF',
                       cursor: 'pointer',
-                      pointerEvents: 'auto'
+                      pointerEvents: 'auto',
+                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.4)',
+                      zIndex: 10
                     }}
                     onClick={() => handleLocationClick(1)}
+                    title="Main Campus Hub - Blue Building Complex"
                   >
                     1
                   </div>
+
+                  {/* Green Complex - Innovation Center (Location 2) */}
                   <div
                     style={{
                       position: 'absolute',
-                      top: '15%',
-                      right: '20%',
-                      width: '40px',
-                      height: '40px',
+                      top: '20%',
+                      right: '15%',
+                      width: '60px',
+                      height: '60px',
                       backgroundColor: getLocationStatus(2).color,
                       borderRadius: '50%',
                       border: '4px solid #FFFFFF',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      fontSize: '20px',
+                      fontSize: '28px',
                       fontWeight: 'bold',
                       color: '#FFFFFF',
                       cursor: 'pointer',
-                      pointerEvents: 'auto'
+                      pointerEvents: 'auto',
+                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.4)',
+                      zIndex: 10
                     }}
                     onClick={() => handleLocationClick(2)}
+                    title="Innovation Center - Green Complex"
                   >
                     2
                   </div>
+
+                  {/* Curved Green - Amphitheater (Location 3) */}
                   <div
                     style={{
                       position: 'absolute',
-                      top: '35%',
-                      left: '20%',
-                      width: '40px',
-                      height: '40px',
+                      top: '15%',
+                      left: '15%',
+                      width: '60px',
+                      height: '60px',
                       backgroundColor: getLocationStatus(3).color,
                       borderRadius: '50%',
                       border: '4px solid #FFFFFF',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      fontSize: '20px',
+                      fontSize: '28px',
                       fontWeight: 'bold',
                       color: '#FFFFFF',
                       cursor: 'pointer',
-                      pointerEvents: 'auto'
+                      pointerEvents: 'auto',
+                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.4)',
+                      zIndex: 10
                     }}
                     onClick={() => handleLocationClick(3)}
+                    title="Amphitheater - Curved Green Structure"
                   >
                     3
                   </div>
+
+                  {/* Large Gray - Central Plaza (Location 4) */}
                   <div
                     style={{
                       position: 'absolute',
-                      top: '35%',
-                      right: '20%',
-                      width: '40px',
-                      height: '40px',
+                      top: '60%',
+                      left: '40%',
+                      width: '60px',
+                      height: '60px',
                       backgroundColor: getLocationStatus(4).color,
                       borderRadius: '50%',
                       border: '4px solid #FFFFFF',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      fontSize: '20px',
+                      fontSize: '28px',
                       fontWeight: 'bold',
                       color: '#FFFFFF',
                       cursor: 'pointer',
-                      pointerEvents: 'auto'
+                      pointerEvents: 'auto',
+                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.4)',
+                      zIndex: 10
                     }}
                     onClick={() => handleLocationClick(4)}
+                    title="Central Plaza - Large Gray Building"
                   >
                     4
                   </div>
                   
-                  {/* Physical Game Locations (5-8) */}
+                  {/* Orange Cube - Tech Lab (Location 5) */}
                   <div
                     style={{
                       position: 'absolute',
-                      top: '50%',
-                      left: '50%',
-                      transform: 'translate(-50%, -50%)',
-                      width: '40px',
-                      height: '40px',
+                      top: '20%',
+                      left: '25%',
+                      width: '60px',
+                      height: '60px',
                       backgroundColor: getLocationStatus(5).color,
                       borderRadius: '50%',
                       border: '4px solid #FFFFFF',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      fontSize: '20px',
+                      fontSize: '28px',
                       fontWeight: 'bold',
                       color: '#FFFFFF',
                       cursor: 'pointer',
-                      pointerEvents: 'auto'
+                      pointerEvents: 'auto',
+                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.4)',
+                      zIndex: 10
                     }}
                     onClick={() => handleLocationClick(5)}
+                    title="Tech Lab - Orange Cube Building"
                   >
                     5
                   </div>
+
+                  {/* Pink Building - Creative Studio (Location 6) */}
                   <div
                     style={{
                       position: 'absolute',
-                      bottom: '25%',
-                      left: '20%',
-                      width: '40px',
-                      height: '40px',
+                      top: '70%',
+                      left: '25%',
+                      width: '60px',
+                      height: '60px',
                       backgroundColor: getLocationStatus(6).color,
                       borderRadius: '50%',
                       border: '4px solid #FFFFFF',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      fontSize: '20px',
+                      fontSize: '28px',
                       fontWeight: 'bold',
                       color: '#FFFFFF',
                       cursor: 'pointer',
-                      pointerEvents: 'auto'
+                      pointerEvents: 'auto',
+                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.4)',
+                      zIndex: 10
                     }}
                     onClick={() => handleLocationClick(6)}
+                    title="Creative Studio - Pink Building"
                   >
                     6
                   </div>
+
+                  {/* Irregular Gray - Research Center (Location 7) */}
                   <div
                     style={{
                       position: 'absolute',
-                      bottom: '25%',
-                      right: '20%',
-                      width: '40px',
-                      height: '40px',
+                      top: '25%',
+                      right: '25%',
+                      width: '60px',
+                      height: '60px',
                       backgroundColor: getLocationStatus(7).color,
                       borderRadius: '50%',
                       border: '4px solid #FFFFFF',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      fontSize: '20px',
+                      fontSize: '28px',
                       fontWeight: 'bold',
                       color: '#FFFFFF',
                       cursor: 'pointer',
-                      pointerEvents: 'auto'
+                      pointerEvents: 'auto',
+                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.4)',
+                      zIndex: 10
                     }}
                     onClick={() => handleLocationClick(7)}
+                    title="Research Center - Irregular Gray Building"
                   >
                     7
                   </div>
+                  {/* Yellow/Light Gray - Workshop (Location 8) */}
                   <div
                     style={{
                       position: 'absolute',
-                      bottom: '10%',
-                      left: '20%',
-                      width: '40px',
-                      height: '40px',
+                      top: '35%',
+                      right: '35%',
+                      width: '60px',
+                      height: '60px',
                       backgroundColor: getLocationStatus(8).color,
                       borderRadius: '50%',
                       border: '4px solid #FFFFFF',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      fontSize: '20px',
+                      fontSize: '28px',
                       fontWeight: 'bold',
                       color: '#FFFFFF',
                       cursor: 'pointer',
-                      pointerEvents: 'auto'
+                      pointerEvents: 'auto',
+                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.4)',
+                      zIndex: 10
                     }}
                     onClick={() => handleLocationClick(8)}
+                    title="Workshop - Yellow/Light Gray Building"
                   >
                     8
                   </div>
                   
-                  {/* Special Location (9) */}
+                  {/* Main Road/Pathway - Checkpoint (Location 9) */}
                   <div
                     style={{
                       position: 'absolute',
-                      bottom: '10%',
-                      right: '20%',
-                      width: '40px',
-                      height: '40px',
+                      bottom: '15%',
+                      left: '50%',
+                      transform: 'translateX(-50%)',
+                      width: '60px',
+                      height: '60px',
                       backgroundColor: getLocationStatus(9).color,
                       borderRadius: '50%',
                       border: '4px solid #FFFFFF',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      fontSize: '20px',
+                      fontSize: '28px',
                       fontWeight: 'bold',
                       color: '#FFFFFF',
                       cursor: 'pointer',
-                      pointerEvents: 'auto'
+                      pointerEvents: 'auto',
+                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.4)',
+                      zIndex: 10
                     }}
                     onClick={() => handleLocationClick(9)}
+                    title="Main Checkpoint - Central Pathway"
                   >
                     9
                   </div>

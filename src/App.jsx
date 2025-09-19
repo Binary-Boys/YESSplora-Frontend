@@ -33,6 +33,15 @@ const GameApp = ({ onLoginSuccess }) => {
         if (parsed && parsed.isAuthenticated) {
           // Initialize game context with auth data
           actions.login(parsed.ticketId, parsed.teamCode, parsed.isAdmin || false);
+          
+          // Load team profile if team_id is available
+          if (parsed.team_id || parsed.teamID) {
+            const team_id = parsed.team_id || parsed.teamID;
+            actions.loadTeamProfile(team_id).catch(error => {
+              console.error('Failed to load team profile on app init:', error);
+            });
+          }
+          
           onLoginSuccess();
         }
       }

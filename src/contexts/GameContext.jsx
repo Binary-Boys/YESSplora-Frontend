@@ -4,10 +4,14 @@ import React, { createContext, useContext, useReducer, useEffect } from 'react';
 const initialState = {
   // Team information
   team: {
-    name: 'Avengers',
-    members: ['Achu', 'Kichu', 'Anju', 'Manju', 'Lechu'],
-    id: null,
-    ticketId: null
+    team_name: '',
+    team_id: '',
+    team_members: [],
+    level_score: [],
+    total_score: 0,
+    is_eliminated: false,
+    createdAt: null,
+    updatedAt: null
   },
   
   // Authentication
