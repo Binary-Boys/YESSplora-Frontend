@@ -84,6 +84,7 @@ function EndScreen({ score, onReplay }: { score: number; onReplay: () => void })
   // Get URL parameters
   const urlParams = new URLSearchParams(window.location.search)
   const ticketId = urlParams.get('ticketId')
+  const teamCode = urlParams.get('teamCode')
   const gameId = urlParams.get('gameId') || '2'
   const level = urlParams.get('level') || '1'
   const returnUrl = urlParams.get('returnUrl')
@@ -91,6 +92,7 @@ function EndScreen({ score, onReplay }: { score: number; onReplay: () => void })
   // Log completion to console
   console.log('Mini-game completed:', {
     yessticketId: ticketId,
+    teamCode: teamCode,
     gameId: gameId,
     level: level,
     score: normalizedScore,
